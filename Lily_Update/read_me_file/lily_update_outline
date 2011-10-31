@@ -1,0 +1,22 @@
+项目名称：Lily_Update
+项目作用：提取"http://bbs.nju.edu.cn"的新帖，更新数据库中存储的主题项。
+项目前提：SQLServer中已建立数据库lily，其含有lily_theme，lily_reply，lily_date三个表。各具有一定内 容。本项目主要使用lily_date表。
+
+输入：子论坛名称subforum(如："http://bbs.nju.edu.cn/bbsdoc?board=D_Computer")、
+               期望更新页数new_page(如：10)、递增更新页数page_increment(如：2)
+输出：将subforum出现的新主题页存入lily_theme和lily_reply，并用最新的一条主题的url和date更新lily_date对应的subforum项。
+
+
+项目流程：
+1. 主程序访问SQLServer--lily--lily_date，取出subforum对应的theme_url项，作为old_newest_theme。
+2. 主程序访问"http://bbs.nju.edu.cn"，取得subforum中前new_page对应的所有主题页的url，存为ArrayList<String>，作为all_new_page。
+3. 主程序在all_new_page中遍历old_newest_theme，如果找到，记下其位置k，并转4。否则new_page+=page_increment，并转3。
+4. 主程序将all_new_page中的0-(k-1)的元素依次取出，根据all_new_page(i)取得对应主题页的内容，整理后存入数据库。
+5. 主程序取得all_new_page(0)对应的主题页的内容，取出其url和date，用它们更新lily_date中subforum对应的theme_url、theme_date值。
+
+注意事项：
+1. 主题页的url格式为"http://bbs.nju.edu.cn/bbscon?board=Mediastudy&file=M.1190777615.A"，
+        而不是"http://bbs.nju.edu.cn/bbscon?board=Mediastudy&file=M.1190777615.A&num=5"，因为"num=*"是动态的。
+
+
+
