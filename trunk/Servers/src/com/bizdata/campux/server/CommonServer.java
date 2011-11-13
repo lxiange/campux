@@ -10,9 +10,13 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.security.KeyStore;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 /**
  *
  * @author yuy
@@ -25,7 +29,19 @@ public class CommonServer extends Thread{
     @Override
     public void run() {
         try{
-            SSLServerSocketFactory sslserversocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            //setup ssl server socket
+            String keyFile = Config.getValue("SSLServerCertificate");
+            String keyFilePass = Config.getValue("SSLServerCertificateKey");
+            String keyPass = Config.getValue("SSLServerAliasKey");
+            KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(new FileInputStream(keyFile), keyFilePass.toCharArray()); 
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"); 
+            kmf.init(ks,keyPass.toCharArray());
+            SSLContext sslc = SSLContext.getInstance("SSLv3"); 
+            sslc.init(kmf.getKeyManagers(), null, null); 
+            SSLServerSocketFactory sslserversocketfactory = sslc.getServerSocketFactory(); 
+
+            //Listen
             m_sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(m_port);
         }catch(Exception exc){
             Log.log("server", Log.Type.FATAL, exc);
