@@ -1,4 +1,4 @@
-package com.bizdata.campux;
+package com.bizdata.campux.sdk;
 
 
 /**
