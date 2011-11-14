@@ -2,6 +2,7 @@ package com.bizdata.campux.server.userprofile;
 
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.SAXHandlerBase;
+import com.bizdata.campux.server.exception.ParseEndException;
 import java.io.OutputStream;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
@@ -81,16 +82,19 @@ public class SAXHandler extends SAXHandlerBase{
                 if( cmd.string().equalsIgnoreCase(qName) ){
                     m_state = 0;
                     fire(cmd);
-                    break;
+                    throw new ParseEndException();
                 }
             }
         }
     }
+    
+    
     /**
      * function that maps the commands into corresponding functions
      * @param cmd 
      */
     protected void fire(Command cmd){
+        System.out.println("fire:"+cmd);
         switch(cmd){
             case LIST_SYS_VARIABLES: 
                 func_LIST_SYS_VARIABLES();

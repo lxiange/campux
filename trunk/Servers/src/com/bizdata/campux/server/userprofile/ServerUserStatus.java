@@ -1,23 +1,23 @@
 package com.bizdata.campux.server.userprofile;
 
 import com.bizdata.campux.server.CommonServer;
+import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.ServerBase;
 import com.bizdata.campux.server.Log;
-import java.io.*;
+import com.bizdata.campux.server.exception.ParseEndException;
+import java.net.SocketException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 /**
  *
  * @author yuy
  */
 public class ServerUserStatus extends ServerBase {
-    private static int s_port = 2505;
+    private static int s_port = -1;
     
     @Override
     public void startServer(){
+        s_port = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
         m_commonserver = new CommonServer();
         m_commonserver.startServer(s_port, this);
     }
@@ -28,7 +28,11 @@ public class ServerUserStatus extends ServerBase {
         try{
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(m_inputstream, new SAXHandler(m_outputstream) );
-        }catch(Exception exc){
+        }catch(ParseEndException exc)
+        {
+            //the exception used to exit the parsing, ignore
+        }
+        catch(Exception exc){
             Log.log("ServerUserprofile", Log.Type.NOTICE, exc);
             return;
         }
