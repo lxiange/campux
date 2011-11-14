@@ -87,7 +87,7 @@ public class User{
         ServerCommunicator comm = new ServerCommunicator(m_ServicePort_UserStatus);
         OutputStreamWriter output = new OutputStreamWriter(comm.getOutputStream());
         output.write(Config.getXMLfirstline());
-        output.write("<usl></ucl>");
+        output.write("<x><usl></usl></x>");
         output.flush();
         
         UserStatusSAX status = new UserStatusSAX();
