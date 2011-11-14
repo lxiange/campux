@@ -103,4 +103,7 @@ public class Config {
             m_commoncharset = Charset.forName("UTF-8");
         return m_commoncharset;
     }
+    static public boolean debug(){
+        return true;
+    }
 }

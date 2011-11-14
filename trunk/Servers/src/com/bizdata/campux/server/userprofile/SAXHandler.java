@@ -2,16 +2,9 @@ package com.bizdata.campux.server.userprofile;
 
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.SAXHandlerBase;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

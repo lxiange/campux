@@ -1,5 +1,12 @@
 package com.bizdata.campux.sdk;
 
+import com.bizdata.campux.sdk.network.ServerCommunicator;
+import com.bizdata.campux.sdk.saxhandler.UserStatusSAX;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+
 
 /**
  *
@@ -12,6 +19,12 @@ public class User{
     protected String m_username, m_userpsw;
     // store the last access time
     protected long m_lasttime;
+    protected int m_ServicePort_UserAuth;
+    protected int m_ServicePort_UserStatus;
+    public User(){
+        m_ServicePort_UserAuth = Integer.parseInt(Config.getValue("ServicePort_UserAuth"));
+        m_ServicePort_UserStatus = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
+    }
     /**
      * login a user
      * @param name username
@@ -70,7 +83,20 @@ public class User{
             login(m_username, m_userpsw);
         return m_userSessionID;
     }
-    public String[] getUserVariables(){
+    public String[] getUserVariables() throws Exception{        
+        ServerCommunicator comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        OutputStreamWriter output = new OutputStreamWriter(comm.getOutputStream());
+        output.write(Config.getXMLfirstline());
+        output.write("<usl></ucl>");
+        output.flush();
         
+        UserStatusSAX status = new UserStatusSAX();
+        status.parseInput(comm.getInputStream());
+        String[] vars = status.getVariables();
+        
+        comm.close();
+        
+        return vars;
     }
+    
 }
