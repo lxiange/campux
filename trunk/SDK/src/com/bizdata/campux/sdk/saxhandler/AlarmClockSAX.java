@@ -15,6 +15,5 @@ public class AlarmClockSAX extends SAXHandlerBase{
     @Override
     protected void contentReceived(String content, String tagname, Attributes m_tagattr) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
+    }    
 }

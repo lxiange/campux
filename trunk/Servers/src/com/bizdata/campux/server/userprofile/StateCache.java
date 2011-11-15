@@ -83,7 +83,7 @@ public class StateCache {
     protected State findUser(String usr){
         State userstate = null;
         for(int i=0; i<m_cachesize; i++){
-            if( m_cache[i]!=null && usr.equalsIgnoreCase(m_cache[i].m_user) ){
+            if( m_cache[i]!=null && m_cache[i].m_user!=null && m_cache[i].m_user.equalsIgnoreCase(usr)){
                 userstate = m_cache[i];
                 m_lasttime[i] = m_cachetime++;
                 return userstate;

@@ -46,9 +46,10 @@ public abstract class SAXHandlerBase extends DefaultHandler{
         }else if( "err".equalsIgnoreCase(qName) ){
             m_isOK = false;
             m_err_code = Integer.parseInt(attributes.getValue("c"));
-        }else{
-            m_tagname = qName;
         }
+        
+        m_tagname = qName;
+        
         if( attributes.getValue("b64")!=null ){
             m_b64=true;
         }else{
@@ -64,6 +65,8 @@ public abstract class SAXHandlerBase extends DefaultHandler{
             System.out.println("Content:"+new String(ch, start, length)+" ok:"+m_isOK);
         if( m_isOK ){
             String content = new String(ch, start, length);
+            if( content!=null )
+                    content = content.trim();
             if( m_b64 ){
                 byte[] bytes = DatatypeConverter.parseBase64Binary(content);
                 content = new String(bytes, Config.getCharset());
@@ -87,6 +90,10 @@ public abstract class SAXHandlerBase extends DefaultHandler{
     }
     public String getErrorMsg(){
         return m_err_message;
+    }
+    
+    public void throwException() throws Exception{
+        throw new Exception(m_err_message);
     }
     
     abstract protected void contentReceived(String content, String tagname, Attributes m_tagattr);

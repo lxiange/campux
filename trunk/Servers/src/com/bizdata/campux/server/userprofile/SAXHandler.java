@@ -1,5 +1,6 @@
 package com.bizdata.campux.server.userprofile;
 
+import com.bizdata.campux.sdk.User;
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.SAXHandlerBase;
 import com.bizdata.campux.server.exception.ParseEndException;
@@ -33,7 +34,7 @@ public class SAXHandler extends SAXHandlerBase{
     }
     
     // state of the current system
-    int m_state = -1;
+    int m_state = 0;
     
     // store temporary attributes for parsing XML
     Attributes m_attr;
@@ -46,10 +47,7 @@ public class SAXHandler extends SAXHandlerBase{
     
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if( m_state==-1){
-            if( "x".equalsIgnoreCase(qName) )
-                m_state=0;
-        }else if(m_state==0){
+        if(m_state==0){
             for(Command cmd : Command.values()){
                 if( cmd.string().equalsIgnoreCase(qName) ){
                     m_state = cmd.state();
@@ -72,11 +70,8 @@ public class SAXHandler extends SAXHandlerBase{
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if( m_state==-1 )
-            ;// not needed here
-        else if( m_state==0 ){
-            if( "x".equalsIgnoreCase(qName) )
-                m_state=-1;
+        if( m_state==0 ){
+            //not needed
         }else{
             for(Command cmd : Command.values()){
                 if( cmd.string().equalsIgnoreCase(qName) ){
@@ -137,14 +132,17 @@ public class SAXHandler extends SAXHandlerBase{
         strbuilder.append("<ok b64=\"true\">");
         
         String usd = attr.getValue("s");
-        String user = "notexistuser"; // go get user id;
+        
+        User userauth = new User();
+        String user = userauth.lookupUsername(usd); // go get user id;
+        System.out.println("read for: " + usd + ":"+ user);
         
         String varname = content;
         String val = StateCache.getInstance().getUserState(user, varname);
         
-        String val64 = DatatypeConverter.printBase64Binary(val.getBytes(Config.getCharset()));
+        val = val == null ? null : DatatypeConverter.printBase64Binary(val.getBytes(Config.getCharset()));
         
-        strbuilder.append(val64);
+        strbuilder.append(val==null?"":val);
         strbuilder.append("</ok>");
         
         response(strbuilder.toString());
@@ -156,7 +154,9 @@ public class SAXHandler extends SAXHandlerBase{
      */
     protected void func_WRITE_SYS_VAIRABLE(Attributes attr, String content){
         String usd = attr.getValue("s");
-        String user = null; // go get user id;
+        User userauth = new User();
+        String user = userauth.lookupUsername(usd);
+        
         
         String varname = attr.getValue("n");
         
@@ -166,8 +166,9 @@ public class SAXHandler extends SAXHandlerBase{
         
         if( b64!=null ){
             byte[] bytes = DatatypeConverter.parseBase64Binary(val);
-            val = new String(bytes, Config.getCharset());
+            val = new String(bytes);
         }
+        System.out.println("write for: " + usd + ":"+ user+ " " + varname+":"+content+" " + b64+" " +val);
         
         if( !StateCache.getInstance().setUserState(user, varname, val) ){
             responseError(151,"No such system variable");
