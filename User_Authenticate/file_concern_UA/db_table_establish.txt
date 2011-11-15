@@ -1,0 +1,6 @@
+create database UA;
+create table UA.dbo.user_psw(user_name char(100),user_psw char(100),user_status char(100));
+create table UA.dbo.workgroup(group_no char(100),group_name char(100));
+create table UA.dbo.user_group(user_group_no char(100),user_name char(100),group_no char(100));
+create table UA.dbo.app_store(user_group_no char(100),root_dir char(100),package_name char(50),space_allocated char(100),space_used char(100));
+create table UA.dbo.wrong_set(wrong_no char(20),wrong_reason char(100));
