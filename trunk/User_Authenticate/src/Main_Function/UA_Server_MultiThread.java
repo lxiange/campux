@@ -5,7 +5,13 @@ import Auxiliary_Function.*;
 import General_Function.General_Function_AboutXml.Convert_StringToXml;
 import General_Function.General_Function_AboutXml.Get_ChildNodeOfRootInXml;
 
+import java.security.KeyStore;
 import java.util.*;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 
 import org.dom4j.Document;
 
@@ -25,11 +31,38 @@ public class UA_Server_MultiThread
 	
 	public void connection()throws IOException
 	{
-		int port=2233;
-		String url="127.0.0.1";
+		/**
+		 * The port is changed and the 127.0.0.1 is not needed 
+		 * -- by yuy
+		 */
+		int port=2501; // the port is changed
+		//String url="127.0.0.1";
+		/**
+		 * Use SSL socket -- by yuy
+		 */
+		SSLServerSocket server = null;
+		try{
+			String keyFile = "serverkey-campuxssl.jks";
+	        String keyFilePass = "_bizdata";
+	        String keyPass = "_bizdata";
+	        KeyStore ks = KeyStore.getInstance("JKS");
+	        ks.load(new FileInputStream(keyFile), keyFilePass.toCharArray()); 
+	        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"); 
+	        kmf.init(ks,keyPass.toCharArray());
+	        SSLContext sslc = SSLContext.getInstance("SSLv3"); 
+	        sslc.init(kmf.getKeyManagers(), null, null); 
+	        SSLServerSocketFactory sslserversocketfactory = sslc.getServerSocketFactory(); 
+	
+	        
+	        server = (SSLServerSocket) sslserversocketfactory.createServerSocket(port);
+		}catch(Exception exc){
+			exc.printStackTrace();
+			return;
+		}
+        /*
 		InetSocketAddress address=InetSocketAddress.createUnresolved(url, port);
-		ServerSocket server=new ServerSocket(port);
-		System.out.println("Server boot now!");
+		ServerSocket server=new ServerSocket(port);*/
+		System.out.println("Server boot now!" + " port:"+server.getLocalPort());
 		System.out.println("Table ran_con have established!");
 		//为ran_con新建计时器，每隔一段时间就扣除ran_con表中所有项的相应active_time值
 		Create_TimerForRCL ran_con_timer=new Create_TimerForRCL(ran_con);
