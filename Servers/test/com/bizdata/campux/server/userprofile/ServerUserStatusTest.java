@@ -61,7 +61,7 @@ public class ServerUserStatusTest {
 
         assertEquals(vars[0],"UserLocation");
         assertEquals(vars[1],"UserStatus");
-        assertEquals(vars[2],"UserStudentID");
+        assertEquals(vars[2],"UserName");
         assertEquals(vars[3],"UserDepartment");
         assertEquals(vars[4],"UserSchool");
         assertEquals(vars[5],"UserGrade");

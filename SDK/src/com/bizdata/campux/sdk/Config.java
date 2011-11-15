@@ -67,7 +67,7 @@ public class Config {
                 }
              };
 
-            BufferedInputStream input = new BufferedInputStream(new FileInputStream("c:/usr/campux/campux/sdk/.config"));   
+            BufferedInputStream input = new BufferedInputStream(new FileInputStream("sdk.config"));   
             //saxParser.setContentHandler(handler);
             //saxParser.parse(new InputSource(input));
             saxParser.parse(input, handler);

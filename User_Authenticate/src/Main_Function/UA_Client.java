@@ -18,7 +18,7 @@ public class UA_Client
 			System.setProperty("javax.net.ssl.trustStore","clientkey-campuxssl.jks");
             System.setProperty("javax.net.ssl.trustStorePassword","_bizdata");
             SSLSocketFactory sslsf = (SSLSocketFactory)SSLSocketFactory.getDefault();
-            server = sslsf.createSocket(InetAddress.getLocalHost(),2501);
+            server = sslsf.createSocket("m.nju.edu.cn",2501);
             
 			//server=new Socket(InetAddress.getLocalHost(),2233);             //把通道连接到某个目的地
 	        
@@ -26,12 +26,13 @@ public class UA_Client
 	  	    PrintWriter out=new PrintWriter(server.getOutputStream());                             //定义一个Sockte类的输出流
     	    BufferedReader wt=new BufferedReader(new InputStreamReader(System.in));                //定义一个System类的输入流
 		    
+    	    //String source = "<v><u>admin</u><p>_bizdata</p></v>";
 
 //           String source="<a><u>gl</u><p>778999</p></a>";//用户添加
 //	String source="<v><u>app_1</u><p>123456</p></v>";//用户认证2
 
 //	        String source="<v><u>app_a</u><p>111</p></v>";//用户认证1
-//	        String source="<c><s>713</s></c>";//用户会话认证
+	        String source="<c><s>521</s></c>";//用户会话认证
 //        String source="<m><si>713</si><p>888</p></m>";//用户密码修改
 //		String source="<d><si>713</si><u>gl</u></d>";//用户删除
 //       String source="<ga><si>713</si><g>group12</g></ga>";//用户组添加	
@@ -73,7 +74,7 @@ public class UA_Client
 //		String source="<cf><si>"+app_rcn+"</si><p>"+sub_file+"</p></cf>";//新建app子文件
 //  	    String source="<fw><si>"+app_rcn+"</si><p>"+sub_file+"</p><b>15</b><d><![CDATA[xxxabcdefghlaallalalalalala]]></d></fw>";//写入app子文件
 //		String source="<fa><si>"+app_rcn+"</si><p>"+sub_dir+"</p></fa>";//获取文件或目录属性
-		String source="<fa><si>"+app_rcn+"</si><p>"+sub_file+"</p></fa>";//获取文件或目录属性
+//		String source="<fa><si>"+app_rcn+"</si><p>"+sub_file+"</p></fa>";//获取文件或目录属性
 
 		    System.out.println(source);
 		   	out.println(source); 

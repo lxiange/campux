@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.security.KeyStore"/>
+<fullyQualifiedTypeName name="javax.net.ssl.KeyManagerFactory"/>
+<fullyQualifiedTypeName name="javax.net.ssl.SSLContext"/>
+<fullyQualifiedTypeName name="javax.net.ssl.SSLServerSocketFactory"/>
+<fullyQualifiedTypeName name="javax.net.ssl.SSLServerSocket"/>
+<fullyQualifiedTypeName name="javax.net.ssl.SSLSocketFactory"/>
+</qualifiedTypeNameHistroy>

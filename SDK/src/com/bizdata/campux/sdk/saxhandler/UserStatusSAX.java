@@ -14,6 +14,7 @@ import org.xml.sax.Attributes;
  */
 public class UserStatusSAX extends SAXHandlerBase{    
     protected LinkedList<String> m_vars = new LinkedList();
+    protected String m_val = null;
     
     public String[] getVariables(){
         String[] vs = new String[m_vars.size()];
@@ -23,9 +24,16 @@ public class UserStatusSAX extends SAXHandlerBase{
         return vs;
     }
     
+    public String getValue()
+    {
+        return m_val;
+    }
+    
     @Override
     protected void contentReceived(String content, String tagname, Attributes m_tagattr){
-        if( "v".equalsIgnoreCase(tagname) ){
+        if("ok".equalsIgnoreCase(tagname)){
+            m_val = content;
+        }else if( "v".equalsIgnoreCase(tagname) ){
             m_vars.add(content.trim());
         }
     }
