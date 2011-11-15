@@ -1,6 +1,9 @@
 package Main_Function;
 import java.io.*; 
 import java.net.*; 
+
+import javax.net.ssl.SSLSocketFactory;
+
 import General_Function.*;
 public class UA_Client
 {
@@ -9,8 +12,17 @@ public class UA_Client
 	{
 		try
 		{
-			server=new Socket(InetAddress.getLocalHost(),2233);             //把通道连接到某个目的地
-	        BufferedReader in=new BufferedReader(new InputStreamReader(server.getInputStream()));  //定义一个Sockte类的输入流
+			/**
+			 * changed to SSL socket
+			 */
+			System.setProperty("javax.net.ssl.trustStore","clientkey-campuxssl.jks");
+            System.setProperty("javax.net.ssl.trustStorePassword","_bizdata");
+            SSLSocketFactory sslsf = (SSLSocketFactory)SSLSocketFactory.getDefault();
+            server = sslsf.createSocket(InetAddress.getLocalHost(),2501);
+            
+			//server=new Socket(InetAddress.getLocalHost(),2233);             //把通道连接到某个目的地
+	        
+            BufferedReader in=new BufferedReader(new InputStreamReader(server.getInputStream()));  //定义一个Sockte类的输入流
 	  	    PrintWriter out=new PrintWriter(server.getOutputStream());                             //定义一个Sockte类的输出流
     	    BufferedReader wt=new BufferedReader(new InputStreamReader(System.in));                //定义一个System类的输入流
 		    
