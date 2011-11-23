@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/scrollView1">
+<LinearLayout 
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TableRow android:id="@+id/tableRow1" android:layout_height="wrap_content" android:layout_width="fill_parent">
+        <TextView android:id="@+id/textView2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginLeft="20dip" android:text="WIFI热点扫描"></TextView>
+    </TableRow>
+    <TextView android:id="@+id/textView_wifi" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="扫描结果..."></TextView>
+    <Button android:text="扫描" android:id="@+id/button_scan" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginLeft="2dip" android:layout_marginTop="5dip" android:visibility="invisible"></Button>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/editText_location" android:layout_marginLeft="2dip" android:layout_marginRight="5dip">
+        <requestFocus></requestFocus>
+    </EditText>
+    <Button android:layout_width="wrap_content" android:id="@+id/button_add" android:layout_height="wrap_content" android:text="保存" android:layout_marginLeft="2dip"></Button>
+    <Button android:layout_width="wrap_content" android:id="@+id/button_show" android:layout_height="wrap_content" android:text="显示已保存WIFI热点" android:layout_marginLeft="2dip"></Button>
+    <TextView android:id="@+id/textView1" android:layout_marginLeft="20dip" android:layout_height="wrap_content" android:text="当前IP" android:layout_width="wrap_content"></TextView>
+</LinearLayout>
+</ScrollView>

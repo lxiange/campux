@@ -1,0 +1,1 @@
+WifiCollector is the project for collecting wifi information from Android phones.
