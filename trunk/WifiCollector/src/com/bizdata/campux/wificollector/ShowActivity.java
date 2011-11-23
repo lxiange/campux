@@ -8,10 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.bizdata.mycampus.R;
-import com.bizdata.mycampus.R.id;
-import com.bizdata.mycampus.R.layout;
-
 import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
