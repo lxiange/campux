@@ -15,13 +15,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bizdata.mycampus.R;
-import com.bizdata.mycampus.R.id;
-import com.bizdata.mycampus.R.layout;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -62,18 +59,17 @@ public class MainActivity extends Activity {
     };
     private void getWIFIScan()
     {
+    	String conBSSID = MainService.get_bssid();
+    	String conIP = MainService.get_ip();
+    	
     	if (MainService.getWifiList().size()>0)
     	{
     		String temp = "";
     		for (int i=0;i<MainService.getWifiList().size();i++)
     		{
     			 ScanResult tempS = MainService.getWifiList().get(i);
-    			 temp = temp +
-    			 			"BSSID:"+tempS.BSSID + "\n"+
-    			 			"capabilities:"+tempS.capabilities+ "\n"+
-    			 			"frequency:"+String.valueOf(tempS.frequency)+ "\n"+
-    			 			"level:"+String.valueOf(tempS.level)+ "\n"+
-    			 			"SSID:"+tempS.SSID+ "\n"+"\n";
+    			 temp = temp + (conBSSID.equals(tempS.BSSID) ? ">>" : "  ") + 
+    			 tempS.SSID + "#"+tempS.BSSID + "," + String.valueOf(tempS.level)+ "\n";
     		}
     		_wifi_TextView.setText(temp);
     	}
@@ -282,31 +278,37 @@ public class MainActivity extends Activity {
 	    }
 
 	    //首先获得地址和IP
-	    String content= _location.getText()+","+_ip_TextView.getText();
+	    String conBSSID = MainService.get_bssid();
+    	String conIP = MainService.get_ip();
+    	String conLevel = "";
+    	
+    	String content= _location.getText().toString().trim()+","+conIP;
+    	
+    	
 	    for (int i=0;i<wifiList.size();i++)
 	    {
 	    	ScanResult tempS = wifiList.get(i);
-	    	//if (checkExist(tempS.SSID))
-	    	{
-	    		//continue;
-	    	}
-	    	//BSSID,level,SSID
-	    	content = content+","+tempS.BSSID+","
-	    					+String.valueOf(tempS.level)+","+tempS.SSID;
+	    	if( conBSSID.equals(tempS.BSSID) )
+	    		conLevel = String.valueOf(tempS.level);
 	    }
-	    	_wifi_list.add(content);
-	    	try {
-	    		writeMethod(pathName + fileName,content+"\r\n");
-
-	    	} catch(Exception e) {
-
-	    		Log.e("TestFile", "Error on writeWIFI.");
-
-	    		e.printStackTrace();
-
-	    	}
+	    content = content + "," + conBSSID + "," + conLevel;
 	    
+	    for (int i=0;i<wifiList.size();i++)
+	    {
+	    	ScanResult tempS = wifiList.get(i);
+	    	if( !conBSSID.equals(tempS.BSSID) )
+	    	content = content+ "," + tempS.BSSID + "," 
+	    	          + String.valueOf(tempS.level);
+	    }
+	    
+	    _wifi_list.add(content);
+    	try {
+    		writeMethod(pathName + fileName,content+"\n");
+    	} catch(Exception e) {
+    		Log.e("TestFile", "Error on writeWIFI.");
 
+    		e.printStackTrace();
+    	}
 	}
 	public void set_file_create(boolean _file_create) {
 		this._file_create = _file_create;

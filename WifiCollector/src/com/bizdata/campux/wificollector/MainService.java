@@ -46,14 +46,11 @@ import android.util.Log;
 public class MainService extends Service {
 	private static List<ScanResult> wifiList;
 	private WifiReceiver receiverWifi;
-   
-
 	
 	private static MainService _single = null;
 	private WifiManager _wifiManager = null;
 	private WifiInfo _wifiInfo = null;
-	private static String _ip = "IP_address";
-	
+	private static String _ip = "IP_address";	
 	
 	private static boolean _wifi_scan_permission = false;
 	public static MainService getInstance()
@@ -119,18 +116,28 @@ public class MainService extends Service {
 				System.out.print(e);
 			}
 		}
-		if (_wifiInfo == null ||_wifiInfo.getIpAddress()==0)
-		{
-			_wifiInfo = _wifiManager.getConnectionInfo();
-		}
-		if(!intToIp(_wifiInfo.getIpAddress()).equals(MainService.get_ip())&&_wifiInfo.getIpAddress()!=0)
+		//if (_wifiInfo == null ||_wifiInfo.getIpAddress()==0)
+		//{
+		_wifiInfo = _wifiManager.getConnectionInfo();
+		//}
+		if(_wifiInfo!=null 
+				&& !intToIp(_wifiInfo.getIpAddress()).equals(MainService.get_ip()) 
+				&& _wifiInfo.getIpAddress()!=0)
 		{
 			MainService.set_ip(intToIp(_wifiInfo.getIpAddress()));
+			MainService.set_bssid(_wifiInfo.getBSSID());
 		}
 		
 	}
-
-	private String intToIp(int i)
+	static String _bssid = "";
+	public static void set_bssid(String bssid) {
+		if( bssid!=null)
+			_bssid = bssid;
+	}
+	public static String get_bssid(){
+		return _bssid;
+	}
+	public static String intToIp(int i)
 	{ 
 		return (i & 0xFF)+ "." + ((i >> 8 ) & 0xFF) + "." + ((i >> 16 ) & 0xFF) +"."+((i >> 24 ) & 0xFF); 
 	}
@@ -140,6 +147,12 @@ public class MainService extends Service {
 	}
 	public static String get_ip() {
 		return _ip;
+	}
+	public static WifiInfo getConnectionInfo(){
+		if(_single==null)
+			return null;
+		_single._wifiInfo = _single._wifiManager.getConnectionInfo();
+		return _single._wifiInfo;
 	}
 	public static void setWifiList(List<ScanResult> wifiList) {
 		MainService.wifiList = wifiList;
