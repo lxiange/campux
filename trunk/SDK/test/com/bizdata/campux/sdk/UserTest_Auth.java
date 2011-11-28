@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2011 Nanjing Bizdata-infotech co., ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.bizdata.campux.sdk;
 
@@ -37,24 +49,7 @@ public class UserTest_Auth {
     @After
     public void tearDown() {
     }
-
-    /**
-     * Test of login method, of class User.
-     */
-    @Test
-    public void testLogin() throws Exception {
-        System.out.println("login");
-        String name = "001221154";
-        String psw = "123456";
-        
-        boolean result = instance.login(name, psw);
-        
-        assertTrue(result);
-        
-        System.out.println("SessionID:"+instance.getSessionID());
-    }
-
-
+    
     /**
      * Test of register method, of class User.
      */
@@ -69,8 +64,27 @@ public class UserTest_Auth {
     }
 
     /**
+     * Test of login method, of class User.
+     */
+    //@Ignore
+    @Test
+    public void testLogin() throws Exception {
+        System.out.println("login");
+        String name = "admin";
+        String psw = "_bizdata";
+        
+        boolean result = instance.login(name, psw);
+        
+        assertTrue(result);
+        
+        System.out.println("SessionID:"+instance.getSessionID());
+    }
+
+
+    /**
      * Test of lookupUsername method, of class User.
      */
+    @Ignore
     @Test
     public void testLookupUsername() throws Exception {
         System.out.println("lookupUsername: " + instance.getSessionID());
@@ -84,7 +98,7 @@ public class UserTest_Auth {
     /**
      * Test of getUserVariables method, of class User.
      */
-    //@Ignore
+    @Ignore
     @Test
     public void testGetUserVariables() throws Exception {
         System.out.println("getUserVariables");
@@ -110,6 +124,7 @@ public class UserTest_Auth {
         assertEquals(vars[7],"UserGender");
         assertEquals(vars[8],"UserPhoto");
     }
+    @Ignore
     @Test
     public void testSetAndGetUserVariable() throws Exception {
         System.out.println("set&GetUserVariable");
@@ -132,9 +147,12 @@ public class UserTest_Auth {
     /**
      * Test of logout method, of class User.
      */
+    @Ignore
     @Test
     public void testLogout() {
         System.out.println("logout");
-        instance.logout();
+        try{
+            instance.logout();
+        }catch(Exception exc){}
     }
 }
