@@ -58,7 +58,7 @@ public class UserTest_Auth {
     public void testRegister() throws Exception{
         System.out.println("register");
         
-        boolean result = instance.register("001221154", "123456", "俞扬", "计算机", null, null, "18", "M");
+        boolean result = instance.register("001221156", "123456", "俞扬", "计算机", null, null, "18", "M");
         assertTrue(result);
         
     }
@@ -70,8 +70,8 @@ public class UserTest_Auth {
     @Test
     public void testLogin() throws Exception {
         System.out.println("login");
-        String name = "admin";
-        String psw = "_bizdata";
+        String name = "001221156";
+        String psw = "123456";
         
         boolean result = instance.login(name, psw);
         

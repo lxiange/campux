@@ -201,6 +201,189 @@ public class User{
             login(m_username, m_userpsw);
         return m_userSessionID;
     }
+    /**
+     * Delete a user. For system manager only
+     * @param usr
+     * @return
+     * @throws Exception 
+     */
+    public boolean deleteUser(String usr) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareUserDelete(getSessionID(), usr);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();        
+        if( auth.getIsError() ) return false;
+        
+        return true;
+    }
+    /** change password of the current user 
+     * @param newpassword
+     * @return
+     * @throws Exception 
+     */
+    public boolean changePassword(String newpassword) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.preparePasswordChange(getSessionID(), m_userpsw);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();        
+        if( auth.getIsError() ) return false;
+        
+        return true;
+    }
+    /**
+     * add a group. For system manager only.
+     * @return 
+     */
+    public boolean groupAdd(String group) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareGroupAdd(getSessionID(), group);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();        
+        if( auth.getIsError() ) return false;
+        
+        return true;
+    }
+    /**
+     * delete a group. For system manager only
+     * @param group
+     * @return
+     * @throws Exception 
+     */
+    public boolean groupDelete(String group) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareGroupDelete(getSessionID(), group);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();        
+        if( auth.getIsError() ) return false;
+        
+        return true;
+    }
+    /**
+     * list all groups
+     * @return
+     * @throws Exception 
+     */
+    public String[] groupList() throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareGroupList(getSessionID());
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        String[] groups = auth.getList();
+        return groups;
+    }
+    /**
+     * List users of a group
+     * @param group
+     * @return
+     * @throws Exception 
+     */
+    public String[] groupUsers(String group) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareGroupUserList(getSessionID(), group);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        String[] users = auth.getList();
+        return users;
+    }
+    /**
+     * list the groups associated with a user
+     * @param user
+     * @return
+     * @throws Exception 
+     */
+    public String[] userGroups(String user) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareUserBelongingGroups(getSessionID(), user);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        String[] groups = auth.getList();
+        return groups;
+    }
+    /**
+     * associate a group to a user
+     * @param group
+     * @return
+     * @throws Exception 
+     */
+    public boolean groupAssociateToUser(String group, String user) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareUserAssociateGroup(getSessionID(), user, group);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();        
+        if( auth.getIsError() ) return false;
+        
+        return true;
+    }
+    /**
+     * remove the association of a group from a user
+     * @param group
+     * @return
+     * @throws Exception 
+     */
+    public boolean groupDissociateFromUser(String group, String user) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareUserDissociateGroup(getSessionID(), user, group);
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();        
+        if( auth.getIsError() ) return false;
+        
+        return true;
+    }
+    
     
     /**
      * List user variables from the UserStatus Server
@@ -270,6 +453,50 @@ public class User{
         
         m_comm.close();
         return success;
+    }
+    /**
+     * get messages from the server
+     * @param id
+     * @return
+     * @throws Exception 
+     */
+    public String[] getMessage(int lastmsgid) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        
+        UserStatusSAX status = new UserStatusSAX();
+        String str = status.prepareGetMessage(getSessionID(), lastmsgid);
+        m_comm.sentString(str);
+        
+        status.parseInput(m_comm.getInputStream());
+        String[] vars = status.getVariables();
+        m_comm.close();
+        
+        return vars;
+    }
+    /**
+     * send a message to users' messagebox. System users only.
+     * @param users
+     * @param groups
+     * @param message
+     * @return
+     * @throws Exception 
+     */
+    public boolean putMessage(String[] users, String[] groups, String message) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        
+        UserStatusSAX status = new UserStatusSAX();
+        String str = status.preparePutMessage(getSessionID(), users, groups, message);
+        m_comm.sentString(str);
+        
+        status.parseInput(m_comm.getInputStream());
+        
+        if( status.getIsError() )
+            return false;
+        return true;
     }
     
 }

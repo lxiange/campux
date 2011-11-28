@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="1" failures="0" hostname="yuy-tp" name="com.bizdata.campux.sdk.UserTest_Auth" tests="1" time="1.409" timestamp="2011-11-28T07:49:46">
+<testsuite errors="0" failures="0" hostname="yuy-tp" name="com.bizdata.campux.sdk.UserTest_Auth" tests="1" time="0.79" timestamp="2011-11-28T12:24:12">
   <properties>
     <property name="default.javac.source" value="1.6" />
     <property name="file.encoding.pkg" value="sun.io" />
@@ -218,7 +218,7 @@
     <property name="application.args" value="" />
     <property name="ant.file.type.SDK-impl" value="file" />
     <property name="sun.cpu.endian" value="little" />
-    <property name="javac.includesfile.binary" value="C:\usr\Campux\campux\SDK\null1297114179" />
+    <property name="javac.includesfile.binary" value="C:\usr\Campux\campux\SDK\null1630146593" />
     <property name="compile.on.save" value="false" />
     <property name="project.license" value="gpl30" />
     <property name="libs.hibernate-support.classpath" value="C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\antlr-2.7.6.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\asm.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\asm-attrs.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\cglib-2.1.3.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\commons-collections-2.1.1.jar;C:\usr\NetBeans 7.0.1\ide\modules\ext\commons-logging-1.1.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\dom4j-1.6.1.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\ehcache-1.2.3.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\jdbc2_0-stdext.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\jta.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\hibernate3.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\hibernate-tools.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\hibernate-annotations.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\hibernate-commons-annotations.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\hibernate-entitymanager.jar;C:\usr\NetBeans 7.0.1\java\modules\ext\hibernate\javassist.jar" />
@@ -277,53 +277,12 @@
     <property name="mkdist.disabled" value="false" />
     <property name="sun.arch.data.model" value="32" />
   </properties>
-  <testcase classname="com.bizdata.campux.sdk.UserTest_Auth" name="testLogin" time="1.336">
-    <error message="Connection refused: connect" type="com.bizdata.campux.sdk.exception.ServerOutofreachException">com.bizdata.campux.sdk.exception.ServerOutofreachException: Connection refused: connect
-	at com.bizdata.campux.sdk.network.ServerCommunicator.&lt;init&gt;(ServerCommunicator.java:56)
-	at com.bizdata.campux.sdk.User.login(User.java:80)
-	at com.bizdata.campux.sdk.UserTest_Auth.testLogin(UserTest_Auth.java:76)
-</error>
-  </testcase>
+  <testcase classname="com.bizdata.campux.sdk.UserTest_Auth" name="testLogin" time="0.725" />
   <system-out><![CDATA[login
-ServerCommunication::ERROR:java.net.ConnectException: Connection refused: connect
-	at java.net.PlainSocketImpl.socketConnect(Native Method)
-	at java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:333)
-	at java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:195)
-	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:182)
-	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:366)
-	at java.net.Socket.connect(Socket.java:525)
-	at com.sun.net.ssl.internal.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:550)
-	at com.sun.net.ssl.internal.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:353)
-	at com.sun.net.ssl.internal.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:71)
-	at com.bizdata.campux.sdk.network.ServerCommunicator.<init>(ServerCommunicator.java:50)
-	at com.bizdata.campux.sdk.User.login(User.java:80)
-	at com.bizdata.campux.sdk.UserTest_Auth.testLogin(UserTest_Auth.java:76)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
-	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
-	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
-	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
-	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:31)
-	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
-	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
-	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
-	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
-	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
-	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
-	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
-	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
-	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
-	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:31)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
-	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:518)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1052)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:906)
-
+StartElement:ok
+Content:450 ok:true
+contentrecevied:ok
+SessionID:450
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

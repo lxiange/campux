@@ -16,8 +16,6 @@
  */
 package com.bizdata.campux.sdk.saxhandler;
 
-import com.bizdata.campux.sdk.Config;
-import java.io.InputStream;
 import java.util.LinkedList;
 import org.xml.sax.Attributes;
 
@@ -92,4 +90,111 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</s></c>\r\n");
         return str.toString();
     }
+    /**
+     * 用户密码修改
+     * @param sessionID 用户登录sessionID
+     * @param psw 新密码
+     * @return 
+     */
+    public String preparePasswordChange(String sessionID, String psw){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<m><si>");
+        str.append(sessionID);
+        str.append("</si><p>");
+        str.append(psw);
+        str.append("</p></m>\r\n");
+        return str.toString();
+    }
+    //用户删除
+    public String prepareUserDelete(String sessionID, String usr){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<d><si>");
+        str.append(sessionID);
+        str.append("</si><u>");
+        str.append(usr);
+        str.append("</u></d>\r\n");
+        return str.toString();
+    }
+    //用户组添加
+    public String prepareGroupAdd(String sessionID, String group){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<ga><si>");
+        str.append(sessionID);
+        str.append("</si><g>");
+        str.append(group);
+        str.append("</g></ga>\r\n");
+        return str.toString();
+    }
+    //用户组删除
+    public String prepareGroupDelete(String sessionID, String group){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<gd><si>");
+        str.append(sessionID);
+        str.append("</si><g>");
+        str.append(group);
+        str.append("</g></gd>\r\n");
+        return str.toString();
+    }
+    //用户组枚举
+    public String prepareGroupList(String sessionID){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<gl><si>");
+        str.append(sessionID);
+        str.append("</si></gl>\r\n");
+        return str.toString();
+    }
+    //用户的组属性枚举
+    public String prepareUserBelongingGroups(String sessionID, String usr){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<ug><si>");
+        str.append(sessionID);
+        str.append("</si><u>");
+        str.append(usr);
+        str.append("</u></ug>\r\n");
+        return str.toString();
+    }
+    //用户组内的用户名枚举
+    public String prepareGroupUserList(String sessionID, String group){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<gul><si>");
+        str.append(sessionID);
+        str.append("</si><g>");
+        str.append(group);
+        str.append("</g></gul>\r\n");
+        return str.toString();
+    }
+    //用户关联到用户组
+    public String prepareUserAssociateGroup(String sessionID, String usr, String group){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<gua><si>");
+        str.append(sessionID);
+        str.append("</si><u>");
+        str.append(usr);
+        str.append("</u><g>");
+        str.append(group);
+        str.append("</g></gua>\r\n");
+        return str.toString();
+    }
+    //用户取消到用户组的关联
+    public String prepareUserDissociateGroup(String sessionID, String usr, String group){
+        StringBuilder str = new StringBuilder();
+        //str.append( Config.getXMLfirstline() );
+        str.append("<gur><si>");
+        str.append(sessionID);
+        str.append("</si><u>");
+        str.append(usr);
+        str.append("</u><g>");
+        str.append(group);
+        str.append("</g></gur>\r\n");
+        return str.toString();
+    }
+
 }
