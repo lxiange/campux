@@ -18,6 +18,7 @@ package com.bizdata.campux.sdk;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,7 +39,7 @@ public class Config {
     // the hash map used to store settings
     private HashMap<String, List<String>> m_hash;
     // when the class is instantialized, load the settings
-    private Config(){
+    private Config(InputStream input){
         try{
             m_hash = new HashMap<String, List<String>>();
 
@@ -79,7 +80,7 @@ public class Config {
                 }
              };
 
-            BufferedInputStream input = new BufferedInputStream(new FileInputStream("sdk.config"));   
+            //BufferedInputStream input = new BufferedInputStream(new FileInputStream("sdk.config"));   
             //saxParser.setContentHandler(handler);
             //saxParser.parse(new InputSource(input));
             saxParser.parse(input, handler);
@@ -90,13 +91,22 @@ public class Config {
         }
     }
     /**
+     * set the input stream of the config file
+     * @param input 
+     */
+    static public void init(InputStream input){
+        if( s_instance==null ){
+            s_instance = new Config(input);
+        }
+    }
+    /**
      * get configuration values by name
      * @param name
      * @return a list of values with the name
      */
     static public List<String> getValueSet(String name){
         if( s_instance==null )
-            s_instance = new Config();
+            return null;
         return s_instance.m_hash.get(name);
     }
     /**
@@ -106,7 +116,7 @@ public class Config {
      */
     static public String getValue(String name){
         if( s_instance==null )
-            s_instance = new Config();
+            return null;
         List<String> v = s_instance.m_hash.get(name);
         if(v==null || v.size()==0)
             return null;

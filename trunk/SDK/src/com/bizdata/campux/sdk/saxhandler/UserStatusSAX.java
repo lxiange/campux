@@ -110,16 +110,50 @@ public class UserStatusSAX extends SAXHandlerBase{
         str.append( "</usr>" );
         return str.toString();
     }
-    
+    /**
+     * construct the XML for the command getMessage
+     * @param sessionID
+     * @param lastMsgID
+     * @return 
+     */
     public String prepareGetMessage(String sessionID, int lastMsgID){
         StringBuilder str = new StringBuilder();
         str.append( Config.getXMLfirstline() );
+        str.append("<mg s=\"");
+        str.append(sessionID);
+        str.append("\">");
+        str.append(lastMsgID);
+        str.append("<mg>");
         return str.toString();
     }
-    
-    public String preparePutMessage(String sessionID){
+    /**
+     * construct the XML for the command putMessage
+     * @param sessionID
+     * @param users
+     * @param groups
+     * @param message
+     * @return 
+     */
+    public String preparePutMessage(String sessionID, String[] users, String[] groups, String message){
         StringBuilder str = new StringBuilder();
         str.append( Config.getXMLfirstline() );
+        str.append("<ms s=\"");
+        str.append(sessionID);
+        str.append("\">");
+        for(String user : users){
+            str.append("<u>");
+            str.append(user);
+            str.append("</u>");
+        }
+        for(String group : groups){
+            str.append("<g>");
+            str.append(group);
+            str.append("</g>");
+        }        
+        str.append("<m b64=\"true\">");
+        message = DatatypeConverter.printBase64Binary(message.getBytes(Config.getCharset()));
+        str.append(message);
+        str.append("</m><ms>");
         return str.toString();
     }
 }
