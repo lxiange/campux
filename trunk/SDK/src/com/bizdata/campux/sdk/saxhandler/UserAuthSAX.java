@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class UserAuthSAX extends SAXHandlerBase {    
-    protected LinkedList<String> m_vars = new LinkedList();
+    protected LinkedList<String> m_vars = new LinkedList<String>();
     protected String m_responseStr = null;
     
     public String getResponseString(){

@@ -90,7 +90,7 @@ public abstract class SAXHandlerBase extends DefaultHandler{
                 byte[] bytes = DatatypeConverter.parseBase64Binary(content);
                 content = new String(bytes, Config.getCharset());
             }
-            contentReceived(content, m_tagname, m_tagAttr);
+            contentReceived(content.trim(), m_tagname, m_tagAttr);
         }else{
             m_err_message = new String(ch, start, length);
         }

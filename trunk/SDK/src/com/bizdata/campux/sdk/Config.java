@@ -68,7 +68,7 @@ public class Config {
                     
                     List<String> list = m_hash.get(var);
                     if( list == null ){
-                        list = new LinkedList();
+                        list = new LinkedList<String>();
                         m_hash.put(var, list);
                     }
                     list.add(val);

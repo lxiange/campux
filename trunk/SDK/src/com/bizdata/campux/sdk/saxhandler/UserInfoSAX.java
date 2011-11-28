@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class UserInfoSAX extends SAXHandlerBase{
-    protected LinkedList<String> m_vars = new LinkedList();
+    protected LinkedList<String> m_vars = new LinkedList<String>();
     /**
      * get names of the variables in the system
      * @return 

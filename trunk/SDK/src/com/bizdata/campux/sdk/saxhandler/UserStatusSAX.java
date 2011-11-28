@@ -17,7 +17,7 @@
 package com.bizdata.campux.sdk.saxhandler;
 
 import com.bizdata.campux.sdk.Config;
-import java.io.InputStream;
+import com.bizdata.campux.sdk.Message;
 import java.util.LinkedList;
 import javax.xml.bind.DatatypeConverter;
 import org.xml.sax.Attributes;
@@ -27,7 +27,8 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class UserStatusSAX extends SAXHandlerBase{    
-    protected LinkedList<String> m_vars = new LinkedList();
+    protected LinkedList<String> m_vars = new LinkedList<String>();
+    protected LinkedList<Message> m_msgs = new LinkedList<Message>();
     protected String m_val = null;
     /**
      * get names of the variables in the system
@@ -39,6 +40,17 @@ public class UserStatusSAX extends SAXHandlerBase{
             vs[i] = m_vars.get(i);
         }
         return vs;
+    }
+    /**
+     * get messages
+     * @return 
+     */
+    public Message[] getMessages(){
+        Message[] msgs = new Message[m_msgs.size()];
+        for(int i=0; i<msgs.length; i++){
+            msgs[i] = m_msgs.get(i);
+        }
+        return msgs;
     }
     /**
      * get a String value
@@ -55,11 +67,22 @@ public class UserStatusSAX extends SAXHandlerBase{
      * @param m_tagattr 
      */
     @Override
-    protected void contentReceived(String content, String tagname, Attributes m_tagattr){
+    protected void contentReceived(String content, String tagname, Attributes tagattr){
         if("ok".equalsIgnoreCase(tagname)){
             m_val = content;
         }else if( "v".equalsIgnoreCase(tagname) ){
-            m_vars.add(content.trim());
+            m_vars.add(content);
+        }else if( "b".equalsIgnoreCase(tagname) ){
+            Message msg = new Message();
+            msg.message = content;
+            msg.date = tagattr.getValue("t");
+            msg.publisher = tagattr.getValue("u");
+            try{
+                msg.id = Integer.parseInt(tagattr.getValue("d"));
+            }catch(Exception exc){
+                msg.id = -1;
+            }
+            m_msgs.add(msg);
         }
     }
     /**

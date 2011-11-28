@@ -18,6 +18,7 @@ SDK 文档
 			Log类：用于保存程序log
 			User类：提供与用户相关的SDK功能
 			Storage类：提供与存储相关的SDK功能
+			Message类：用户消息的封装类
 		com.bizdata.campux.sdk.network包提供与服务器通讯的类ServerCommunicator
 		com.bizdata.campux.sdk.saxhandler包提供各个服务的定义和处理
 		com.bizdata.campux.sdk.exception包定义了异常
