@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/saxhandler/UserStatusSAX.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/User.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/test/com/bizdata/campux/sdk/UserTest_Auth.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/test/com/bizdata/campux/sdk/saxhandler/UserStatusSAXTest.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/Config.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/saxhandler/SAXHandlerBase.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/saxhandler/UserInfoSAX.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/saxhandler/AlarmClockSAX.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/saxhandler/UserAuthSAX.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/network/ServerCommunicator.java</file>
+        <file>file:/C:/usr/Campux/campux/SDK/src/com/bizdata/campux/sdk/NewClass.java</file>
+    </open-files>
 </project-private>

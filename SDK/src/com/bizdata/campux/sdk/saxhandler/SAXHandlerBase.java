@@ -1,11 +1,25 @@
+/*
+ * Copyright (C) 2011 Nanjing Bizdata-infotech co., ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.bizdata.campux.sdk.saxhandler;
 
 import com.bizdata.campux.sdk.Config;
 import com.bizdata.campux.sdk.Log;
 import com.bizdata.campux.sdk.exception.NetworkErrorException;
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -14,7 +28,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 /**
- *
+ * this class provides a base class and common functions for all SAX handlers
  * @author yuy
  */
 public abstract class SAXHandlerBase extends DefaultHandler{
@@ -23,6 +37,11 @@ public abstract class SAXHandlerBase extends DefaultHandler{
         try{
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(inputstream, this);
+            /*while(false){
+                byte[] bytes=new byte[20];
+                int c = inputstream.read(bytes);
+                System.out.print(new String(bytes,0,c));
+            }*/
         }catch(Exception exc){
             Log.log("UserStatus", Log.Type.NOTICE, exc);
             throw new NetworkErrorException(exc);
@@ -96,6 +115,6 @@ public abstract class SAXHandlerBase extends DefaultHandler{
         throw new Exception(m_err_message);
     }
     
-    abstract protected void contentReceived(String content, String tagname, Attributes m_tagattr);
+    abstract protected void contentReceived(String content, String tagname, Attributes tagattr);
     
 }
