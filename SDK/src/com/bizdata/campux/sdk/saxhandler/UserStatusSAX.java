@@ -150,6 +150,22 @@ public class UserStatusSAX extends SAXHandlerBase{
         return str.toString();
     }
     /**
+     * construct the XML for the command delete message
+     * @param sessionID
+     * @param msgID
+     * @return 
+     */
+    public String prepareDeleteMessage(String sessionID, int msgID){
+        StringBuilder str = new StringBuilder();
+        str.append( Config.getXMLfirstline() );
+        str.append("<md s=\"");
+        str.append(sessionID);
+        str.append("\">");
+        str.append(msgID);
+        str.append("<md>");
+        return str.toString();
+    }
+    /**
      * construct the XML for the command putMessage
      * @param sessionID
      * @param users
