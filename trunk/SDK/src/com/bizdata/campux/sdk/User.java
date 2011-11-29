@@ -460,7 +460,7 @@ public class User{
      * @return
      * @throws Exception 
      */
-    public String[] getMessage(int lastmsgid) throws Exception{
+    public String[] messageGet(int lastmsgid) throws Exception{
         // force shutdown of the old connection
         if( m_comm!=null) m_comm.close();
         m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
@@ -475,6 +475,23 @@ public class User{
         
         return vars;
     }
+    
+    public boolean messageDelete(int msgID) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        
+        UserStatusSAX status = new UserStatusSAX();
+        String str = status.prepareDeleteMessage(getSessionID(), msgID);
+        m_comm.sentString(str);
+        
+        status.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        
+        if( status.getIsError() )
+            return false;        
+        return true;
+    }
     /**
      * send a message to users' messagebox. System users only.
      * @param users
@@ -483,7 +500,7 @@ public class User{
      * @return
      * @throws Exception 
      */
-    public boolean putMessage(String[] users, String[] groups, String message) throws Exception{
+    public boolean messagePut(String[] users, String[] groups, String message) throws Exception{
         // force shutdown of the old connection
         if( m_comm!=null) m_comm.close();
         m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
