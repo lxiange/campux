@@ -22,8 +22,8 @@ package com.bizdata.campux.sdk;
  * @date 2011-11-29 01:16:07
  */
 public class Message {
+    public int id;
     public String message;
     public String publisher;
     public String date;
-    public int id;
 }

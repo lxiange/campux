@@ -84,6 +84,7 @@ public class User{
         m_comm.sentString(str);
         
         auth.parseInput(m_comm.getInputStream());
+        m_comm.close();
         
         if( auth.getIsError() ){
             m_userSessionID=null;
@@ -91,8 +92,6 @@ public class User{
         }
         
         String id = auth.getResponseString();
-        
-        m_comm.close();
         
         m_userSessionID = id;
         
@@ -460,7 +459,7 @@ public class User{
      * @return
      * @throws Exception 
      */
-    public String[] messageGet(int lastmsgid) throws Exception{
+    public Message[] messageGet(int lastmsgid) throws Exception{
         // force shutdown of the old connection
         if( m_comm!=null) m_comm.close();
         m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
@@ -470,7 +469,7 @@ public class User{
         m_comm.sentString(str);
         
         status.parseInput(m_comm.getInputStream());
-        String[] vars = status.getVariables();
+        Message[] vars = status.getMessages();
         m_comm.close();
         
         return vars;
