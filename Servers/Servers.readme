@@ -3,6 +3,7 @@
 1. 包结构
 	根包为: com.bizdata.campux.server
 	com.bizdata.campux.server.exception 为异常包。
+	com.bizdata.campux.server.exception 为通用缓存包
 	服务XXX的相关类文件放在一个 com.bizdata.campux.server.XXX 包下，目前已经有com.bizdata.campux.server.userstatus包，为用户状态服务，和com.bizdata.campux.server.userinfo包，为用户信息服务。
 1.2 根包
 	Config类：读取配置文件 .config
@@ -14,6 +15,13 @@
 	ServerBase类 和 CommonServer类 共同作用形成一个服务器：CommonServer负责监听网络，将收到的消息通过handle函数提交给ServerBase的子类，通过子类定义的SAXHandlerBase子类处理消息。
 1.3 exception包
 	ParseEndException：该异常用来中断SAX的解析，无需处理该异常。
+1.4 缓存包
+	CacheItem：缓存辅助类，表示一个条目
+	Cache：缓存主类。使用方法：
+		a) 初始化： Cache<CLASS1, CLASS2> cache = new Cache<CLASS1, CLASS2>(cachesize); //cachesize为缓存的条目数量, CLASS1为键值类型，CLASS2为对象类型
+		b) 读取缓存： CLASS2 object = cache.findItem(CLASS1 key); //读取键值为key的缓存对象。当不在缓存中时，返回null。当在缓存中时，自动更新该对象的最后访问时间。
+		c) 安静读取缓存：CLASS2 object = cache.findItemQuietly(CLASS1 key); //与findItem相同，只是不更新找到的对象的最后访问时间。例如，如果一种对象是频繁读取而很少写入的，那么写入时可以不更新对象的最后访问时间。
+		d) 放入缓存： cache.cacheItem(CLASS1 key, CLASS2 object); //将键值为key的对象object放入缓存。当缓存满时，会踢掉最后一次访问时间最老的对象
 
 2. 定义一个服务器
 	以UserStatus服务为例：
