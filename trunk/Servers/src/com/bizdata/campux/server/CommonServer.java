@@ -9,10 +9,8 @@ package com.bizdata.campux.server;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.security.KeyStore;
 import javax.net.ssl.KeyManagerFactory;
@@ -24,7 +22,7 @@ import javax.net.ssl.SSLContext;
 public class CommonServer extends Thread{
     protected SSLServerSocket m_sslserversocket = null;
     protected int m_port = -1;
-    protected ServerBase m_handler = null;
+    protected ServerBase m_server = null;
     
     @Override
     public void run() {
@@ -55,7 +53,7 @@ public class CommonServer extends Thread{
                 InputStream inputstream = sslsocket.getInputStream();
                 OutputStream outputstream = sslsocket.getOutputStream();
                 
-                m_handler.handle(inputstream, outputstream);
+                m_server.handle(inputstream, outputstream);
                 
             }catch(Exception exc){
                 Log.log("server", Log.Type.NOTICE, exc);
@@ -70,7 +68,7 @@ public class CommonServer extends Thread{
      * Start the server that listens the port
      * @param port the tcp port to be listened on
      */
-    public void startServer(int port, ServerBase handler){
+    public void startServer(int port, ServerBase server){
         stopServer();
         
         try{
@@ -80,7 +78,7 @@ public class CommonServer extends Thread{
         }
         
         m_instance.m_port = port;
-        m_instance.m_handler = handler;
+        m_instance.m_server = server;
         m_instance.start();
     }
     /**

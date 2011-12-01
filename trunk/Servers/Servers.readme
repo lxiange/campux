@@ -1,0 +1,25 @@
+中间层服务 结构
+
+1. 包结构
+	根包为: com.bizdata.campux.server
+	com.bizdata.campux.server.exception 为异常包。
+	服务XXX的相关类文件放在一个 com.bizdata.campux.server.XXX 包下，目前已经有com.bizdata.campux.server.userstatus包，为用户状态服务，和com.bizdata.campux.server.userinfo包，为用户信息服务。
+1.2 根包
+	Config类：读取配置文件 .config
+	Log类：用于保存程序log
+	Main类：用于启动服务，该类为服务程序入口。
+	SAXHandlerBase：处理客户端XML命令的SAX基类，同时也继承了SAX的DefaultHandler，是一个SAX handler。要用到的两个函数是
+		void response(String str)：将String发回客户端
+		void responseError(int code, String str)：将错误代码和错误信息返回客户端		
+	ServerBase类 和 CommonServer类 共同作用形成一个服务器：CommonServer负责监听网络，将收到的消息通过handle函数提交给ServerBase的子类，通过子类定义的SAXHandlerBase子类处理消息。
+1.3 exception包
+	ParseEndException：该异常用来中断SAX的解析，无需处理该异常。
+
+2. 定义一个服务器
+	以UserStatus服务为例：
+	a) 一个服务在一个子包路径下，例如 com.bizdata.campux.server.userstatus包
+	b) 创建一个以“Server”开头的类，继承跟包中的ServerBase类，例如ServerUserStatus类。该类只需要实现构造函数，完成三件事：
+		1. 设置服务的名称 m_serverName = "ServerUserStatus";
+		2. 设置服务的TCP端口 m_port = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
+		3. 设置使用的SAXhandler类 m_saxhandlerClass = SAXHandler.class;
+	c) 在包路径下创建 SAXHandler类，继承根包中的SAXHandlerBase类，根据需要重载 startElement、characters、endElement函数来解析收到的XML格式的指令。

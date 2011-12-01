@@ -1,21 +1,28 @@
 package com.bizdata.campux.server;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
+import com.bizdata.campux.server.exception.ParseEndException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 /**
  * HandlerBase implements common functions of a server handler
  * @author yuy
  */
 public abstract class ServerBase extends Thread{
+    // the name of this server. Subclass should overwrite this name
+    protected String m_serverName = "ServerBase";
+    // running TCP port
+    protected int m_port = -1;
     // the input stream from network client
     protected InputStream m_inputstream = null;
     // the output stream to the network client
     protected OutputStream m_outputstream = null;
-    
-    protected CommonServer m_commonserver=null;
+    // the server listening to the client
+    protected CommonServer m_commonserver = new CommonServer();
+    // SAX handler deals with client requests
+    protected Class m_saxhandlerClass=null;
     
     /**
      * The CommonServer will call this interface when it gets requests
@@ -26,63 +33,44 @@ public abstract class ServerBase extends Thread{
         ServerBase h = this.getClass().newInstance();
         h.m_inputstream = input;
         h.m_outputstream = output;
-        h.start();        
+        h.m_saxhandlerClass = m_saxhandlerClass;
+        h.start();
     }
     
     /**
-     * subclass should implement it functionality in the run() function
+     * parse the input
      */
     @Override
-    abstract public void run();
+    public void run(){
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        try{
+            SAXParser saxParser = factory.newSAXParser();
+            // new an SAX handler from the class
+            SAXHandlerBase saxhandler = (SAXHandlerBase)m_saxhandlerClass.newInstance();
+            saxhandler.setOutputStream(m_outputstream);
+            // parse input
+            saxParser.parse(m_inputstream, saxhandler);
+        }catch(ParseEndException exc)
+        {
+            //the exception used to exit the parsing, ignore
+        }
+        catch(Exception exc){
+            Log.log(m_serverName, Log.Type.NOTICE, exc);
+            return;
+        }
+    }
     
     /**
-     * subclass sould implement how to start the server, the common code is
-     * public void startServer(){
-     *   m_commonserver = new CommonServer();
-     *   m_commonserver.startServer(s_port, this);
-     * }    
+     * start running the server    
      */
-    abstract public void startServer();
+    public void startServer(){
+        m_commonserver.startServer(m_port, this);
+    }
     
     /**
      * common stop process
      */
     public void stopServer(){
         m_commonserver.stopServer();
-    }
-    
-    /**
-     * read a network input stream
-     */
-    protected String readInput() throws Exception{
-        BufferedInputStream reader = new BufferedInputStream(m_inputstream);
-        boolean end = false;
-        byte[] buff = new byte[10240];
-        byte[] tag = new byte[4]; //test for </x>
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(10240);
-        try{
-            while(!end){
-                int size = reader.read(buff, 0, buff.length);
-                if( size > 0 ){
-                    buffer.write(buff, 0, size);
-                    // store the last 4 bytes for test of the end
-                    if( size>=4){
-                        System.arraycopy(buff, size-4, tag, 0, 4);
-                    }else{
-                        System.arraycopy(tag, size, tag, 0, 4-size);
-                        System.arraycopy(buff, 0, tag, 4-size, size);
-                    }
-                    if( tag[0]=='<' && tag[1]=='/' && tag[2]=='x' && tag[3]=='>'){
-                        end = true;
-                    }
-                }else{
-                    this.sleep(100);
-                }                
-            }
-        }catch(Exception exc){
-            Log.log("ServerUserprofile", Log.Type.NOTICE, exc);
-        }
-        new String("UTF-8");
-        return buffer.toString("UTF-8");
     }
 }

@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.bizdata.campux.server.userprofile;
+package com.bizdata.campux.server.userstatus;
 
 import java.io.File;
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.ConfigTest;
-import com.bizdata.campux.server.userprofile.StateCache.State;
+import com.bizdata.campux.server.userstatus.StateCache.State;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -107,11 +107,6 @@ public class StateCacheTest {
         assertEquals(result.get(6),"UserAge");
         assertEquals(result.get(7),"UserGender");
         assertEquals(result.get(8),"UserPhoto");
-    }
-    
-    static public void main(String arg[]){
-        StateCacheTest test = new StateCacheTest();
-        test.testGetAndSetUserState();
     }
 
 }
