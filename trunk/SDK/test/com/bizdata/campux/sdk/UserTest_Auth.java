@@ -16,6 +16,7 @@
  */
 package com.bizdata.campux.sdk;
 
+import java.io.FileInputStream;
 import org.junit.Ignore;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,6 +36,7 @@ public class UserTest_Auth {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        Config.init(new FileInputStream("sdk.config"));
         instance = new User();
     }
 
@@ -53,12 +55,12 @@ public class UserTest_Auth {
     /**
      * Test of register method, of class User.
      */
-    @Ignore
+    //@Ignore
     @Test
     public void testRegister() throws Exception{
         System.out.println("register");
         
-        boolean result = instance.register("001221156", "123456", "俞扬", "计算机", null, null, "18", "M");
+        boolean result = instance.register("001221157", "123456", "俞扬", "计算机", null, null, "18", "M");
         assertTrue(result);
         
     }
@@ -70,7 +72,7 @@ public class UserTest_Auth {
     @Test
     public void testLogin() throws Exception {
         System.out.println("login");
-        String name = "001221156";
+        String name = "001221157";
         String psw = "123456";
         
         boolean result = instance.login(name, psw);
@@ -84,7 +86,7 @@ public class UserTest_Auth {
     /**
      * Test of lookupUsername method, of class User.
      */
-    @Ignore
+    //@Ignore
     @Test
     public void testLookupUsername() throws Exception {
         System.out.println("lookupUsername: " + instance.getSessionID());
