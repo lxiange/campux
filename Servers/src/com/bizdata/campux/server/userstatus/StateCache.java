@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.bizdata.campux.server.userprofile;
+package com.bizdata.campux.server.userstatus;
 
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.Log;
 import com.bizdata.campux.server.Log.Type;
+import com.bizdata.campux.server.cache.Cache;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,8 +41,7 @@ public class StateCache {
     
     private StateCache(){
         m_cachesize = Integer.parseInt(Config.getValue("StateCacheSize"));
-        m_cache = new State[m_cachesize];
-        m_lasttime = new long[m_cachesize];
+        m_cache = new Cache(m_cachesize);
         m_variables = Config.getValueSet("StateVariable");
         m_path = Config.getValue("UserStateVariablePath");
     }
@@ -54,9 +54,7 @@ public class StateCache {
     // path to store files
     protected String m_path;
     
-    protected State[] m_cache;
-    protected long[] m_lasttime;
-    protected long m_cachetime = 1;
+    protected Cache<String, State> m_cache;
     protected List<String> m_variables;
     
     synchronized public String getUserState(String usr, String state){
@@ -81,43 +79,19 @@ public class StateCache {
     }
     
     protected State findUser(String usr){
-        State userstate = null;
-        for(int i=0; i<m_cachesize; i++){
-            if( m_cache[i]!=null && m_cache[i].m_user!=null && m_cache[i].m_user.equalsIgnoreCase(usr)){
-                userstate = m_cache[i];
-                m_lasttime[i] = m_cachetime++;
-                return userstate;
-            }
-        }
+        State userstate = m_cache.findItem(usr);
         
-        // user not found in cache, load from disk
-        userstate = readUser(usr);
-        if( userstate==null )
-            return null;
-        
-        // find the last used cache item
-        long mintime = m_lasttime[0];
-        int minindex = 0;
-        for(int i=1; i<m_cachesize; i++){
-            if( mintime > m_lasttime[i] ){
-                mintime = m_lasttime[i];
-                minindex = i;
-            }
+        if( userstate==null){
+            // user not found in cache, load from disk
+            userstate = loadUser(usr);
+            m_cache.cacheItem(usr, userstate);
         }
-        for(int i=1; i<m_cachesize; i++){
-            m_lasttime[i] -= mintime;
-        }
-        m_cachetime -= mintime;
-        
-        // replace
-        m_cache[minindex] = userstate;
-        m_lasttime[minindex]=m_cachetime++;
         
         return userstate;
     }
     
     // read user state from file
-    protected State readUser(String usr){
+    protected State loadUser(String usr){
         final State state = new State();
         try{
             state.m_user = usr;
@@ -143,7 +117,7 @@ public class StateCache {
                         return;
                     val = new String(ch, start, length);
                     if( b64 ){
-                        byte[] bytes = DatatypeConverter.parseBase64Binary(var);
+                        byte[] bytes = DatatypeConverter.parseBase64Binary(val);
                         val = new String(bytes, Charset.forName("UTF-8"));
                     }
                     state.m_values.put(var, val);

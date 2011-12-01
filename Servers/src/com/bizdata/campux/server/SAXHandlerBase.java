@@ -15,7 +15,7 @@ public class SAXHandlerBase extends DefaultHandler{
     // output to the network client
     BufferedWriter m_output = null;
     
-    public SAXHandlerBase(OutputStream outputstream){
+    public void setOutputStream(OutputStream outputstream){
          m_output = new BufferedWriter(new OutputStreamWriter(outputstream));
     }
     /**

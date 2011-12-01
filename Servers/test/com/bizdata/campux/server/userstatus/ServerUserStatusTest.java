@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.bizdata.campux.server.userprofile;
+package com.bizdata.campux.server.userstatus;
 
+import com.bizdata.campux.server.userstatus.ServerUserStatus;
 import com.bizdata.campux.sdk.User;
 import org.junit.After;
 import org.junit.AfterClass;
