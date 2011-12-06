@@ -65,9 +65,9 @@ public class UserAuthSAX extends SAXHandlerBase {
     public String prepareLogout(String sessionID){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
-        str.append("<o>");
+        str.append("<o><s>");
         str.append(sessionID);
-        str.append("</o>\r\n" );
+        str.append("</s></o>\r\n" );
         return str.toString();
     }
     
