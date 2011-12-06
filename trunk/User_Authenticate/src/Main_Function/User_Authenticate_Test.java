@@ -34,6 +34,8 @@ public class User_Authenticate_Test
 		String root_name=Get_RootOfXml.get_RootNameOfXml(document);
 		if(root_name.equals("v"))
 			response=User_Authen.user_Authen(document,ran_con);
+		else if(root_name.equals("o"))
+			response=User_Logout.user_Logout(document,ran_con);
 		else if(root_name.equals("a"))
 			response=User_Append.user_Append(document);
 		else if(root_name.equals("c"))
