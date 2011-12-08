@@ -19,13 +19,14 @@ package com.bizdata.campux.sdk;
 import com.bizdata.campux.sdk.network.ServerCommunicator;
 import com.bizdata.campux.sdk.saxhandler.UserAuthSAX;
 import com.bizdata.campux.sdk.saxhandler.UserStatusSAX;
+import com.bizdata.campux.sdk.saxhandler.UserStoreSAX;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import javax.xml.bind.DatatypeConverter;
-
+import java.io.*;
 
 /**
  * An object of the User class represents a user, and implements operations regarding the user
@@ -49,6 +50,12 @@ public class User{
     
     // initialization, load TCP ports
     public User(){
+    	
+    	try{
+    		InputStream input=new FileInputStream("sdk.config");
+    		Config.init(input);
+    	}
+ 		catch(Exception e){System.out.println("Can't find sde.config!");}
         m_ServicePort_UserAuth = Integer.parseInt(Config.getValue("ServicePort_UserAuth"));
         m_ServicePort_UserStatus = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
     }
@@ -111,6 +118,7 @@ public class User{
         
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareLogout(m_userSessionID);
+        System.out.println(str);
         m_comm.sentString(str);
         
         m_comm.close();
@@ -515,4 +523,277 @@ public class User{
         return true;
     }
     
+    
+   /**
+    * List app users from the UserStore Server
+    * @return
+    * @throws Exception 
+    */
+   public String[] appList() throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        
+        UserStoreSAX auth = new UserStoreSAX();
+        String str = auth.prepareAppList(getSessionID());
+        m_comm.sentString(str);
+        
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        String[] apps = auth.getList();
+        return apps;
+    }
+    /** 
+    * Associate a user to app group
+    * @param app
+    * @return
+    * @throws Exception 
+    */
+   public boolean appAdd(String app) throws Exception{
+       // force shutdown of the old connection
+       if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareAppAdd(getSessionID(), app);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if( auth.getIsError() ) return false;
+       
+       return true;
+   }
+   /** 
+    * Remove the association of a user from app group
+    * @param app
+    * @return
+    * @throws Exception 
+    */
+   public boolean appDelete(String app) throws Exception{
+       // force shutdown of the old connection
+       if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareAppDelete(getSessionID(), app);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if( auth.getIsError() ) return false;
+       
+       return true;
+   }
+    /**
+    *  Set the allocated space of a app 
+    *  @param app
+    * @throws Exception 
+    */
+   public boolean appSetSpace(String app,String len)throws Exception{
+	   if(m_comm!=null)m_comm.close();
+	   m_comm=new ServerCommunicator(m_ServicePort_UserAuth);
+	   
+	   UserStoreSAX auth=new UserStoreSAX();
+	   String str=auth.prepareAppSetSpace(getSessionID(),app,len);
+	   m_comm.sentString(str);
+	   
+	   auth.parseInput(m_comm.getInputStream());
+	   m_comm.close();
+       if( auth.getIsError() ) return false;
+       
+       return true;
+   }
+   /**
+    *  Get the space information of a app 
+    *  @param app
+    * @throws Exception 
+    */
+   public String[] appGetSpace(String app)throws Exception{
+	   if(m_comm!=null)m_comm.close();
+	   m_comm=new ServerCommunicator(m_ServicePort_UserAuth);
+	   
+	   UserStoreSAX auth=new UserStoreSAX();
+	   String str=auth.prepareAppGetSpace(getSessionID(), app);
+	   m_comm.sentString(str);
+	   
+	   auth.parseInput(m_comm.getInputStream());
+	   m_comm.close();
+	   String[] spaces=auth.getList();
+	   return spaces;
+   }
+
+   
+   /**
+    * List files in a directory of a app user from the UserStore Server
+    * @param path
+    * @return
+    * @throws Exception 
+    */
+   public String[] dirList(String path)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareDirList(getSessionID(), path);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String[] files = auth.getList();
+       return files;
+   }
+
+   /**
+    * Add a directory for a app user from the UserStore Server
+    * @param path
+    * @return
+    * @throws Exception 
+    */
+   public boolean dirAdd(String path)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareDirAdd(getSessionID(), path);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if( auth.getIsError() ) return false;
+       
+       return true;
+   }
+   
+   /**
+    * Delete the directory for a app user from the UserStore Server
+    * @param path
+    * @return
+    * @throws Exception 
+    */
+   public boolean dirDelete(String path)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareDirDelete(getSessionID(), path);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if( auth.getIsError() ) return false;
+       
+       return true;
+	   
+   }
+
+   /**
+    * Detect whether the file or directory exist for a app user from the UserStore Server
+    * @param file
+    * @return
+    * @throws Exception 
+    */
+   public boolean fileExist(String file)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareFileExist(getSessionID(), file);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if( auth.getIsError() ) return false;
+       
+       return true;
+   }
+
+   /**
+    * Get the property of a file for a app user from the UserStore Server
+    * @param file
+    * @return
+    * @throws Exception 
+    */
+   public String[] fileGetProperty(String file)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareFileGetProperty(getSessionID(), file);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String[] properties = auth.getList();
+       return properties;
+   }
+   
+   /**
+    * Get the content of a file for a app user from the UserStore Server
+    * @param file
+    * @param begin
+    * @param end
+    * @return
+    * @throws Exception 
+    */
+   public String fileRead(String file,String begin,String end)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareFileRead(getSessionID(), file,begin,end);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String content = auth.getResponseString();
+       return content;
+   }
+   
+   /**
+    * Write the content to a file for a app user from the UserStore Server
+    * @param file
+    * @param begin
+    * @param content
+    * @return
+    * @throws Exception 
+    */
+   public boolean fileWrite(String file,String begin,String content)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareFileWrite(getSessionID(), file,begin,content);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       if( auth.getIsError() ) return false;
+       
+       return true;
+   }
+   
+   /**
+    * Delete the file for a app user from the UserStore Server
+    * @param file
+    * @return
+    * @throws Exception 
+    */
+   public boolean fileDelete(String file)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       
+       UserStoreSAX auth = new UserStoreSAX();
+       String str = auth.prepareFileDelete(getSessionID(), file);
+       m_comm.sentString(str);
+       
+       auth.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if( auth.getIsError() ) return false;
+       
+       return true;
+	   
+   }
+
+   
 }
