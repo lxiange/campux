@@ -47,7 +47,21 @@ public class UserStoreSAX extends SAXHandlerBase {
         }else if( "g".equalsIgnoreCase(tagname) ){
             m_vars.add(content);
         }else if( "u".equalsIgnoreCase(tagname) ){
-            m_vars.add(content);
+            m_vars.add(content);            
+        }else if( "f".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);            
+        }else if( "t".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);            
+        }else if( "i".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);            
+        }else if( "m".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);            
+        }else if( "l".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);            
+        }else if( "q".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);            
+        }else if( "a".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);       
         }
     }
 
