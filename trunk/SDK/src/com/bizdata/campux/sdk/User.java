@@ -43,6 +43,8 @@ public class User{
     protected int m_ServicePort_UserAuth;
     // TCP port of UserStatus service
     protected int m_ServicePort_UserStatus;
+    // TCP port of UserStore service
+    protected int m_ServicePort_UserStore;
     // object for communication with the server
     protected ServerCommunicator m_comm = null;
     // is the user an APP user
@@ -58,6 +60,7 @@ public class User{
  		catch(Exception e){System.out.println("Can't find sde.config!");}
         m_ServicePort_UserAuth = Integer.parseInt(Config.getValue("ServicePort_UserAuth"));
         m_ServicePort_UserStatus = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
+        m_ServicePort_UserStore= Integer.parseInt(Config.getValue("ServicePort_CloudStorage"));
     }
     
     /**
@@ -532,7 +535,7 @@ public class User{
    public String[] appList() throws Exception{
         // force shutdown of the old connection
         if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
         
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareAppList(getSessionID());
@@ -552,7 +555,7 @@ public class User{
    public boolean appAdd(String app) throws Exception{
        // force shutdown of the old connection
        if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareAppAdd(getSessionID(), app);
@@ -573,7 +576,7 @@ public class User{
    public boolean appDelete(String app) throws Exception{
        // force shutdown of the old connection
        if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareAppDelete(getSessionID(), app);
@@ -592,7 +595,7 @@ public class User{
     */
    public boolean appSetSpace(String app,String len)throws Exception{
 	   if(m_comm!=null)m_comm.close();
-	   m_comm=new ServerCommunicator(m_ServicePort_UserAuth);
+	   m_comm=new ServerCommunicator(m_ServicePort_UserStore);
 	   
 	   UserStoreSAX auth=new UserStoreSAX();
 	   String str=auth.prepareAppSetSpace(getSessionID(),app,len);
@@ -611,7 +614,7 @@ public class User{
     */
    public String[] appGetSpace(String app)throws Exception{
 	   if(m_comm!=null)m_comm.close();
-	   m_comm=new ServerCommunicator(m_ServicePort_UserAuth);
+	   m_comm=new ServerCommunicator(m_ServicePort_UserStore);
 	   
 	   UserStoreSAX auth=new UserStoreSAX();
 	   String str=auth.prepareAppGetSpace(getSessionID(), app);
@@ -632,7 +635,7 @@ public class User{
     */
    public String[] dirList(String path)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareDirList(getSessionID(), path);
@@ -652,7 +655,7 @@ public class User{
     */
    public boolean dirAdd(String path)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareDirAdd(getSessionID(), path);
@@ -673,7 +676,7 @@ public class User{
     */
    public boolean dirDelete(String path)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareDirDelete(getSessionID(), path);
@@ -695,7 +698,7 @@ public class User{
     */
    public boolean fileExist(String file)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareFileExist(getSessionID(), file);
@@ -716,7 +719,7 @@ public class User{
     */
    public String[] fileGetProperty(String file)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareFileGetProperty(getSessionID(), file);
@@ -738,7 +741,7 @@ public class User{
     */
    public String fileRead(String file,String begin,String end)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareFileRead(getSessionID(), file,begin,end);
@@ -760,7 +763,7 @@ public class User{
     */
    public boolean fileWrite(String file,String begin,String content)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareFileWrite(getSessionID(), file,begin,content);
@@ -781,7 +784,7 @@ public class User{
     */
    public boolean fileDelete(String file)throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
        UserStoreSAX auth = new UserStoreSAX();
        String str = auth.prepareFileDelete(getSessionID(), file);
