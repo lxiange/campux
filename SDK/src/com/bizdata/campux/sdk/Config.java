@@ -39,6 +39,7 @@ public class Config {
     // the hash map used to store settings
     private HashMap<String, List<String>> m_hash;
     // when the class is instantialized, load the settings
+    
     private Config(InputStream input){
         try{
             m_hash = new HashMap<String, List<String>>();
@@ -89,6 +90,10 @@ public class Config {
             Log.log("Config", Log.Type.FATAL, exc);
             System.exit(-1);
         }
+    }
+    
+    static public boolean needInit(){
+        return s_instance==null;
     }
     /**
      * set the input stream of the config file
