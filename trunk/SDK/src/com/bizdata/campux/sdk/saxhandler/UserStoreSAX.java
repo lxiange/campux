@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
  */
 public class UserStoreSAX extends SAXHandlerBase {
 
-	protected LinkedList<String> m_vars = new LinkedList<String>();
+    protected LinkedList<String> m_vars = new LinkedList<String>();
     protected String m_responseStr = null;
     
     public String getResponseString(){
@@ -196,7 +196,7 @@ public class UserStoreSAX extends SAXHandlerBase {
         return str.toString();
     }
 
-    public String prepareFileWrite(String sessionID,String file,String begin,String content){
+    public String prepareFileWrite(String sessionID,String file,long begin,String content){
     	StringBuilder str = new StringBuilder();
         str.append("<fw><si>");
         str.append(sessionID);

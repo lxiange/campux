@@ -52,10 +52,11 @@ public class User{
     
     // initialization, load TCP ports
     public User(){
-    	
     	try{
+            if( Config.needInit() ){
     		InputStream input=new FileInputStream("sdk.config");
     		Config.init(input);
+            }
     	}
  		catch(Exception e){System.out.println("Can't find sde.config!");}
         m_ServicePort_UserAuth = Integer.parseInt(Config.getValue("ServicePort_UserAuth"));
@@ -753,25 +754,38 @@ public class User{
        return content;
    }
    
+   public boolean fileWriteNew(String file, String content) throws Exception{
+	return fileWrite(file, 0, content);
+   }
+   
+   public boolean fileWriteAppend(String file, String content) throws Exception{
+       String[] properties = fileGetProperty(file);
+       long len = 0;
+       if( properties!=null )
+           len = Long.parseLong(properties[3]);
+       return fileWrite(file, len, content);
+   }
+   
    /**
-    * Write the content to a file for a app user from the UserStore Server
+    * Write the content to a file for a app user from the UserStore Server.
+    * DO NOT provide this function. Provide fileWriteNew and fileWriteAppend instead.
     * @param file
     * @param begin
     * @param content
     * @return
     * @throws Exception 
     */
-   public boolean fileWrite(String file,String begin,String content)throws Exception{
+   private boolean fileWrite(String file,long begin,String content)throws Exception{
 	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
-       UserStoreSAX auth = new UserStoreSAX();
-       String str = auth.prepareFileWrite(getSessionID(), file,begin,content);
+       UserStoreSAX store = new UserStoreSAX();
+       String str = store.prepareFileWrite(getSessionID(), file, begin, content);
        m_comm.sentString(str);
        
-       auth.parseInput(m_comm.getInputStream());
+       store.parseInput(m_comm.getInputStream());
        m_comm.close();
-       if( auth.getIsError() ) return false;
+       if( store.getIsError() ) return false;
        
        return true;
    }
@@ -786,13 +800,13 @@ public class User{
 	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
        
-       UserStoreSAX auth = new UserStoreSAX();
-       String str = auth.prepareFileDelete(getSessionID(), file);
+       UserStoreSAX store = new UserStoreSAX();
+       String str = store.prepareFileDelete(getSessionID(), file);
        m_comm.sentString(str);
        
-       auth.parseInput(m_comm.getInputStream());
+       store.parseInput(m_comm.getInputStream());
        m_comm.close();        
-       if( auth.getIsError() ) return false;
+       if( store.getIsError() ) return false;
        
        return true;
 	   
