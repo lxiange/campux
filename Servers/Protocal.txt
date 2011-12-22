@@ -222,3 +222,21 @@
 九、Q&A服务 2513 （暂时不做）
 		
 十、wifi定位服务 2503
+*	取得地址
+		请求：<g s="用户SessionID">
+			<i>IP地址</i>
+			<w s="型号强度" c="连接的wifi为true">wifi的BSSID</w>
+			<w s="型号强度">wifi的BSSID</w>
+			<w s="型号强度">wifi的BSSID</w>
+			</g>
+		OK响应：<ok>地理位置名称</ok>
+		失败响应：<err c="错误代码">错误原因</err>
+*	添加地址
+		请求：<a s="用户SessionID" l="位置名称">
+			<i>IP地址</i>
+			<w s="型号强度" c="连接的wifi为true">wifi的BSSID</w>
+			<w s="型号强度">wifi的BSSID</w>
+			<w s="型号强度">wifi的BSSID</w>
+			</a>
+		OK响应：<ok></ok>
+		失败响应：<err c="错误代码">错误原因</err>
