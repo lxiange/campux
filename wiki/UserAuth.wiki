@@ -3,7 +3,7 @@
 v0.1r46  2011/12/23
 
 = 实现 =
-用户认证服务位于User_Authenticate子项目中，启动类为UA_Server_MultiThread.MainFunction。由SQLServer做后台。
+用户认证服务位于'User_Authenticate'子项目中，启动类为'UA_Server_MultiThread.MainFunction'。由SQLServer做后台。
 
 [TODO：在下一个版本中用户认证将与其他服务统一在Servers子项目中，使用统一构架，规范包和函数命名，取消SQLServer的使用。]
 
