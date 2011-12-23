@@ -116,7 +116,7 @@ if( Config.needInit() ){
     InputStream input=new FileInputStream("sdk.config");
     Config.init(input);
 }
-获取类实例。
+//获取类实例。
 User instance = new User();
 }}}
 
