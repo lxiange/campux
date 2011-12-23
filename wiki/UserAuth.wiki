@@ -105,7 +105,9 @@ XML消息开头必须不包含XML注释，必须以"\n"结束。<br/>
 
 = SDK使用 =
 
-用户认证功能全部实现于com.bizdata.campux.sdk.User类中。类初始化示例：
+用户认证功能全部实现于com.bizdata.campux.sdk.User类中。<br/>
+
+* 类初始化
 {{{
 //包名称
 import com.bizdata.campux.sdk.*;
