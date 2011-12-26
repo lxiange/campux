@@ -26,13 +26,13 @@ public class UA_Client
 	  	    PrintWriter out=new PrintWriter(server.getOutputStream());                             //定义一个Sockte类的输出流
     	    BufferedReader wt=new BufferedReader(new InputStreamReader(System.in));                //定义一个System类的输入流
 		    
-    	    //String source = "<v><u>admin</u><p>_bizdata</p></v>";
+    	    String source = "<v><u>admin</u><p>_bizdata</p></v>";
 
 //           String source="<a><u>gl</u><p>778999</p></a>";//用户添加
 //	String source="<v><u>app_1</u><p>123456</p></v>";//用户认证2
 
 //	        String source="<v><u>app_a</u><p>111</p></v>";//用户认证1
-	        String source="<c><s>521</s></c>";//用户会话认证
+//	        String source="<c><s>521</s></c>";//用户会话认证
 //        String source="<m><si>713</si><p>888</p></m>";//用户密码修改
 //		String source="<d><si>713</si><u>gl</u></d>";//用户删除
 //       String source="<ga><si>713</si><g>group12</g></ga>";//用户组添加	

@@ -6,12 +6,14 @@
 */
 
 package User_Authenticate;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import General_Function.*;
 import User_Authenticate.*;
 import General_Function.General_Function_AboutXml.*;
 import Auxiliary_Function.*;
 import org.dom4j.*;
+import com.twmacinta.util.MD5;
 
 public class User_Authen 
 {
@@ -31,6 +33,16 @@ public class User_Authen
 		
 		String user_name=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_name_label);
 		String user_psw=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_psw_label);
+		
+		// password convert to MD5 --by yuy
+		MD5 md5 = new MD5();
+		try{
+			md5.Update(user_psw, null);
+		}catch(Exception exc){
+			exc.printStackTrace();
+		}
+		user_psw = md5.asHex();
+		md5=null;
 		
 		//错误2：用户名为空
 		if(user_name=="")

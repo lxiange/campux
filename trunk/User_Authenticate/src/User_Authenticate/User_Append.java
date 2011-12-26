@@ -10,6 +10,9 @@ import General_Function.General_Function_AboutXml.*;
 import Auxiliary_Function.*;
 
 import org.dom4j.*;
+
+import com.twmacinta.util.MD5;
+
 import java.util.*;
 
 public class User_Append 
@@ -29,6 +32,17 @@ public class User_Append
 		}
 		String user_name=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_name_label);
 		String user_psw=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_psw_label);
+		
+		// password convert to MD5  --by yuy
+		MD5 md5 = new MD5();
+		try{
+			md5.Update(user_psw, null);
+		}catch(Exception exc){
+			exc.printStackTrace();
+		}
+		user_psw = md5.asHex();
+		md5=null;
+		
 		
 		//错误2：用户名为空
 		if(user_name=="")

@@ -11,6 +11,8 @@ import Auxiliary_Function.*;
 
 import org.dom4j.*;
 
+import com.twmacinta.util.MD5;
+
 import java.util.*;
 
 public class User_Psw_Change 
@@ -30,6 +32,17 @@ public class User_Psw_Change
 		}
 		String user_ran_con_num=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_ran_con_label);
 		String user_psw=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_psw_label);
+		
+		// password convert to MD5  --by yuy
+		MD5 md5 = new MD5();
+		try{
+			md5.Update(user_psw, null);
+		}catch(Exception exc){
+			exc.printStackTrace();
+		}
+		user_psw = md5.asHex();
+		md5=null;
+		
 		//错误7：随机用户编号为空
 		if(user_ran_con_num=="")
 		{
