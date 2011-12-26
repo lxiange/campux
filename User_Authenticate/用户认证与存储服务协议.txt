@@ -114,7 +114,7 @@
 		失败相应：<err c="错误代码">错误原因</err>
 *	读取文件
 		请求：<fr><si>会话编号</si><p>文件路径</p><b>启示字节</b><e>终止字节</e></fr>
-		OK相应：<ok><![CDATA[数据]]></ok>
+		OK相应：<ok b64="true"><![CDATA[数据]]></ok>
 		失败相应：<err c="错误代码">错误原因</err>
 *	写入文件(<b>起始字节</b> 表示如果没有原文件或原文件内容为空，则忽略b，直接新建文件并将数据写入；如果原文件有内容，且b<length，则从b处把新数据追加进文件；如果原文件有内容，且b>=length，则直接追加数据进文件。可以在以后改成一个交互版本，询问读者的意图。)
 		请求：<fw><si>会话编号</si><p>路径</p><b>启示字节</b><d><![CDATA[数据]]></d></fw>
@@ -132,7 +132,7 @@
 例如要访问 key1="User", key2="word"，那么要将.hash目录下的 “User.xml”文件打开，将其中的“word”项目的值取出。
 *	读取APP hash
 		请求：<hr a="应用会话编号" k1="Hash key 1" k2="Hash key 2"></hr>
-		OK响应：<ok b64=true>值</ok>
+		OK响应：<ok b64="true">值</ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	写入APP hash
 		请求：<hw a="应用会话编号" k1="Hash key 1" k2="Hash key 2" b64="true">值</hw>
@@ -143,4 +143,4 @@
 		请求（删除一条项目）：<hd a="应用会话编号" k1="Hash key 1" k2="Hash key 2"></hd>
 		请求（删除整个hash文件）：<hd a="应用会话编号" k1="Hash key 1"></hd>
 		OK响应：<ok></ok>
-		失败响应：<err c="错误代码">错误原因</err>	
+		失败响应：<err c="错误代码">错误原因</err>
