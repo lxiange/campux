@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import org.xml.sax.Attributes;
 
 /**
- * handles the 
+ * handles the user authentication
  * @author yuy
  */
 public class UserAuthSAX extends SAXHandlerBase {    
@@ -91,9 +91,9 @@ public class UserAuthSAX extends SAXHandlerBase {
         return str.toString();
     }
     /**
-     * ç”¨æˆ·å¯†ç ä¿®æ”¹
-     * @param sessionID ç”¨æˆ·ç™»å½•sessionID
-     * @param psw æ–°å¯†ç 
+     * ÓÃ»§ÃÜÂëĞŞ¸Ä
+     * @param sessionID ÓÃ»§µÇÂ¼sessionID
+     * @param psw ĞÂÃÜÂë
      * @return 
      */
     public String preparePasswordChange(String sessionID, String psw){
@@ -106,7 +106,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</p></m>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·åˆ é™¤
+    //ÓÃ»§É¾³ı
     public String prepareUserDelete(String sessionID, String usr){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -117,7 +117,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</u></d>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·ç»„æ·»åŠ 
+    //ÓÃ»§×éÌí¼Ó
     public String prepareGroupAdd(String sessionID, String group){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -128,7 +128,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</g></ga>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·ç»„åˆ é™¤
+    //ÓÃ»§×éÉ¾³ı
     public String prepareGroupDelete(String sessionID, String group){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -139,7 +139,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</g></gd>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·ç»„æšä¸¾
+    //ÓÃ»§×éÃ¶¾Ù
     public String prepareGroupList(String sessionID){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -148,7 +148,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</si></gl>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·çš„ç»„å±æ€§æšä¸¾
+    //ÓÃ»§µÄ×éÊôĞÔÃ¶¾Ù
     public String prepareUserBelongingGroups(String sessionID, String usr){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -159,7 +159,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</u></ug>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·ç»„å†…çš„ç”¨æˆ·åæšä¸¾
+    //ÓÃ»§×éÄÚµÄÓÃ»§ÃûÃ¶¾Ù
     public String prepareGroupUserList(String sessionID, String group){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -170,7 +170,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</g></gul>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·å…³è”åˆ°ç”¨æˆ·ç»„
+    //ÓÃ»§¹ØÁªµ½ÓÃ»§×é
     public String prepareUserAssociateGroup(String sessionID, String usr, String group){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
@@ -183,7 +183,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         str.append("</g></gua>\r\n");
         return str.toString();
     }
-    //ç”¨æˆ·å–æ¶ˆåˆ°ç”¨æˆ·ç»„çš„å…³è”
+    //ÓÃ»§È¡Ïûµ½ÓÃ»§×éµÄ¹ØÁª
     public String prepareUserDissociateGroup(String sessionID, String usr, String group){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );

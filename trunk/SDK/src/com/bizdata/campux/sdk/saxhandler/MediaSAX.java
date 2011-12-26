@@ -17,6 +17,8 @@
 package com.bizdata.campux.sdk.saxhandler;
 
 import java.io.InputStream;
+import java.util.LinkedList;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -24,9 +26,80 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class MediaSAX extends SAXHandlerBase{
+	protected LinkedList<String> m_vars = new LinkedList<String>();
+    protected String m_responseStr = null;
+    /**
+     * get names of the variables in the system
+     * @return 
+     */
+    public String getResponseString(){
+        return m_responseStr;
+    }
+    public String[] getList(){
+        String[] vs = new String[m_vars.size()];
+        for(int i=0; i<vs.length; i++){
+            vs[i] = m_vars.get(i);
+        }
+        return vs;
+    }
+    /**
+     * Deals with the XML content via SAX
+     * @param content
+     * @param tagname
+     * @param m_tagattr 
+     */
     @Override
-    protected void contentReceived(String content, String tagname, Attributes m_tagattr) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected void contentReceived(String content, String tagname, Attributes m_tagattr){
+    	System.out.println("contentrecevied:"+tagname);
+        if("ok".equalsIgnoreCase(tagname)){
+            m_responseStr = content;
+        }else if( "a".equalsIgnoreCase(tagname) ){
+            m_vars.add(content.trim());
+        }else if( "f".equalsIgnoreCase(tagname) ){
+            m_vars.add(content.trim());
+        }else if( "i".equalsIgnoreCase(tagname) ){
+            m_vars.add(content.trim());
+        }else if( "s".equalsIgnoreCase(tagname) ){
+            m_vars.add(content.trim());
+        }
+    }
+
+    public String prepareMediaListGet(String sessionID)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<la ");
+        str.append("s=\""+sessionID+"\">");
+        str.append("</la>\r\n");
+        return str.toString();
     }
     
+    public String prepareMediaContentRead(String sessionID,String m_content)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<ra ");
+        str.append("s=\""+sessionID+"\">");
+        str.append(m_content);
+        str.append("</ra>\r\n");
+        return str.toString();
+    }
+    
+    public String prepareMusicRead(String sessionID,String m_ID)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<rs ");
+        str.append("s=\""+sessionID+"\">");
+        str.append(m_ID);
+        str.append("</rs>\r\n");
+        return str.toString();
+    }
+
+    
+ /*   public static void main(String[] args){
+    	String sessionID="1234556677";
+    	MediaSAX mm=new MediaSAX();
+    	System.out.println(mm.prepareMediaListGet(sessionID));
+    	System.out.println(mm.prepareMediaContentRead(sessionID, "aa"));
+    	System.out.println(mm.prepareMusicRead(sessionID, "bb"));
+    }
+*/
 }
