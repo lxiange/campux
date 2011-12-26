@@ -17,6 +17,8 @@
 package com.bizdata.campux.sdk.saxhandler;
 
 import java.io.InputStream;
+import java.util.LinkedList;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -24,8 +26,99 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class ClassScheduleSAX extends SAXHandlerBase{
-    @Override
-    protected void contentReceived(String content, String tagname, Attributes m_tagattr) {
-        throw new UnsupportedOperationException("Not supported yet.");
+	protected LinkedList<String> m_vars = new LinkedList<String>();
+    protected String m_responseStr = null;
+    /**
+     * get names of the variables in the system
+     * @return 
+     */
+    public String getResponseString(){
+        return m_responseStr;
     }
+    public String[] getList(){
+        String[] vs = new String[m_vars.size()];
+        for(int i=0; i<vs.length; i++){
+            vs[i] = m_vars.get(i);
+        }
+        return vs;
+    }
+    /**
+     * Deals with the XML content via SAX
+     * @param content
+     * @param tagname
+     * @param m_tagattr 
+     */
+    @Override
+    protected void contentReceived(String content, String tagname, Attributes m_tagattr){
+    	System.out.println("contentrecevied:"+tagname);
+        if("ok".equalsIgnoreCase(tagname)){
+            m_responseStr = content;
+        }else if( "c".equalsIgnoreCase(tagname) ){
+            m_vars.add(content.trim());
+        }
+    }
+    
+    public String prepareClassListGet()
+    {
+    	StringBuilder str = new StringBuilder();
+        str.append("<lc>");
+        str.append("</lc>\r\n");
+        return str.toString();
+    }
+    
+    public String prepareClassPublish(String sessionID,String address,String available)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<pr ");
+        str.append("s=\""+sessionID+"\" ");
+        str.append("l=\""+address+"\">");
+        str.append(available);
+        str.append("</pr>\r\n");
+        return str.toString();
+    }
+    
+    public String prepareClassHistoryRead(String sessionID,String address)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<rr ");
+        str.append("s=\""+sessionID+"\" ");
+        str.append("l=\""+address+"\">");
+        str.append("</rr>\r\n");
+        return str.toString();
+    }
+  
+    public String prepareClassScheduleRead(String sessionID)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<rs ");
+        str.append("s=\""+sessionID+"\">");
+        str.append("</rs>\r\n");
+        return str.toString();
+    }
+    
+    public String prepareClassScheduleSet(String sessionID,String c_day,String c_class,String c_room,String c_content)
+    {
+    	StringBuilder str = new StringBuilder();
+    	str.append("<ws ");
+        str.append("s=\""+sessionID+"\" ");
+        str.append("d=\""+c_day+"\" ");
+        str.append("t=\""+c_class+"\" ");
+        str.append("r=\""+c_room+"\">");
+        str.append(c_content);
+        str.append("</ws>\r\n");
+        return str.toString();
+    }
+    
+    
+ /*   public static void main(String[] args){
+    	String sessionID="1234556677";
+    	ClassScheduleSAX cc=new ClassScheduleSAX();
+  	    System.out.println(cc.prepareClassListGet());
+    	System.out.println(cc.prepareClassPublish(sessionID, "bb", "cc"));
+    	System.out.println(cc.prepareClassHistoryRead(sessionID, "dd"));
+    	System.out.println(cc.prepareClassScheduleRead(sessionID));
+    	System.out.println(cc.prepareClassScheduleSet(sessionID, "ee", "ff", "gg", "hh"));
+ 
+    }
+ */   
 }

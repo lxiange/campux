@@ -17,6 +17,8 @@
 package com.bizdata.campux.sdk.saxhandler;
 
 import java.io.InputStream;
+import java.util.LinkedList;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -24,8 +26,60 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class BubbleSAX extends SAXHandlerBase{
-    @Override
-    protected void contentReceived(String content, String tagname, Attributes m_tagattr) {
-        throw new UnsupportedOperationException("Not supported yet.");
+	protected LinkedList<String> m_vars = new LinkedList<String>();
+    protected String m_responseStr = null;
+    
+    public String getResponseString(){
+        return m_responseStr;
     }
+    
+    public String[] getList(){
+        String[] vs = new String[m_vars.size()];
+        for(int i=0; i<vs.length; i++){
+            vs[i] = m_vars.get(i);
+        }
+        return vs;
+    }	
+    
+	
+	@Override
+    protected void contentReceived(String content, String tagname, Attributes m_tagattr) {
+		System.out.println("contentrecevied:"+tagname);
+        if("ok".equalsIgnoreCase(tagname)){
+            m_responseStr = content;
+        }else if( "m".equalsIgnoreCase(tagname) ){
+            m_vars.add(content);
+        }
+    }    
+	
+	public String prepareBubbleRelease(String sessionID,String b_location,String b_content)
+	{
+		StringBuilder str = new StringBuilder();
+    	str.append("<p ");
+        str.append("s=\""+sessionID+"\" ");
+        str.append("b64=\"true\" l=\""+b_location+"\">");
+        str.append(b_content);
+        str.append("</p>\r\n");
+        return str.toString();
+	}
+	
+	public String prepareBubbleHistoryRead(String sessionID,String b_initialTime,String b_location)
+	{
+		StringBuilder str = new StringBuilder();
+    	str.append("<r ");
+        str.append("s=\""+sessionID+"\" ");
+        str.append("d=\""+b_initialTime+"\">");
+        str.append(b_location);
+        str.append("</r>\r\n");
+        return str.toString();
+	}
+	
+	
+/*	public static void main(String[] args){
+		String sessionID="1234556677";
+		BubbleSAX bb=new BubbleSAX();
+		System.out.println(bb.prepareBubbleRelease(sessionID, "a", "b"));
+		System.out.println(bb.prepareBubbleReceive(sessionID, "c", "d"));
+	}
+*/
 }
