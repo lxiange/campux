@@ -291,7 +291,7 @@ public class UserMessage {
 	   for(MsgIndex index: indices){
 		   box.addIndex(index);
 	   }
-	   box.loadMsgBox();
+	   box.saveMsgBox();
 	   return true;
    }
    
@@ -406,47 +406,5 @@ public class UserMessage {
             }
         }
     }
-  
-   //for test
-   public UserMessage(int k){
-	   m_path = "D:\\MyServerTry1\\bbs\\";
-       
-	   m_maxBlocksize = 500;
-       m_maxMsgBox = 32*1024;
-       // init cache
-       m_cachesizeMsgBox = 100;
-       m_cachesizeMsgItem = 100;
-       m_cacheMsgBox = new Cache<String, MsgBox>(m_cachesizeMsgBox);
-       m_cacheMsgItem= new Cache<String, Message>(m_cachesizeMsgItem);
-       m_block = findMsgBlock();
-   }
-   public static void main(String[] args){
-	   UserMessage user=new UserMessage(1);
-//	   Message msg=new Message("mytitle1","mydate1","mylink1","mypublisher1","mypubcategory1","mycontent1",null);
-//	   Message msg=new Message("mytitle2","mydate2","mylink2","mypublisher2","mypubcategory2","mycontent2",null);
-	   
-/*	   Event e1=new Event("etitel1","edate1","eaddress1");
-	   Event e2=new Event("etitel2","edate2","eaddress2");
-	   LinkedList<Event> events=new LinkedList<Event>();
-	   events.add(e1);
-	   events.add(e2);
-	   Message msg=new Message("mytitle2","mydate2","mylink2","mypublisher2","mypubcategory2","mycontent2",events);
-	   
-	   ArrayList<String> users=new ArrayList<String>();
-       users.add("user_a");
-	   users.add("user_b");
-	   user.putMessage(msg, users); 
-*/
-//	   user.deleteMessage("user_a", 0);
-	   Message[] msgs=user.getNewMessage("user_a", -1);
-//	   System.out.println(msgs.length);
-	   for(Message msga:msgs)
-	   	   System.out.println(msga.toString());
-
-//	   MsgIndex[] indices=user.getNewIndex("user_a", -1);
-//	   System.out.println(indices[0]);
-//	   for(MsgIndex index:indices)
-//		   System.out.println(index.toString());
-    }
-
+    
 }
