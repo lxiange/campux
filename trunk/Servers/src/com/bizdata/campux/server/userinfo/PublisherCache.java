@@ -1,4 +1,5 @@
 package com.bizdata.campux.server.userinfo;
+
 import com.bizdata.campux.server.*;
 import com.bizdata.campux.server.Log.Type;
 import com.bizdata.campux.server.cache.Cache;
@@ -24,8 +25,7 @@ public class PublisherCache {
 	private PublisherCache(){
         m_cachesize = Integer.parseInt(Config.getValue("PublisherCacheSize"));
         m_cache = new Cache(m_cachesize);
-        m_variables = Config.getValueSet("PublisherVariable");
-        m_path = Config.getValue("UserPublisherVariablePath");
+        m_path = Config.getValue("UserPublisherPath");
     }
 	// size of the number of users to cache
     protected int m_cachesize = 100;
@@ -36,27 +36,87 @@ public class PublisherCache {
     protected String m_path;
     
     protected Cache<String, Publisher> m_cache;
-    protected List<String> m_variables;
 
-    synchronized public String getPubliserVariable(String usr, String variable){
+    protected LinkedList<Publisher> displayAllPublisher(){
+    	LinkedList<Publisher> pubs=new LinkedList<Publisher>();
+    	File dir=new File(m_path);
+    	String[] filenames=dir.list();
+    	LinkedList<String> pubnames=new LinkedList<String>();
+    	for(String filename:filenames){
+    		if(filename.endsWith(".publisher"))
+    			pubnames.add(filename.substring(0, filename.indexOf(".publisher")));
+    	}
+    	for(String usr:pubnames)
+    	    pubs.add(findPublisher(usr));
+    	return pubs;
+    }
+    synchronized public String getPublisherIcon(String usr){
         Publisher pub = findPublisher(usr);
         if( pub==null )
             return null;
-        return pub.m_values.get(variable);
+        return pub.p_iconname;
     }
-    public List<String> getVariables(){
-        LinkedList<String> l = new LinkedList<String>(m_variables);
-        return l;
+    synchronized public String getPublisherDisplayName(String usr){
+        Publisher pub = findPublisher(usr);
+        if( pub==null )
+            return null;
+        return pub.p_displayname;
     }
-    synchronized public boolean setPublisherVariable(String usr, String state, String value){
+    synchronized public List<String> getPublisherType(String usr){
+        Publisher pub = findPublisher(usr);
+        if( pub==null )
+            return null;
+        return pub.p_infotype;
+    }
+    
+    synchronized public boolean setPublisherIcon(String usr,String icon){
     	Publisher pub = findPublisher(usr);
-        HashSet<String> set = new HashSet<String>(m_variables);
-        if( set.contains(state) ){
-            pub.m_values.put(state, value);
-            savePublisher(pub);
-            return true;
-        }
-        return false;
+    	if(pub==null)
+    		return false;
+    	pub.p_iconname=icon;
+        savePublisher(pub);
+        return true;
+    }
+    synchronized public boolean setPublisherDisplayName(String usr,String displayname){
+    	Publisher pub = findPublisher(usr);
+    	if(pub==null)
+    		return false;
+    	pub.p_displayname=displayname;
+        savePublisher(pub);
+        return true;
+    }
+    synchronized public boolean addPublisherInfoType(String usr,String infotype){
+    	Publisher pub = findPublisher(usr);
+    	if(pub==null)
+    		return false;
+    	for(String v:pub.p_infotype){
+    		if(v.equalsIgnoreCase(infotype))
+    			return false;
+    	}
+    	pub.p_infotype.add(infotype);
+    	return true;
+    }
+    synchronized public boolean deletePublisherInfoType(String usr,String infotype){
+    	Publisher pub = findPublisher(usr);
+    	if(pub==null)
+    		return false;
+    	for(String v:pub.p_infotype){
+    		if(v.equalsIgnoreCase(infotype))
+    			pub.p_infotype.remove(v);
+    		return true;
+    	}
+    	return false;
+    }
+    
+    
+    protected boolean havePublisher(String usr){
+    	LinkedList<Publisher> pubs=displayAllPublisher();
+    	for(Publisher pub:pubs){
+    		if(pub.m_user.equalsIgnoreCase(usr)){
+    			return true;
+    		}
+    	}
+    	return false;
     }
     protected Publisher findPublisher(String usr){
     	Publisher pub = m_cache.findItem(usr);
@@ -72,7 +132,7 @@ public class PublisherCache {
         final Publisher pub = new Publisher();
         try{
         	pub.m_user = usr;
-            File file = new File(m_path+usr+".state");
+            File file = new File(m_path+usr+".publisher");
             if( !file.exists() ){
                 savePublisher(pub);
             }
@@ -97,13 +157,18 @@ public class PublisherCache {
                         byte[] bytes = DatatypeConverter.parseBase64Binary(val);
                         val = new String(bytes, Charset.forName("UTF-8"));
                     }
-                    pub.m_values.put(var, val);
+                    if("i".equalsIgnoreCase(var)){
+                    	pub.p_iconname=val;
+                    }else if("dp".equalsIgnoreCase(var)){
+                    	pub.p_displayname=val;
+                    }else if("cp".equalsIgnoreCase(var)){
+                    	pub.p_infotype.add(val);
+                    }
                 }
                 @Override
-                public void endElement(String uri, String localName, String qName) throws SAXException {
+                public void endElement(String uri, String localName, String qName)throws SAXException {
                     var = null;
-                }
-                
+                }                
              };
 
             FileInputStream input = new FileInputStream(file);
@@ -120,18 +185,14 @@ public class PublisherCache {
         try{
             BufferedWriter output = new BufferedWriter( 
                     new OutputStreamWriter(new FileOutputStream(m_path + pub.m_user + ".publisher")));
-            output.write(Config.getXMLfirstline() + "<root>");
-            for(String v : m_variables){
-                String val = pub.m_values.get(v);
-                if( val==null ){
-                    output.write("<"+ v +"></" + v + ">\n");
-                }else{
-                    byte[] valbytes = val.getBytes(Charset.forName("UTF-8"));
-                    String val64 = DatatypeConverter.printBase64Binary(valbytes);
-                    output.write("<" + v + " b64=\"true\">" + val64 + "</" + v + ">\n");
-                }
+            output.write(Config.getXMLfirstline() + "<rp>");
+            output.write("<i b64=\"true\">"+pub.p_iconname+"</i>");
+            output.write("<dp>"+pub.p_displayname+"</dp>");
+            for(String v : pub.p_infotype){
+                String val = v;
+                output.write("<cp>"+val+"</cp>");
             }
-            output.write("</root>");
+            output.write("</rp>");
             output.close();
         }catch(Exception exc){
             Log.log("UserInfo", Type.FATAL, exc);
@@ -139,9 +200,18 @@ public class PublisherCache {
         }
     }
     
-    
-    class Publisher{
-        public String m_user;
-        public HashMap<String, String> m_values = new HashMap<String, String>();
+    synchronized public boolean registerNewPublisher(Publisher pub){
+    	if(havePublisher(pub.m_user))
+    		return false;
+    	else{
+    		savePublisher(pub);
+    		return true;
+    	}
     }
+}
+class Publisher{
+    public String m_user;
+    public String p_iconname;
+    public String p_displayname;
+    public LinkedList<String> p_infotype=new LinkedList<String>();
 }

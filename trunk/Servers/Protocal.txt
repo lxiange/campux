@@ -41,28 +41,28 @@
 		OK响应：<ok>
 		<a n="PUBLISHER ID">
 			<i b64="true">base64编码的icon</i>
-			<d>PUBLISHER显示名称</d>
-			<c>PUBLISHER信息类别1</c>
-			<c>PUBLISHER信息类别2</c> ...
+			<dp>PUBLISHER显示名称</dp>
+			<cp>PUBLISHER信息类别1</cp>
+			<cp>PUBLISHER信息类别2</cp> ...
 		</a>
 		<a>…</a>
 		</ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	注册PUBLISHER（仅admin和system组用户可以注册）
-		请求：<rp s="用户SessionID" n="PUBLISHER名称">
+		请求：<rp s="用户SessionID">
 				<i b64="true">base64编码的icon</i>
-				<d>PUBLISHER显示名称</d>
-				<c>PUBLISHER信息类别1</c>
-				<c>PUBLISHER信息类别2</c> ...
+				<dp>PUBLISHER显示名称</dp>
+				<cp>PUBLISHER信息类别1</cp>
+				<cp>PUBLISHER信息类别2</cp> ...
 			</rp>
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
-*	账户初始化
-		请求：<ui s="用户会话编号"></cn>
+*	账户初始化                            
+		请求：<ui s="用户会话编号"></ui>   
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	检查更新
-		请求：<ci="用户会话编号"></ci>  (无会话编号视为guest用户)
+		请求：<ci s="用户会话编号"></ci>  (无会话编号视为guest用户)
 		OK响应：<ok>最新信息ID</ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	获取信息
@@ -77,60 +77,72 @@
 		OK响应：<ok>
 			  <t b64="true">题目</t>
 			  <d>信息日期</d>
-			  <u>链接</u>
+			  <l>链接</l>
 			  <co b64="true">内容</co>
 			  <e>(包含事件)
-			  	<t b64="true">事件名称</t>
-			  	<d>事件日期和时间</d>
-			  	<a b64="true">事件地点</a>
+			  	<et b64="true">事件名称</et>
+			  	<ed>事件日期和时间</ed>
+			  	<ea b64="true">事件地点</ea>
 			  </e>
 			  <e>...</e> （可包含多个事件）
 		  </ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	发布信息 
-		请求：<si s="PUBLISHER会话编号">（每次写入一条）
+		请求：<si s="用户会话编号">（每次写入一条）
 		  <t b64="true">题目</t>
 		  <d>信息日期</d>
-		  <u>链接</u>
+		  <l>链接</l>
 		  <co b64="true">内容</co>
-		  <c>publisher信息类别</c><c>publisher信息类别</c>
+		  <p>publisher名称</p>
+		  <c>publisher信息类别</c>
+		  <es>包含事件的数量</es>(无事件则为空或0)
 		  <e>(包含事件)
-		    <t b64="true">事件名称</t>
-		    <d>事件日期</d>
-		    <a b64="true">事件地点</a>
+		    <et b64="true">事件名称</et>
+		    <ed>事件日期</ed>
+		    <ea b64="true">事件地点</ea>
 		  </e>
+		  <u>发布对象用户</u>		  
+		  ...
+		  <u>发布对象用户</u>
+		  <g>发布对象组</g>
+		  ...
+		  <g>发布对象组</g>
 		</si>
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	删除信息
-		请求：<di s="用户会话编号>信息ID</di>
+		请求：<di s="用户会话编号">信息ID</di>
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
 
 三、闹钟服务 2507  ( 到时发送消息给用户的MessageBox )
-*	设置提醒
-		请求：<sa s="APP会话编号">
-		  <s u="用户" t="提醒日期和时间">提醒消息</s> (单次提醒)
-		  <p u="用户" t="提醒时间" s="起始日期和时间" i="时间间隔">提醒消息</s>（或者多次提醒）
-		<sa>
+*	设置提醒(单次提醒)
+		请求：<sas s="APP会话编号">
+		  <s u="用户" t="提醒日期和时间">提醒消息</s> 
+		<sas>
+		OK响应：<ok><d>提醒ID</d></ok>
+		失败响应：<err c="错误代码">错误原因</err>
+*	设置提醒(多次提醒)
+		请求：<sap s="APP会话编号">
+		  <p u="用户" t="提醒时间" s="起始日期和时间" i="时间间隔">提醒消息</p>
+		<sap>
 		OK响应：<ok><d>提醒ID</d></ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	枚举提醒
-		请求：<al s="APP会话编号">
+		请求：<al s="APP会话编号"></al>
 		OK响应：<ok>
 			<s d="提醒ID" u="用户" t="提醒时间">提醒消息</s>
-			<p d="提醒ID" u="用户" t="提醒时间" s="起始日期和时间" i="时间间隔">提醒消息</s>
+			<p d="提醒ID" u="用户" t="提醒时间" s="起始日期和时间" i="时间间隔">提醒消息</p>
 		</ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	取消请求
-		请求：<sa s="APP会话编号">提醒ID</c>
-		<sa>
+		请求：<sa s="APP会话编号">提醒ID<sa>
 		OK响应：<ok><d>提醒ID</d></ok>
 		失败响应：<err c="错误代码">错误原因</err>
 		
 四、朋友信息服务 2508
 *	读取好友列表
-		请求：<lf s="用户SessionID"></lp>
+		请求：<lf s="用户SessionID"></lf>
 		OK响应：<ok>
 			<u>用户名</u><u>...</u>
 		</ok>
@@ -180,7 +192,7 @@
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
 *	读取信息历史
-		请求：<rr s="用户SessionID">l="地理位置"</rr> 
+		请求：<rr s="用户SessionID" l="地理位置"</rr> 
 		OK响应：<ok>0~100</ok> （值表示教室空闲程度）
 		失败响应：<err c="错误代码">错误原因</err>
 *	读取课表
@@ -222,21 +234,3 @@
 九、Q&A服务 2513 （暂时不做）
 		
 十、wifi定位服务 2503
-*	取得地址
-		请求：<g s="用户SessionID">
-			<i>IP地址</i>
-			<w s="型号强度" c="连接的wifi为true">wifi的BSSID</w>
-			<w s="型号强度">wifi的BSSID</w>
-			<w s="型号强度">wifi的BSSID</w>
-			</g>
-		OK响应：<ok>地理位置名称</ok>
-		失败响应：<err c="错误代码">错误原因</err>
-*	添加地址
-		请求：<a s="用户SessionID" l="位置名称">
-			<i>IP地址</i>
-			<w s="型号强度" c="连接的wifi为true">wifi的BSSID</w>
-			<w s="型号强度">wifi的BSSID</w>
-			<w s="型号强度">wifi的BSSID</w>
-			</a>
-		OK响应：<ok></ok>
-		失败响应：<err c="错误代码">错误原因</err>
