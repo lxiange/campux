@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
 public class SAXHandler extends SAXHandlerBase{
     // defining commands
     enum Command{
-        LIST_PUBLISHER_TABLE(110,"lp"), 
+        LIST_PUBLISHERS(110,"lp"), 
         REGISTER_PUBLISHER_TABLE(120,"rp"), 
         INITIALIZE_PUBLISHER_ACCOUNT(130,"ui"),
         CHECK_MsgBox_UPDATE(210,"ci"),
@@ -57,6 +57,8 @@ public class SAXHandler extends SAXHandlerBase{
     // store the events
     LinkedList<Event> events;
     Event event;   
+    // store the publihser
+    Publisher pub;
     
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -124,6 +126,17 @@ public class SAXHandler extends SAXHandlerBase{
         	m_users.add(m_content);
         }else if( "g".equalsIgnoreCase(m_tagname) ){
             m_groups.add(m_content);
+        }else if("i".equalsIgnoreCase(m_tagname)){
+        	pub=new Publisher();
+        	if( m_attr.getValue("b64")!=null ){
+                byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
+                m_content = new String(bytes, Config.getCharset());
+            }
+        	pub.p_iconname=m_content;
+        }else if( "dp".equalsIgnoreCase(m_tagname) ){
+            pub.p_displayname=m_content;
+        }else if("cp".equalsIgnoreCase(m_tagname)){
+        	pub.p_infotype.add(m_content);
         }
     }
 
@@ -151,11 +164,11 @@ public class SAXHandler extends SAXHandlerBase{
         try{
             System.out.println("fire:"+cmd);
             switch(cmd){
-                case LIST_PUBLISHER_TABLE: 
-//                    func_LIST_PUBLISHER_TABLE();
+                case LIST_PUBLISHERS: 
+                    func_LIST_PUBLISHERS();
                     break;
                 case REGISTER_PUBLISHER_TABLE:
-//                    func_REGISTER_PUBLISHER_TABLE(m_attr, m_content);
+                    func_REGISTER_PUBLISHER_TABLE(m_attr, m_content);
                     break;
                 case INITIALIZE_PUBLISHER_ACCOUNT: 
                     func_INITIALIZE_PUBLISHER_ACCOUNT(m_attr, m_content);
@@ -183,12 +196,52 @@ public class SAXHandler extends SAXHandlerBase{
     /**
      * function for list PUBLISHER items
      */
-    protected void func_LIST_PUBLISHER_TABLE(){
+    protected void func_LIST_PUBLISHERS(){
     	StringBuilder strbuilder = new StringBuilder();
         strbuilder.append("<ok>");
         
+        LinkedList<Publisher> pubs=PublisherCache.getInstance().displayAllPublisher();
+        for(Publisher pub:pubs){
+        	strbuilder.append("<a n=\""+pub.m_user+"\">");
+        	strbuilder.append("<i b64=\"true\">");
+        	String b64 = DatatypeConverter.printBase64Binary(pub.p_iconname.getBytes(Config.getCharset()));
+    		strbuilder.append(b64);
+    		strbuilder.append("</i>");
+    		strbuilder.append("<dp>"+pub.p_displayname+"</dp>");
+    		for(String type:pub.p_infotype){
+    			strbuilder.append("<cp>"+type+"</cp>");
+    		}
+        	strbuilder.append("</a>");
+        }
+        strbuilder.append("</ok>");
+        response(strbuilder.toString());
+    }
+    /**
+     * function for register new publisher
+     * @param attr
+     * @param content 
+     */
+    protected void func_REGISTER_PUBLISHER_TABLE(Attributes attr,String content)throws Exception{
+    	String usd = attr.getValue("s");        
+        User userauth = new User();
+        String user = userauth.lookupUsername(usd); 
+        String[] ugs = userauth.userGroups(user);
+        boolean passcheck = false;
+        for(String ug:ugs){
+            if( "admin".equalsIgnoreCase(ug) || "system".equalsIgnoreCase(ug) || "verifiedapp".equalsIgnoreCase(ug) ){
+                passcheck = true;
+                break;
+            }
+        }        
+        if( !passcheck )
+            throw new Exception("Unauthorized action");
+        Log.log("UserInfoServer", Type.INFO, "read for: " + usd + ":"+ user);
         
-    
+        if(PublisherCache.getInstance().registerNewPublisher(pub))
+            response("<ok></ok>");
+        else
+        	responseError(302,"publusher has existed");
+    	
     }
     /**
      * function for initialize new user count
@@ -196,8 +249,6 @@ public class SAXHandler extends SAXHandlerBase{
      * @param content 
      */
     protected void func_INITIALIZE_PUBLISHER_ACCOUNT(Attributes attr,String content){
-    	StringBuilder strbuilder = new StringBuilder();
-    	
     	String usd = attr.getValue("s");        
         User userauth = new User();
         String user = userauth.lookupUsername(usd);                         
