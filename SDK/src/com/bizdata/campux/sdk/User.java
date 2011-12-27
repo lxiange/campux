@@ -16,8 +16,10 @@
  */
 package com.bizdata.campux.sdk;
 
+import com.bizdata.campux.sdk.Config;
 import com.bizdata.campux.sdk.network.ServerCommunicator;
 import com.bizdata.campux.sdk.saxhandler.UserAuthSAX;
+import com.bizdata.campux.sdk.saxhandler.UserInfoSAX;
 import com.bizdata.campux.sdk.saxhandler.UserStatusSAX;
 import com.bizdata.campux.sdk.saxhandler.UserStoreSAX;
 import java.io.InputStreamReader;
@@ -45,6 +47,18 @@ public class User{
     protected int m_ServicePort_UserStatus;
     // TCP port of UserStore service
     protected int m_ServicePort_UserStore;
+    // TCP port of UserInfo service
+    protected int m_ServicePort_UserInfo;
+    // TCP port of Friend service
+    protected int m_ServicePort_Friend;
+    // TCP port of Bubble service
+    protected int m_ServicePort_Bubble;
+    // TCP port of Media service
+    protected int m_ServicePort_Media;
+    // TCP port of AlarmClock service
+    protected int m_ServicePort_AlarmClock;
+    // TCP port of ClassSchedule service
+    protected int m_ServicePort_ClassSchedule;
     // object for communication with the server
     protected ServerCommunicator m_comm = null;
     // is the user an APP user
@@ -62,6 +76,13 @@ public class User{
         m_ServicePort_UserAuth = Integer.parseInt(Config.getValue("ServicePort_UserAuth"));
         m_ServicePort_UserStatus = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
         m_ServicePort_UserStore= Integer.parseInt(Config.getValue("ServicePort_CloudStorage"));
+        m_ServicePort_UserInfo=Integer.parseInt(Config.getValue("ServicePort_UserInfo"));
+        
+        m_ServicePort_Friend=Integer.parseInt(Config.getValue("ServicePort_Friend"));
+        m_ServicePort_Bubble=Integer.parseInt(Config.getValue("ServicePort_Bubble"));
+        m_ServicePort_Media=Integer.parseInt(Config.getValue("ServicePort_Media"));
+        m_ServicePort_AlarmClock=Integer.parseInt(Config.getValue("ServicePort_AlarmClock"));
+        m_ServicePort_ClassSchedule=Integer.parseInt(Config.getValue("ServicePort_ClassSchedule"));
     }
     
     /**
@@ -75,7 +96,6 @@ public class User{
         m_isapp = true;
         return login(name, psw);
     }
-    
     /**
      * login a user on the UserAuth Server
      * @param name username
@@ -647,7 +667,6 @@ public class User{
        String[] files = auth.getList();
        return files;
    }
-
    /**
     * Add a directory for a app user from the UserStore Server
     * @param path
@@ -668,8 +687,7 @@ public class User{
        
        return true;
    }
-   
-   /**
+    /**
     * Delete the directory for a app user from the UserStore Server
     * @param path
     * @return
@@ -690,8 +708,7 @@ public class User{
        return true;
 	   
    }
-
-   /**
+    /**
     * Detect whether the file or directory exist for a app user from the UserStore Server
     * @param file
     * @return
@@ -711,7 +728,6 @@ public class User{
        
        return true;
    }
-
    /**
     * Get the property of a file for a app user from the UserStore Server
     * @param file
@@ -731,8 +747,7 @@ public class User{
        String[] properties = auth.getList();
        return properties;
    }
-   
-   /**
+    /**
     * Get the content of a file for a app user from the UserStore Server
     * @param file
     * @param begin
@@ -753,7 +768,7 @@ public class User{
        String content = auth.getResponseString();
        return content;
    }
-   
+ 
    public boolean fileWriteNew(String file, String content) throws Exception{
 	return fileWrite(file, 0, content);
    }
@@ -813,4 +828,173 @@ public class User{
    }
 
    
+   /**
+    * List items in PUBLISHER from the UserInfo Server
+    * @return
+    * @throws Exception 
+    */
+   public String[] publisherList()throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.preparePublisherList();
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String[] files = info.getList();
+       return files;
+   }
+   /**
+    * Register a item in PUBLISHER table from the UserInfo Server
+    * @param p_name
+    * @param icon
+    * @param p_displayName
+    * @param p_infoKind
+    * @return
+    * @throws Exception 
+    */
+   public boolean publisherRegistration(String p_name,
+    		String icon, String p_displayName, String[] p_infoKind)throws Exception{
+  	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.preparePublisherRegistration(getSessionID(), p_name, icon, p_displayName, p_infoKind);
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if(info.getIsError() ) return false;
+       
+       return true;
+   }
+   /**
+    * Initialize the PUBLISHER account from the UserInfo Server
+    * @return
+    * @throws Exception
+    */
+   public boolean publiserInitialization()throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.prepareAccountInitialization(getSessionID());
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if(info.getIsError() ) return false;
+       
+       return true;
+   }
+   /**
+    * Check the update of PUBLISHER table from the UserInfo Server
+    * @param file
+    * @param begin
+    * @param end
+    * @return
+    * @throws Exception 
+    */
+   public String updateCheck()throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.prepareUpdateCheck(getSessionID());
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String content = info.getResponseString();
+       return content;
+   }
+   /**
+    * List items in PUBLISHER from the UserInfo Server
+    * @param  initialInfoID
+    * @return
+    * @throws Exception 
+    */
+   public String[] publisherInfoAchieve(String initialInfoID)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.prepareInfoAchieve(getSessionID(), initialInfoID);
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String[] files = info.getList();
+       return files;
+   }
+   /**
+    * List detailed items in PUBLISHER from the UserInfo Server
+    * @param  initialInfoID
+    * @return
+    * @throws Exception 
+    */
+   public String[] publisherDetailedInfoAchieve(String infoID)throws Exception{
+	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.prepareInfoAchieve(getSessionID(), infoID);
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();
+       String[] files = info.getList();
+       return files;
+   }
+   /**
+    * Publish a item in PUBLISHER table from the UserInfo Server
+    * @param i_title
+    * @param i_link
+    * @param i_conten
+    * @param i_kind
+    * @param a_name
+    * @param a_date
+    * @param a_address
+    * @return
+    * @throws Exception 
+    */
+   public boolean publisherRegistration(String i_title,String i_date,String i_link,
+    		String i_content,String i_kind,String a_name,String a_date,String a_address)throws Exception{
+  	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.prepareInfoPublish(getSessionID(), i_title, i_date, i_link, i_content, i_kind, a_name, a_date, a_address);
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if(info.getIsError() ) return false;
+       
+       return true;
+   }
+   /**
+    * Delete a item in PUBLISHER table from the UserInfo Server
+    * @param infoID
+    * @return
+    * @throws Exception 
+    */
+   public boolean publisherRegistration(String infoID)throws Exception{
+  	   if( m_comm!=null) m_comm.close();
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
+       
+       UserInfoSAX info = new UserInfoSAX();
+       String str = info.prepareInfoDelete(getSessionID(), infoID);
+       m_comm.sentString(str);
+       
+       info.parseInput(m_comm.getInputStream());
+       m_comm.close();        
+       if(info.getIsError() ) return false;
+       
+       return true;
+   }
+
+
 }
