@@ -40,7 +40,7 @@
 		请求：<lp></lp>
 		OK响应：<ok>
 		<a n="PUBLISHER ID">
-			<i b64="true">base64编码的icon</i>
+			<ip b64="true">base64编码的icon</ip>
 			<dp>PUBLISHER显示名称</dp>
 			<cp>PUBLISHER信息类别1</cp>
 			<cp>PUBLISHER信息类别2</cp> ...
@@ -50,7 +50,7 @@
 		失败响应：<err c="错误代码">错误原因</err>
 *	注册PUBLISHER（仅admin和system组用户可以注册）
 		请求：<rp s="用户SessionID">
-				<i b64="true">base64编码的icon</i>
+				<ip b64="true">base64编码的icon</ip>
 				<dp>PUBLISHER显示名称</dp>
 				<cp>PUBLISHER信息类别1</cp>
 				<cp>PUBLISHER信息类别2</cp> ...
@@ -68,7 +68,7 @@
 *	获取信息
 		请求：<gs s="用户会话编号">起始信息ID</gs>  (无会话编号视为guest)
 		OK响应：<ok>
-			<i p="publisher名称" b64="true" c="类别1;类别2" d="信息ID">预览信息base64编码</i> （预览信息最多三行）
+			<i xp="publisher名称" b64="true" xc="类别1;类别2" xd="信息ID">预览信息base64编码</i> （预览信息最多三行）
 			<i>…</i>
 		</ok>
 		失败响应：<err c="错误代码">错误原因</err>
@@ -101,6 +101,8 @@
 		    <ed>事件日期</ed>
 		    <ea b64="true">事件地点</ea>
 		  </e>
+		  ...
+		  <e></e>
 		  <u>发布对象用户</u>		  
 		  ...
 		  <u>发布对象用户</u>
