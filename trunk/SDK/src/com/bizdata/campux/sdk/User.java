@@ -829,11 +829,11 @@ public class User{
 
    
    /**
-    * List items in PUBLISHER from the UserInfo Server
+    * List publishers from the UserInfo Server
     * @return
     * @throws Exception 
     */
-   public String[] publisherList()throws Exception{
+   public Publisher[] publisherList()throws Exception{
 	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
@@ -843,11 +843,11 @@ public class User{
        
        info.parseInput(m_comm.getInputStream());
        m_comm.close();
-       String[] files = info.getList();
-       return files;
+       Publisher[] pubs=info.getPublishers();
+       return pubs;
    }
    /**
-    * Register a item in PUBLISHER table from the UserInfo Server
+    * Register a publisher from the UserInfo Server
     * @param p_name
     * @param icon
     * @param p_displayName
@@ -871,11 +871,11 @@ public class User{
        return true;
    }
    /**
-    * Initialize the PUBLISHER account from the UserInfo Server
+    * Initialize an user account from the UserInfo Server
     * @return
     * @throws Exception
     */
-   public boolean publiserInitialization()throws Exception{
+   public boolean msgBoxInitialization()throws Exception{
 	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
@@ -890,7 +890,7 @@ public class User{
        return true;
    }
    /**
-    * Check the update of PUBLISHER table from the UserInfo Server
+    * Check the update of message box from the UserInfo Server
     * @param file
     * @param begin
     * @param end
@@ -899,7 +899,7 @@ public class User{
     */
    public String updateCheck()throws Exception{
 	   if( m_comm!=null) m_comm.close();
-       m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+       m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
        UserInfoSAX info = new UserInfoSAX();
        String str = info.prepareUpdateCheck(getSessionID());
@@ -911,12 +911,12 @@ public class User{
        return content;
    }
    /**
-    * List items in PUBLISHER from the UserInfo Server
+    * List message indices in message box from the UserInfo Server
     * @param  initialInfoID
     * @return
     * @throws Exception 
     */
-   public String[] publisherInfoAchieve(String initialInfoID)throws Exception{
+   public InfoMsgIndex[] msgIndicesAchieve(String initialInfoID)throws Exception{
 	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
@@ -926,16 +926,16 @@ public class User{
        
        info.parseInput(m_comm.getInputStream());
        m_comm.close();
-       String[] files = info.getList();
-       return files;
+       InfoMsgIndex[] indices_a = info.getMessageIndices();
+       return indices_a;
    }
    /**
-    * List detailed items in PUBLISHER from the UserInfo Server
+    * List messages from the UserInfo Server
     * @param  initialInfoID
     * @return
     * @throws Exception 
     */
-   public String[] publisherDetailedInfoAchieve(String infoID)throws Exception{
+   public InfoMessage[] messagesAchieve(String infoID)throws Exception{
 	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
@@ -945,28 +945,32 @@ public class User{
        
        info.parseInput(m_comm.getInputStream());
        m_comm.close();
-       String[] files = info.getList();
-       return files;
+       InfoMessage[] messages= info.getInfoMessages();
+       return messages;
    }
    /**
-    * Publish a item in PUBLISHER table from the UserInfo Server
+    * Publish a message of publisher from the UserInfo Server
     * @param i_title
     * @param i_link
     * @param i_conten
+    * @param i_publisher
     * @param i_kind
     * @param a_name
     * @param a_date
     * @param a_address
+    * @param ee
+    * @param uu
+    * @param gg
     * @return
     * @throws Exception 
     */
-   public boolean publisherRegistration(String i_title,String i_date,String i_link,
-    		String i_content,String i_kind,String a_name,String a_date,String a_address)throws Exception{
+   public boolean publisherMessagePut(String sessionID,String i_title,String i_date,
+   		String i_link,String i_content,String i_publisher,String i_kind,InfoEvent[] ee,String[] uu,String[] gg)throws Exception{
   	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
        UserInfoSAX info = new UserInfoSAX();
-       String str = info.prepareInfoPublish(getSessionID(), i_title, i_date, i_link, i_content, i_kind, a_name, a_date, a_address);
+       String str = info.prepareInfoPublish(getSessionID(), i_title, i_date, i_link, i_content, i_publisher,i_kind, ee,uu,gg);
        m_comm.sentString(str);
        
        info.parseInput(m_comm.getInputStream());
@@ -976,12 +980,12 @@ public class User{
        return true;
    }
    /**
-    * Delete a item in PUBLISHER table from the UserInfo Server
+    * Delete a message index from the UserInfo Server
     * @param infoID
     * @return
     * @throws Exception 
     */
-   public boolean publisherRegistration(String infoID)throws Exception{
+   public boolean publisherMsgIndexDelete(String infoID)throws Exception{
   	   if( m_comm!=null) m_comm.close();
        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
        
