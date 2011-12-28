@@ -126,7 +126,7 @@ public class SAXHandler extends SAXHandlerBase{
         	m_users.add(m_content);
         }else if( "g".equalsIgnoreCase(m_tagname) ){
             m_groups.add(m_content);
-        }else if("i".equalsIgnoreCase(m_tagname)){
+        }else if("ip".equalsIgnoreCase(m_tagname)){
         	pub=new Publisher();
         	if( m_attr.getValue("b64")!=null ){
                 byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
@@ -203,10 +203,10 @@ public class SAXHandler extends SAXHandlerBase{
         LinkedList<Publisher> pubs=PublisherCache.getInstance().displayAllPublisher();
         for(Publisher pub:pubs){
         	strbuilder.append("<a n=\""+pub.m_user+"\">");
-        	strbuilder.append("<i b64=\"true\">");
+        	strbuilder.append("<ip b64=\"true\">");
         	String b64 = DatatypeConverter.printBase64Binary(pub.p_iconname.getBytes(Config.getCharset()));
     		strbuilder.append(b64);
-    		strbuilder.append("</i>");
+    		strbuilder.append("</ip>");
     		strbuilder.append("<dp>"+pub.p_displayname+"</dp>");
     		for(String type:pub.p_infotype){
     			strbuilder.append("<cp>"+type+"</cp>");
@@ -299,11 +299,11 @@ public class SAXHandler extends SAXHandlerBase{
         	return;
         }else{
         	for(MsgIndex index:indices){
-        		strbuilder.append("<i p=\"");
+        		strbuilder.append("<i xp=\"");
         		strbuilder.append(index.i_publisher);
-        		strbuilder.append("\" b64=\"true\" c=\"");
+        		strbuilder.append("\" b64=\"true\" xc=\"");
         		strbuilder.append(index.i_pubcategory);
-        		strbuilder.append("\" d=\"");
+        		strbuilder.append("\" xd=\"");
         		strbuilder.append(index.i_id);
         		strbuilder.append("\">");
         		String b64 = DatatypeConverter.printBase64Binary(index.i_preview.getBytes(Config.getCharset()));

@@ -157,7 +157,7 @@ public class PublisherCache {
                         byte[] bytes = DatatypeConverter.parseBase64Binary(val);
                         val = new String(bytes, Charset.forName("UTF-8"));
                     }
-                    if("i".equalsIgnoreCase(var)){
+                    if("ip".equalsIgnoreCase(var)){
                     	pub.p_iconname=val;
                     }else if("dp".equalsIgnoreCase(var)){
                     	pub.p_displayname=val;
@@ -186,7 +186,7 @@ public class PublisherCache {
             BufferedWriter output = new BufferedWriter( 
                     new OutputStreamWriter(new FileOutputStream(m_path + pub.m_user + ".publisher")));
             output.write(Config.getXMLfirstline() + "<rp>");
-            output.write("<i b64=\"true\">"+pub.p_iconname+"</i>");
+            output.write("<ip b64=\"true\">"+pub.p_iconname+"</ip>");
             output.write("<dp>"+pub.p_displayname+"</dp>");
             for(String v : pub.p_infotype){
                 String val = v;
