@@ -23,11 +23,18 @@ import com.bizdata.campux.sdk.exception.NetworkErrorException;
 import com.bizdata.campux.sdk.exception.ServerOutofreachException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import javax.net.ssl.SSLSocketFactory;
+import java.security.KeyStore;
+//import javax.net.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.BasicHttpParams;
+
 
 /**
  * 
@@ -37,6 +44,9 @@ public class ServerCommunicator {
     protected Socket m_socket;
     protected InputStream m_inputstream;
     protected OutputStream m_outputstream;
+    static public enum StoreType{
+        JKS, BKS, PKCS, JCEKS
+    }
     /**
      * In the instantiation, the communicator create a TCP connection to the server.
      * @param port
@@ -44,10 +54,20 @@ public class ServerCommunicator {
      */
     public ServerCommunicator(int port) throws Exception{
         try{
-            System.setProperty("javax.net.ssl.trustStore",Config.getValue("SSLClientCertificate"));
-            System.setProperty("javax.net.ssl.trustStorePassword",Config.getValue("SSLClientCertificateKey"));
-            SSLSocketFactory sslsf = (SSLSocketFactory)SSLSocketFactory.getDefault();
-            m_socket = sslsf.createSocket(Config.getValue("ServerAddress"),port);
+            String storetype = Config.getValue("KeyStoreType");
+            KeyStore trusted = KeyStore.getInstance(storetype);
+            String password = Config.getValue("SSLClientCertificateKey");
+            trusted.load(new FileInputStream(Config.getValue("SSLClientCertificate")), password.toCharArray());
+            
+            InetSocketAddress serveraddress = new InetSocketAddress(Config.getValue("ServerAddress"), port);
+            //System.setProperty("javax.net.ssl.trustStore",Config.getValue("SSLClientCertificate"));
+            //System.setProperty("javax.net.ssl.trustStorePassword",Config.getValue("SSLClientCertificateKey"));
+            
+            //SSLSocketFactory sslsf = (SSLSocketFactory)SSLSocketFactory.getDefault();
+            SSLSocketFactory sslsf = new SSLSocketFactory(trusted);
+            sslsf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            m_socket = sslsf.createSocket();
+            m_socket = sslsf.connectSocket(m_socket, serveraddress, null, new BasicHttpParams());
             
             m_inputstream = new BufferedInputStream(m_socket.getInputStream());
             m_outputstream = new BufferedOutputStream(m_socket.getOutputStream());
