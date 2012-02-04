@@ -55,19 +55,27 @@ public class ServerCommunicator {
     public ServerCommunicator(int port) throws Exception{
         try{
             String storetype = Config.getValue("KeyStoreType");
-            KeyStore trusted = KeyStore.getInstance(storetype);
+            String host = Config.getValue("ServerAddress");
             String password = Config.getValue("SSLClientCertificateKey");
-            trusted.load(new FileInputStream(Config.getValue("SSLClientCertificate")), password.toCharArray());
             
-            InetSocketAddress serveraddress = new InetSocketAddress(Config.getValue("ServerAddress"), port);
-            //System.setProperty("javax.net.ssl.trustStore",Config.getValue("SSLClientCertificate"));
-            //System.setProperty("javax.net.ssl.trustStorePassword",Config.getValue("SSLClientCertificateKey"));
+            // when the KeyStoreType is not specified or is "jsk", use Oracle default setting, otherwise, use android compatible setting
+            if( storetype==null || "jsk".equalsIgnoreCase(storetype)){
+                InetSocketAddress serveraddress = new InetSocketAddress(host, port);
+                System.setProperty("javax.net.ssl.trustStore",Config.getValue("SSLClientCertificate"));
+                System.setProperty("javax.net.ssl.trustStorePassword",Config.getValue("SSLClientCertificateKey"));
             
-            //SSLSocketFactory sslsf = (SSLSocketFactory)SSLSocketFactory.getDefault();
-            SSLSocketFactory sslsf = new SSLSocketFactory(trusted);
-            sslsf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            m_socket = sslsf.createSocket();
-            m_socket = sslsf.connectSocket(m_socket, serveraddress, null, new BasicHttpParams());
+                javax.net.ssl.SSLSocketFactory sslsf = (javax.net.ssl.SSLSocketFactory)javax.net.ssl.SSLSocketFactory.getDefault();
+                m_socket = sslsf.createSocket(host, port);
+            }else{
+                KeyStore trusted = KeyStore.getInstance(storetype);
+                trusted.load(new FileInputStream(Config.getValue("SSLClientCertificate")), password.toCharArray());
+                
+                SSLSocketFactory sslsf = new SSLSocketFactory(trusted);
+                // the deprecated methods are used to be compatible with android 2.2
+                sslsf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                m_socket = sslsf.createSocket();
+                m_socket = sslsf.connectSocket(m_socket, host, port, null, -1, new BasicHttpParams());
+            }
             
             m_inputstream = new BufferedInputStream(m_socket.getInputStream());
             m_outputstream = new BufferedOutputStream(m_socket.getOutputStream());
