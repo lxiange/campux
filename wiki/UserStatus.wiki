@@ -89,7 +89,7 @@ if( Config.needInit() ){
 //获取类实例。
 User user = new User();
 //在用户登录后，才能进行后续的访问
-boolean success = instance.login("用户名","密码");
+boolean success = user.login("用户名","密码");
 }}}
 
 * 获得用户变量列表
@@ -102,7 +102,7 @@ String[] vars = user.getUserVariables();
 {{{
 //读取变量名称var的值. 变量名称var为任意非空字符串
 String var = "UserName"; //读取用户姓名
-String val = getUserVariable(String var)
+String val = user.getUserVariable(String var)
 }}}
 
 * 写入变量
@@ -117,14 +117,14 @@ boolean success = user.setUserVariable(var, val);
 {{{
 //获得指定消息id之后的消息。消息编号从0开始。
 int lastmsgid = -1; //获得所有消息
-Message[] messages = messageGet(lastmsgid);
+Message[] messages = user.messageGet(lastmsgid);
 }}}
 
 * 删除MessageBox消息
 {{{
 //删除指定id的消息
 int id = 0;
-boolean success = messageDelete(int id);
+boolean success = user.messageDelete(int id);
 }}}
 
 * 发布Message（客户端不使用该功能）
@@ -133,5 +133,5 @@ boolean success = messageDelete(int id);
 String[] user = new String[]{"user1", "user2", ...};
 String[] user = new String[]{"user", "admin"};
 String message = "测试消息";
-boolean success = messagePut(String[] users, String[] groups, String message)
+boolean success = user.messagePut(String[] users, String[] groups, String message)
 }}}
