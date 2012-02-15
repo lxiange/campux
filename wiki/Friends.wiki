@@ -37,6 +37,8 @@ Friends按照Servers统一规范开发，XML消息开头可包含XML注释。
 
 需要使用{{{com.bizdata.campux.sdk.User}}}和{{{com.bizdata.campux.sdk.Friends}}}类。<br/>
 
+* 用户对UserStatus、UserLocation变量的更改将自动发布好友更新信息。
+
 * 类初始化
 {{{
 //包名称
