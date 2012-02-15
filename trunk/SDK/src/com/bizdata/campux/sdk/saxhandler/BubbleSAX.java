@@ -16,6 +16,9 @@
  */
 package com.bizdata.campux.sdk.saxhandler;
 
+import com.bizdata.campux.sdk.BubbleMessage;
+import com.bizdata.campux.sdk.Config;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.io.InputStream;
 import java.util.LinkedList;
 
@@ -26,15 +29,15 @@ import org.xml.sax.Attributes;
  * @author yuy
  */
 public class BubbleSAX extends SAXHandlerBase{
-	protected LinkedList<String> m_vars = new LinkedList<String>();
+    protected LinkedList<BubbleMessage> m_vars = new LinkedList<BubbleMessage>();
     protected String m_responseStr = null;
     
     public String getResponseString(){
         return m_responseStr;
     }
     
-    public String[] getList(){
-        String[] vs = new String[m_vars.size()];
+    public BubbleMessage[] getList(){
+        BubbleMessage[] vs = new BubbleMessage[m_vars.size()];
         for(int i=0; i<vs.length; i++){
             vs[i] = m_vars.get(i);
         }
@@ -43,35 +46,40 @@ public class BubbleSAX extends SAXHandlerBase{
     
 	
 	@Override
-    protected void contentReceived(String content, String tagname, Attributes m_tagattr) {
+    protected void contentReceived(String content, String tagname) {
 		System.out.println("contentrecevied:"+tagname);
         if("ok".equalsIgnoreCase(tagname)){
             m_responseStr = content;
         }else if( "m".equalsIgnoreCase(tagname) ){
-            m_vars.add(content);
+            BubbleMessage msg = new BubbleMessage();
+            msg.message = content;
+            msg.publisher = m_moreatt.get("u");
+            msg.time = Long.parseLong(m_moreatt.get("d"));
+            m_vars.add(msg);
         }
     }    
 	
-	public String prepareBubbleRelease(String sessionID,String b_location,String b_content)
+	public String prepareBubblePublish(String sessionID,String content)
 	{
-		StringBuilder str = new StringBuilder();
-    	str.append("<p ");
-        str.append("s=\""+sessionID+"\" ");
-        str.append("b64=\"true\" l=\""+b_location+"\">");
-        str.append(b_content);
-        str.append("</p>\r\n");
-        return str.toString();
+            String val = DatatypeConverter.printBase64Binary(content.getBytes(Config.getCharset()));
+            
+            StringBuilder str = new StringBuilder();
+            str.append("<p ");
+            str.append("s=\""+sessionID+"\" ");
+            str.append("b64=\"true\">");
+            str.append(val);
+            str.append("</p>");
+            return str.toString();
 	}
 	
-	public String prepareBubbleHistoryRead(String sessionID,String b_initialTime,String b_location)
+	public String prepareBubbleRead(String sessionID, long time)
 	{
-		StringBuilder str = new StringBuilder();
-    	str.append("<r ");
-        str.append("s=\""+sessionID+"\" ");
-        str.append("d=\""+b_initialTime+"\">");
-        str.append(b_location);
-        str.append("</r>\r\n");
-        return str.toString();
+            StringBuilder str = new StringBuilder();
+            str.append("<r ");
+            str.append("s=\""+sessionID+"\" ");
+            str.append("d=\""+time+"\">");
+            str.append("</r>");
+            return str.toString();
 	}
 	
 	

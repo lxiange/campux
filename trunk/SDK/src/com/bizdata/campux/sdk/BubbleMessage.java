@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nanjing Bizdata-infotech co., ltd.
+ * Copyright (C) 2012 Nanjing Bizdata-infotech co., ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,18 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.bizdata.campux.sdk.saxhandler;
-
-import java.io.InputStream;
-import org.xml.sax.Attributes;
+package com.bizdata.campux.sdk;
 
 /**
  *
  * @author yuy
+ * @date 2012-02-15 01:35:31
  */
-public class QASAX extends SAXHandlerBase{
-    @Override
-    protected void contentReceived(String content, String tagname) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+public class BubbleMessage {
+    public String message;
+    public String publisher;
+    public long time;
 }

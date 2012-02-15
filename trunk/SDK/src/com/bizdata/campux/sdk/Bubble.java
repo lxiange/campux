@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.LinkedList;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.io.*;
 
 /**
@@ -33,20 +33,19 @@ import java.io.*;
  */
 public class Bubble {
 	// store login sessionid of user who use service
-    protected String m_userSessionID = null;
-    // store username and password
-    protected String m_username, m_userpsw;
+    protected User m_user;
     // store the last access time
-    protected long m_lasttime;
+    protected long m_lasttime = 0;
     // TCP port of Bubble service
     protected int m_ServicePort_Bubble;
     // object for communication with the server
     protected ServerCommunicator m_comm = null;
     
+    
     // initialization, load TCP ports (from a instance of User class)
-    public Bubble(int port,String sessionID){
-    	m_ServicePort_Bubble=port;
-    	m_userSessionID=sessionID;
+    public Bubble(User user){
+    	m_ServicePort_Bubble=Integer.parseInt(Config.getValue("ServicePort_Bubble"));
+        m_user = user;
     }
     /**
      * Release a bubble from the Bubble Server
@@ -55,12 +54,13 @@ public class Bubble {
      * @return
      * @throws Exception 
      */
-    public boolean bubbleRelease(String b_location,String b_content)throws Exception{
-   	    if( m_comm!=null) m_comm.close();
-   	    m_comm = new ServerCommunicator(m_ServicePort_Bubble);
-     
-   	    BubbleSAX bubble = new BubbleSAX();
-        String str = bubble.prepareBubbleRelease(m_userSessionID, b_location,b_content);
+    public boolean publish(String content)throws Exception{
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_Bubble);
+
+        BubbleSAX bubble = new BubbleSAX();
+        String str = bubble.prepareBubblePublish(m_user.getSessionID(), content);
+        
         m_comm.sentString(str);
         
         bubble.parseInput(m_comm.getInputStream());
@@ -76,20 +76,33 @@ public class Bubble {
      * @return
      * @throws Exception 
      */
-    public String[] bubbleHistoryRead(String b_initialTime,String b_location) throws Exception{
+    public BubbleMessage[] bubbleRead(long starttime) throws Exception{
         // force shutdown of the old connection
         if( m_comm!=null) m_comm.close();
         m_comm = new ServerCommunicator(m_ServicePort_Bubble);
         
         BubbleSAX bubble = new BubbleSAX();
-        String str = bubble.prepareBubbleHistoryRead(m_userSessionID,b_initialTime,b_location);
+        String str = bubble.prepareBubbleRead(m_user.getSessionID(), starttime);
         m_comm.sentString(str);
         
         bubble.parseInput(m_comm.getInputStream());
         m_comm.close();
-        String[] groups = bubble.getList();
+        BubbleMessage[] groups = bubble.getList();
+        for(BubbleMessage msg : groups){
+            if( m_lasttime < msg.time )
+                m_lasttime = msg.time;
+        }
         return groups;
-    }    
-    
+    }
+    /**
+     * List the update of bubbles
+     * @param b_initialTime
+     * @param b_location
+     * @return
+     * @throws Exception 
+     */
+    public BubbleMessage[] bubbleUpdate() throws Exception{
+        return bubbleRead(m_lasttime);
+    }
     
 }

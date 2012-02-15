@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.LinkedList;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.io.*;
 
 /**

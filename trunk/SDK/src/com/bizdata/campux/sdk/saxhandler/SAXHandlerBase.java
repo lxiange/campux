@@ -23,7 +23,8 @@ import java.io.InputStream;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
+import java.util.HashMap;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -37,11 +38,6 @@ public abstract class SAXHandlerBase extends DefaultHandler{
         try{
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(inputstream, this);
-            /*while(false){
-                byte[] bytes=new byte[20];
-                int c = inputstream.read(bytes);
-                System.out.print(new String(bytes,0,c));
-            }*/
         }catch(Exception exc){
             Log.log("UserStatus", Log.Type.NOTICE, exc);
             throw new NetworkErrorException(exc);
@@ -54,17 +50,28 @@ public abstract class SAXHandlerBase extends DefaultHandler{
     protected String m_err_message = null;
     protected int m_err_code = -1;
     protected String m_tagname = null;
-    protected Attributes m_tagAttr = null;
+    protected String m_content = null;
+    protected HashMap<String, String> m_moreatt = new HashMap<String, String>();
+    protected final String[] f_moreattNames = {"t","u","d"};
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        m_content = "";
         if(Config.debug())
             System.out.println("StartElement:"+qName);
         m_saxbody = true;
         if( "ok".equalsIgnoreCase(qName) ){
             m_isOK = true;
+            m_content = "";
         }else if( "err".equalsIgnoreCase(qName) ){
             m_isOK = false;
             m_err_code = Integer.parseInt(attributes.getValue("c"));
+        }
+        
+        m_moreatt = new HashMap<String, String>();
+        for(String name:f_moreattNames){
+            String val = attributes.getValue(name);
+            if( val!=null )
+                m_moreatt.put(name, val);
         }
         
         m_tagname = qName;
@@ -84,13 +91,7 @@ public abstract class SAXHandlerBase extends DefaultHandler{
             System.out.println("Content:"+new String(ch, start, length)+" ok:"+m_isOK);
         if( m_isOK ){
             String content = new String(ch, start, length);
-            if( content!=null )
-                    content = content.trim();
-            if( m_b64 ){
-                byte[] bytes = DatatypeConverter.parseBase64Binary(content);
-                content = new String(bytes, Config.getCharset());
-            }
-            contentReceived(content.trim(), m_tagname, m_tagAttr);
+            m_content += content;
         }else{
             m_err_message = new String(ch, start, length);
         }
@@ -98,6 +99,13 @@ public abstract class SAXHandlerBase extends DefaultHandler{
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
+        if(m_saxbody){
+            if( m_b64 ){
+                byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
+                m_content = new String(bytes, Config.getCharset());
+            }
+            contentReceived(m_content, m_tagname);
+        }
         m_saxbody = false;
     }
     
@@ -115,6 +123,6 @@ public abstract class SAXHandlerBase extends DefaultHandler{
         throw new Exception(m_err_message);
     }
     
-    abstract protected void contentReceived(String content, String tagname, Attributes tagattr);
+    abstract protected void contentReceived(String content, String tagname);
     
 }
