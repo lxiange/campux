@@ -3,7 +3,7 @@ package com.bizdata.campux.server.userinfo;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 
 import com.bizdata.campux.sdk.User;
 import com.bizdata.campux.server.Config;

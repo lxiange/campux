@@ -42,7 +42,7 @@ public class ServerUserStatusTest {
      * Test of startServer method, of class ServerUserStatus.
      */
     @Test
-    public void testStartServer() {
+    public void testStartServer() throws Exception{
         System.out.println("startServer");
         ServerUserStatus instance = new ServerUserStatus();
         instance.startServer();
@@ -69,5 +69,8 @@ public class ServerUserStatusTest {
         assertEquals(vars[6],"UserAge");
         assertEquals(vars[7],"UserGender");
         assertEquals(vars[8],"UserPhoto");
+        
+        //user.setUserVariable("test2", "var", "val");
+        user.getUserVariable("test2", "var");
     }
 }

@@ -12,7 +12,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -47,6 +47,8 @@ public class SAXHandler extends SAXHandlerBase{
     LocationItem m_item;
     // store the message
     String m_usersession;
+    // store the command
+    String m_command;
     
     /**
      * 处理XML的一个项目的开头
@@ -62,6 +64,7 @@ public class SAXHandler extends SAXHandlerBase{
             m_item = new LocationItem();
             for(Command cmd : Command.values()){
                 if( cmd.string().equalsIgnoreCase(qName) ){
+                    m_command = qName;
                     m_state = cmd.state();
                     m_attr = attributes;
                     m_content = null;
@@ -114,7 +117,7 @@ public class SAXHandler extends SAXHandlerBase{
                 if( cmd.string().equalsIgnoreCase(qName) ){
                     m_state = 0;
                     fire(cmd);
-                    break;
+                    throw new ParseEndException();
                 }
             }
         }
@@ -161,7 +164,8 @@ public class SAXHandler extends SAXHandlerBase{
         //User userauth = new User();
         String user = null; //userauth.lookupUsername(m_usersession); // go get user id;
         
-        Log.log("UserStatusServer", Type.INFO, "read for: " + m_usersession + ":"+ user);
+        Log.log("ServerWifiLocator", Type.INFO, "get location for: " + m_usersession + ":"+ user);
+        Log.log("ServerWifiLocator", Type.INFO, "get location:" + m_item.toString());
         /*if( user==null ){
             responseError(0, "user not valid");
             return;
@@ -172,6 +176,9 @@ public class SAXHandler extends SAXHandlerBase{
         try{
             Locator locator = Locator.getInstance();
             String lname = locator.locate(m_item.wifis);
+            Log.log("ServerWifiLocator", Type.INFO, "classified location:" + lname);
+            if( lname==null )
+                lname="";
             lname = DatatypeConverter.printBase64Binary(lname.getBytes(Config.getCharset()));
             strbuilder.append(lname);
             strbuilder.append("</ok>");
@@ -190,7 +197,8 @@ public class SAXHandler extends SAXHandlerBase{
         //User userauth = new User();
         String user = null;//userauth.lookupUsername(m_usersession); // go get user id;
         
-        Log.log("UserStatusServer", Type.INFO, "read for: " + m_usersession + ":"+ user);
+        Log.log("ServerWifiLocator", Type.INFO, "add location for: " + m_usersession + ":"+ user);
+        Log.log("ServerWifiLocator", Type.INFO, "add location:" + m_item.toString());
         /*if( user==null ){
             responseError(0, "user not valid");
             return;

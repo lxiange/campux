@@ -22,7 +22,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import org.xml.sax.Attributes;
 
 /**
@@ -44,6 +44,11 @@ public class StateCache {
         m_cache = new Cache(m_cachesize);
         m_variables = Config.getValueSet("StateVariable");
         m_path = Config.getValue("UserStateVariablePath");
+        File file = new File(m_path);
+        if( !file.exists() || !file.isDirectory() ){
+            if( !file.mkdirs() )
+                Log.log("UserStateCache", Type.FATAL, "directory can not be created:" + m_path);
+        }
     }
     
     // size of the number of users to cache
@@ -159,7 +164,7 @@ public class StateCache {
             output.write("</root>");
             output.close();
         }catch(Exception exc){
-            Log.log("UserProfile", Type.FATAL, exc);
+            Log.log("UserStateCache", Type.FATAL, exc);
             return;
         }
     }

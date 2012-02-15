@@ -8,7 +8,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 

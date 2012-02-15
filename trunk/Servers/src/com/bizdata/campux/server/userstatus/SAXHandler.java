@@ -10,7 +10,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -36,15 +36,23 @@ public class SAXHandler extends SAXHandlerBase{
         public String string() {return m_string;}
         public int state(){return m_state;}
     }
-    
+    protected final String f_servername = "UserStatusServer";
+    // the command
+    Command m_cmd;
     // state of the current system
     int m_state = 0;    
-    // store temporary attributes for parsing XML
-    Attributes m_attr;
     // store temporary content for parsing XML
-    String m_content;
+    StringBuilder m_content = new StringBuilder();
     // store tagname
     String m_tagname;
+    // user session
+    String m_usersession;
+    // target user
+    String m_targetuser;
+    // base64 encoding
+    String m_b64=null;
+    // variable name
+    String m_varname;
     // store users publish to
     List<String> m_users;
     // store groups publish to
@@ -62,12 +70,16 @@ public class SAXHandler extends SAXHandlerBase{
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        m_content=new StringBuilder();
         if(m_state==0){
             for(Command cmd : Command.values()){
                 if( cmd.string().equalsIgnoreCase(qName) ){
+                    m_cmd = cmd;
                     m_state = cmd.state();
-                    m_attr = attributes;
-                    m_content = null;
+                    m_usersession = attributes.getValue("s");
+                    m_targetuser = attributes.getValue("u");
+                    m_b64 = attributes.getValue("b64");
+                    m_varname = attributes.getValue("n");
                     break;
                 }
             }
@@ -91,19 +103,9 @@ public class SAXHandler extends SAXHandlerBase{
     public void characters(char[] ch, int start, int length) throws SAXException {
         if( m_state<=0)
             return; //忽略以外字符
-        m_content = new String(ch, start, length).trim();
-        
-        if( "u".equalsIgnoreCase(m_tagname)){
-            m_users.add(m_content);
-        }else if( "g".equalsIgnoreCase(m_tagname) ){
-            m_groups.add(m_content);
-        }else if( "m".equalsIgnoreCase(m_tagname) ){
-            m_message = m_content;
-            if( m_attr.getValue("b64")!=null ){
-                byte[] bytes = DatatypeConverter.parseBase64Binary(m_message);
-                m_message = new String(bytes, Config.getCharset());
-            }
-        }
+        if( length>0 )
+            m_content.append(ch, start, length);
+        System.out.println("characters: " + m_content.toString());
     }
     /**
      * 处理XML文件的项目终止记号
@@ -117,18 +119,28 @@ public class SAXHandler extends SAXHandlerBase{
         if( m_state==0 ){
             //not needed
         }else{
-            for(Command cmd : Command.values()){
-                if( cmd.string().equalsIgnoreCase(qName) ){
-                    m_state = 0;
-                    fire(cmd);
-                    break;
+            if( "u".equalsIgnoreCase(m_tagname)){
+                m_users.add(m_content.toString());
+            }else if( "g".equalsIgnoreCase(m_tagname) ){
+                m_groups.add(m_content.toString());
+            }else if( "m".equalsIgnoreCase(m_tagname) ){
+                m_message = m_content.toString();
+                if( m_b64!=null ){
+                    byte[] bytes = DatatypeConverter.parseBase64Binary(m_message);
+                    m_message = new String(bytes, Config.getCharset());
                 }
+            }
+            
+            if( m_cmd.string().equalsIgnoreCase(qName) ){
+                System.out.println("fire with: " + m_content.toString());
+                m_state = 0;
+                fire(m_cmd);
+                throw new ParseEndException();
             }
         }
         // clean up
         m_tagname = null;
         m_content = null;
-        m_attr = null;
     }
 
     /**
@@ -139,7 +151,6 @@ public class SAXHandler extends SAXHandlerBase{
     public void endDocument() throws SAXException {
         m_tagname = null;
         m_content = null;
-        m_attr = null;
         m_groups = null;
         m_users = null;
     }    
@@ -156,19 +167,19 @@ public class SAXHandler extends SAXHandlerBase{
                     func_LIST_SYS_VARIABLES();
                     break;
                 case READ_SYS_VARIABLE:
-                    func_READ_SYS_VARIABLE(m_attr, m_content);
+                    func_READ_SYS_VARIABLE(m_content.toString());
                     break;
                 case WRITE_SYS_VAIRABLE: 
-                    func_WRITE_SYS_VAIRABLE(m_attr, m_content);
+                    func_WRITE_SYS_VAIRABLE(m_content.toString());
                     break;
                 case UPDATE_MSGBOX:
-                    func_UPDATE_MSGBOX(m_attr, m_content);
+                    func_UPDATE_MSGBOX(m_content.toString());
                     break;
                 case PUBLISH_MSGBOX:
-                    func_PUBLISH_MSGBOX(m_attr, m_users, m_groups, m_message);
+                    func_PUBLISH_MSGBOX(m_users, m_groups, m_message);
                     break;
                 case DELETE_MSGBOX:
-                    func_DELETE_MSGBOX(m_attr, m_content);
+                    func_DELETE_MSGBOX(m_content.toString());
                     break;
             }
         }catch(Exception exc){
@@ -197,20 +208,26 @@ public class SAXHandler extends SAXHandlerBase{
      * @param attr
      * @param content 
      */
-    protected void func_READ_SYS_VARIABLE(Attributes attr, String content){
+    protected void func_READ_SYS_VARIABLE(String content){
         StringBuilder strbuilder = new StringBuilder();
         strbuilder.append("<ok b64=\"true\">");
-        
-        String usd = attr.getValue("s");
-        
+        // 从属性s的用户sessionID查询用户名称
+        String usd = m_usersession;
         User userauth = new User();
         String user = userauth.lookupUsername(usd); // go get user id;
+        // 从属性u得到要查询的目标用户名称
+        String targetuser = m_targetuser;
+        // 若被忽略，则查询自己
+        if( targetuser==null || targetuser.isEmpty())
+            targetuser = user;
         
-        Log.log("UserStatusServer", Type.INFO, "read for: " + usd + ":"+ user);
+        Log.log(f_servername, Type.INFO, "read for: " + usd + ":"+ user + " of user:" + targetuser);
         
         String varname = content;
-        String val = StateCache.getInstance().getUserState(user, varname);
+        String val = StateCache.getInstance().getUserState(targetuser, varname);
         
+        Log.log(f_servername, Type.INFO, "read out: " + varname + "="+ val);
+        // 进行编码
         val = val == null ? null : DatatypeConverter.printBase64Binary(val.getBytes(Config.getCharset()));
         
         strbuilder.append(val==null?"":val);
@@ -223,26 +240,53 @@ public class SAXHandler extends SAXHandlerBase{
      * @param attr
      * @param content 
      */
-    protected void func_WRITE_SYS_VAIRABLE(Attributes attr, String content){
+    protected void func_WRITE_SYS_VAIRABLE(String content){
         // 从属性s的用户sessionID查询用户名称
-        String usd = attr.getValue("s");
+        String usd = m_usersession;
         User userauth = new User();
-        String user = userauth.lookupUsername(usd);        
+        String user = userauth.lookupUsername(usd);  
+        // 从属性u获得目标用户名称
+        String targetuser = m_targetuser;
+        // 默认为自己
+        if( targetuser==null || targetuser.isEmpty() )
+            targetuser = user;
+        // 检查权限
+        boolean isAuthorized = false;
+        if( targetuser == user || targetuser.equals(user) ){
+            isAuthorized = true;
+        }else{
+            try{
+                String[] groups = userauth.groupList();
+                for(String group : groups)
+                    if( group.equalsIgnoreCase("system") || group.equalsIgnoreCase("admin")){
+                        isAuthorized = true;
+                        break;
+                    }
+            }catch(Exception exc){
+                Log.log(f_servername, Type.INFO, exc);
+            }
+        }
+        // 普通用户不允许写别人
+        if( !isAuthorized ){
+            responseError(150, "unauthorized access to user variables");
+            return;
+        }
+            
         // 从属性n获得变量名称
-        String varname = attr.getValue("n");
+        String varname = m_varname;
         // 从属性b64获得内容是否是base64编码
-        String b64 = attr.getValue("b64");
+        //String b64 = attr.getValue("b64");
         // 内容
         String val = content;
         // 解base64码
-        if( b64!=null ){
+        if( m_b64!=null ){
             byte[] bytes = DatatypeConverter.parseBase64Binary(val);
-            val = new String(bytes);
+            val = new String(bytes, Config.getCharset());
         }
         
-        Log.log("UserStatusServer", Type.INFO, "write for: " + usd + ":"+ user+ " " + varname+":"+content+" " + b64+" " +val);
+        Log.log(f_servername, Type.INFO, "write for: " + usd + ":"+ user+ " to user:" + targetuser + " " + varname+"="+content+" " + m_b64+" " +val);
         //从Cache中取出用户变量
-        if( !StateCache.getInstance().setUserState(user, varname, val) ){
+        if( !StateCache.getInstance().setUserState(targetuser, varname, val) ){
             responseError(151,"No such system variable");
         }else{        
             response("<ok></ok>");
@@ -257,9 +301,9 @@ public class SAXHandler extends SAXHandlerBase{
 		OK响应（无更新）：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
      * */
-    protected void func_UPDATE_MSGBOX(Attributes attr, String content) {
+    protected void func_UPDATE_MSGBOX(String content) {
         // 从属性s的用户sessionID查询用户名称
-        String usd = attr.getValue("s");
+        String usd = m_usersession;
         User userauth = new User();
         String user = userauth.lookupUsername(usd);
         // id
@@ -291,8 +335,8 @@ public class SAXHandler extends SAXHandlerBase{
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
      */
-    protected void func_PUBLISH_MSGBOX(Attributes attr, List<String> users, List<String> groups, String msg) throws Exception{
-        String usd = attr.getValue("s");
+    protected void func_PUBLISH_MSGBOX(List<String> users, List<String> groups, String msg) throws Exception{
+        String usd = m_usersession;
         User userauth = new User();
         String user = userauth.lookupUsername(usd);
         String[] ugs = userauth.userGroups(user);
@@ -330,8 +374,8 @@ public class SAXHandler extends SAXHandlerBase{
 		OK响应：<ok></ok>
 		失败响应：<err c="错误代码">错误原因</err>
          * */
-    protected void func_DELETE_MSGBOX(Attributes attr, String idstr){
-        String usd = attr.getValue("s");
+    protected void func_DELETE_MSGBOX(String idstr){
+        String usd = m_usersession;
         User userauth = new User();
         String user = userauth.lookupUsername(usd);
         

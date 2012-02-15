@@ -1,6 +1,7 @@
 package com.bizdata.campux.server;
 
 import com.bizdata.campux.server.exception.ParseEndException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.parsers.SAXParser;
@@ -24,6 +25,8 @@ public abstract class ServerBase extends Thread{
     // SAX handler deals with client requests
     protected Class m_saxhandlerClass=null;
     
+    //protected byte[] m_buffer ;= new byte[100*1024*1024];
+    
     /**
      * The CommonServer will call this interface when it gets requests
      * @param input input stream
@@ -44,12 +47,16 @@ public abstract class ServerBase extends Thread{
     public void run(){
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try{
+            //InputStream input = bufferInputstream(m_inputstream);
+            
             SAXParser saxParser = factory.newSAXParser();
             // new an SAX handler from the class
             SAXHandlerBase saxhandler = (SAXHandlerBase)m_saxhandlerClass.newInstance();
             saxhandler.setOutputStream(m_outputstream);
             // parse input
             saxParser.parse(m_inputstream, saxhandler);
+            //input.close();
+            //input=null;
         }catch(ParseEndException exc)
         {
             //the exception used to exit the parsing, ignore
@@ -59,6 +66,22 @@ public abstract class ServerBase extends Thread{
             return;
         }
     }
+    
+    /*protected InputStream bufferInputstream(InputStream inputstream) throws Exception{
+        int count = 0;
+        while(true){
+            int numread = inputstream.read(m_buffer,count,m_buffer.length-count);
+            if( numread==-1 )
+                break;
+            count += numread;
+            if( m_buffer[count-1] == '>' )
+                break;
+        }
+        //System.out.println( new String(m_buffer, 0, count, Config.getCharset()) );
+        
+        ByteArrayInputStream stream = new ByteArrayInputStream(m_buffer, 0, count);
+        return stream;
+    }*/
     
     /**
      * start running the server    
@@ -72,5 +95,12 @@ public abstract class ServerBase extends Thread{
      */
     public void stopServer(){
         m_commonserver.stopServer();
+    }
+    /**
+     * get server name
+     * @return 
+     */
+    public String getServerName() {
+        return m_serverName;
     }
 }
