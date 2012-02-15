@@ -69,6 +69,7 @@ UserStatus按照Servers统一规范开发，XML消息开头可包含XML注释。
 用户动态信息：
   * "{{{UserLocation}}}": 用户位置信息
   * "{{{UserStatus}}}": 用户发布的状态
+  * "{{{Friends}}}": 好友信息
 用户配置信息：
   * "{{{AllowLocationAutoUpdate}}}": ("true" or "false") 允许自动更新位置信息
   * "{{{OnlyFollowedByFriends}}}": ("true" or "false") 只允许我关注的朋友获得我的信息更新
