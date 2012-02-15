@@ -213,7 +213,7 @@ public class UserMessage {
         return im;
     }
     /**
-     * read a message from a block according to a index.
+     * read a message from a block according to an index.
      * The function first finds the index in cache.
      * @param im
      * @return a message

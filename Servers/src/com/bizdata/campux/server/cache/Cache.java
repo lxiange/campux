@@ -24,7 +24,7 @@ public class Cache<K,T> {
      * @param key
      * @return 
      */
-    public T findItem(K key){
+    synchronized public T findItem(K key){
         CacheItem<T> item = m_cache.get(key);
         if( item!=null )
             item.lastaccesstime = System.currentTimeMillis();
@@ -35,7 +35,7 @@ public class Cache<K,T> {
      * @param key
      * @return 
      */
-    public T findItemQuietly(K key){
+    synchronized public T findItemQuietly(K key){
         CacheItem<T> item = m_cache.get(key);
         return item==null ? null : item.object;
     }
@@ -43,7 +43,10 @@ public class Cache<K,T> {
      * put an object in the cache
      * @param object 
      */
-    public void cacheItem(K key, T object){
+    synchronized public void cacheItem(K key, T object){
+        if( m_cache.containsKey(key) )
+            return; // if the key already cached.
+        
         CacheItem<T> item = new CacheItem<T>();
         item.lastaccesstime = System.currentTimeMillis();
         item.object = object;
@@ -58,20 +61,23 @@ public class Cache<K,T> {
                     removekey = entry.getKey();
                 }
             }
-            m_cache.remove(removekey);
+            CacheItem<T> toberemoved = m_cache.remove(removekey);
+            if( toberemoved.object instanceof Room){
+                ((Room)toberemoved.object).flush();
+            }
         }
     }
     /** clean cache
      * 
      */
-    public void clean(){
+    synchronized public void clean(){
         m_cache.clear();
     }
     /**
      * clean a key
      * @param key 
      */
-    public void clean(K key){
+    synchronized public void clean(K key){
         m_cache.remove(key);
     }
 }

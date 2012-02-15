@@ -23,14 +23,18 @@ public class SAXHandlerBase extends DefaultHandler{
      * @param str 
      */
     protected void response(String str){
+        if( Config.isUnitTest())
+            System.out.println(str);
+        else{
         try{
             m_output.write(Config.getXMLfirstline());
             m_output.write(str);
+            m_output.flush();
             m_output.close();
         }catch(Exception exc){
             Log.log("UserProfile", Type.ERROR, exc);
             try{m_output.close();}catch(Exception e){}
-        }
+        }}
     }
     /**
      * send error back to the client
@@ -38,6 +42,9 @@ public class SAXHandlerBase extends DefaultHandler{
      * @param str 
      */
     protected void responseError(int code, String str){
+        if( Config.isUnitTest())
+            System.out.println(str);
+        else{
         try{
             m_output.write(Config.getXMLfirstline());
             m_output.write("<err c=\""+code+"\">"+str+"</err>");
@@ -45,6 +52,6 @@ public class SAXHandlerBase extends DefaultHandler{
         }catch(Exception exc){
             Log.log("UserProfile", Type.ERROR, exc);
             try{m_output.close();}catch(Exception e){}
-        }
+        }}
     }
 }

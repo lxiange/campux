@@ -1,0 +1,146 @@
+STATUS | wrapper  | 2011/12/23 03:17:05 | --> Wrapper Started as Console
+STATUS | wrapper  | 2011/12/23 03:17:05 | Java Service Wrapper Community Edition 32-bit 3.5.13
+STATUS | wrapper  | 2011/12/23 03:17:05 |   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2011/12/23 03:17:05 |     http://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2011/12/23 03:17:05 | 
+STATUS | wrapper  | 2011/12/23 03:17:07 | Launching a JVM...
+INFO   | jvm 1    | 2011/12/23 03:17:07 | Error: no `server' JVM at `C:\Program Files\Java\jre6\bin\server\jvm.dll'.
+ERROR  | wrapper  | 2011/12/23 03:17:07 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:17:12 | Launching a JVM...
+INFO   | jvm 2    | 2011/12/23 03:17:12 | Error: no `server' JVM at `C:\Program Files\Java\jre6\bin\server\jvm.dll'.
+ERROR  | wrapper  | 2011/12/23 03:17:12 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:17:16 | Launching a JVM...
+INFO   | jvm 3    | 2011/12/23 03:17:17 | Error: no `server' JVM at `C:\Program Files\Java\jre6\bin\server\jvm.dll'.
+ERROR  | wrapper  | 2011/12/23 03:17:17 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:17:21 | Launching a JVM...
+INFO   | jvm 4    | 2011/12/23 03:17:21 | Error: no `server' JVM at `C:\Program Files\Java\jre6\bin\server\jvm.dll'.
+ERROR  | wrapper  | 2011/12/23 03:17:21 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:17:25 | CTRL-C trapped.  Shutting down.
+STATUS | wrapper  | 2011/12/23 03:17:25 | <-- Wrapper Stopped
+STATUS | wrapper  | 2011/12/23 03:17:48 | --> Wrapper Started as Console
+STATUS | wrapper  | 2011/12/23 03:17:48 | Java Service Wrapper Community Edition 32-bit 3.5.13
+STATUS | wrapper  | 2011/12/23 03:17:48 |   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2011/12/23 03:17:48 |     http://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2011/12/23 03:17:48 | 
+STATUS | wrapper  | 2011/12/23 03:17:48 | Launching a JVM...
+INFO   | jvm 1    | 2011/12/23 03:17:49 | WrapperManager: Initializing...
+INFO   | jvm 1    | 2011/12/23 03:17:50 | WrapperSimpleApp Error: Unable to locate the class com.bizdata.campux.server.Main : java.lang.ClassNotFoundException: com.bizdata.campux.server.Main
+INFO   | jvm 1    | 2011/12/23 03:17:50 | 
+INFO   | jvm 1    | 2011/12/23 03:17:50 | WrapperSimpleApp Usage:
+INFO   | jvm 1    | 2011/12/23 03:17:50 |   java org.tanukisoftware.wrapper.WrapperSimpleApp {app_class{/app_method}} [app_arguments]
+INFO   | jvm 1    | 2011/12/23 03:17:50 | 
+INFO   | jvm 1    | 2011/12/23 03:17:50 | Where:
+INFO   | jvm 1    | 2011/12/23 03:17:50 |   app_class:      The fully qualified class name of the application to run.
+INFO   | jvm 1    | 2011/12/23 03:17:50 |   app_arguments:  The arguments that would normally be passed to the
+INFO   | jvm 1    | 2011/12/23 03:17:50 |                   application.
+ERROR  | wrapper  | 2011/12/23 03:17:52 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:17:57 | Launching a JVM...
+INFO   | jvm 2    | 2011/12/23 03:17:57 | WrapperManager: Initializing...
+INFO   | jvm 2    | 2011/12/23 03:17:57 | WrapperSimpleApp Error: Unable to locate the class com.bizdata.campux.server.Main : java.lang.ClassNotFoundException: com.bizdata.campux.server.Main
+INFO   | jvm 2    | 2011/12/23 03:17:57 | 
+INFO   | jvm 2    | 2011/12/23 03:17:57 | WrapperSimpleApp Usage:
+INFO   | jvm 2    | 2011/12/23 03:17:57 |   java org.tanukisoftware.wrapper.WrapperSimpleApp {app_class{/app_method}} [app_arguments]
+INFO   | jvm 2    | 2011/12/23 03:17:57 | 
+INFO   | jvm 2    | 2011/12/23 03:17:57 | Where:
+INFO   | jvm 2    | 2011/12/23 03:17:57 |   app_class:      The fully qualified class name of the application to run.
+INFO   | jvm 2    | 2011/12/23 03:17:57 |   app_arguments:  The arguments that would normally be passed to the
+INFO   | jvm 2    | 2011/12/23 03:17:57 |                   application.
+ERROR  | wrapper  | 2011/12/23 03:17:59 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:18:01 | CTRL-C trapped.  Shutting down.
+STATUS | wrapper  | 2011/12/23 03:18:01 | <-- Wrapper Stopped
+STATUS | wrapper  | 2011/12/23 03:19:26 | --> Wrapper Started as Console
+STATUS | wrapper  | 2011/12/23 03:19:26 | Java Service Wrapper Community Edition 32-bit 3.5.13
+STATUS | wrapper  | 2011/12/23 03:19:26 |   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2011/12/23 03:19:26 |     http://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2011/12/23 03:19:26 | 
+STATUS | wrapper  | 2011/12/23 03:19:26 | Launching a JVM...
+INFO   | jvm 1    | 2011/12/23 03:19:26 | WrapperManager: Initializing...
+INFO   | jvm 1    | 2011/12/23 03:19:26 | WrapperSimpleApp Error: Unable to locate the class com.bizdata.campux.server.Main : java.lang.ClassNotFoundException: com.bizdata.campux.server.Main
+INFO   | jvm 1    | 2011/12/23 03:19:26 | 
+INFO   | jvm 1    | 2011/12/23 03:19:26 | WrapperSimpleApp Usage:
+INFO   | jvm 1    | 2011/12/23 03:19:26 |   java org.tanukisoftware.wrapper.WrapperSimpleApp {app_class{/app_method}} [app_arguments]
+INFO   | jvm 1    | 2011/12/23 03:19:26 | 
+INFO   | jvm 1    | 2011/12/23 03:19:26 | Where:
+INFO   | jvm 1    | 2011/12/23 03:19:26 |   app_class:      The fully qualified class name of the application to run.
+INFO   | jvm 1    | 2011/12/23 03:19:26 |   app_arguments:  The arguments that would normally be passed to the
+INFO   | jvm 1    | 2011/12/23 03:19:26 |                   application.
+ERROR  | wrapper  | 2011/12/23 03:19:28 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 03:19:28 | CTRL-C trapped.  Shutting down.
+STATUS | wrapper  | 2011/12/23 03:19:28 | <-- Wrapper Stopped
+STATUS | wrapper  | 2011/12/23 15:37:12 | --> Wrapper Started as Console
+STATUS | wrapper  | 2011/12/23 15:37:12 | Java Service Wrapper Community Edition 32-bit 3.5.13
+STATUS | wrapper  | 2011/12/23 15:37:12 |   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2011/12/23 15:37:12 |     http://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2011/12/23 15:37:12 | 
+STATUS | wrapper  | 2011/12/23 15:37:12 | Launching a JVM...
+INFO   | jvm 1    | 2011/12/23 15:37:13 | WrapperManager: Initializing...
+INFO   | jvm 1    | 2011/12/23 15:37:13 | WrapperSimpleApp Error: Unable to locate the class com.bizdata.campux.server.Main : java.lang.ClassNotFoundException: com.bizdata.campux.server.Main
+INFO   | jvm 1    | 2011/12/23 15:37:13 | 
+INFO   | jvm 1    | 2011/12/23 15:37:13 | WrapperSimpleApp Usage:
+INFO   | jvm 1    | 2011/12/23 15:37:13 |   java org.tanukisoftware.wrapper.WrapperSimpleApp {app_class{/app_method}} [app_arguments]
+INFO   | jvm 1    | 2011/12/23 15:37:13 | 
+INFO   | jvm 1    | 2011/12/23 15:37:13 | Where:
+INFO   | jvm 1    | 2011/12/23 15:37:13 |   app_class:      The fully qualified class name of the application to run.
+INFO   | jvm 1    | 2011/12/23 15:37:13 |   app_arguments:  The arguments that would normally be passed to the
+INFO   | jvm 1    | 2011/12/23 15:37:13 |                   application.
+ERROR  | wrapper  | 2011/12/23 15:37:14 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 15:37:19 | Launching a JVM...
+INFO   | jvm 2    | 2011/12/23 15:37:19 | WrapperManager: Initializing...
+INFO   | jvm 2    | 2011/12/23 15:37:19 | WrapperSimpleApp Error: Unable to locate the class com.bizdata.campux.server.Main : java.lang.ClassNotFoundException: com.bizdata.campux.server.Main
+INFO   | jvm 2    | 2011/12/23 15:37:19 | 
+INFO   | jvm 2    | 2011/12/23 15:37:19 | WrapperSimpleApp Usage:
+INFO   | jvm 2    | 2011/12/23 15:37:19 |   java org.tanukisoftware.wrapper.WrapperSimpleApp {app_class{/app_method}} [app_arguments]
+INFO   | jvm 2    | 2011/12/23 15:37:19 | 
+INFO   | jvm 2    | 2011/12/23 15:37:19 | Where:
+INFO   | jvm 2    | 2011/12/23 15:37:19 |   app_class:      The fully qualified class name of the application to run.
+INFO   | jvm 2    | 2011/12/23 15:37:19 |   app_arguments:  The arguments that would normally be passed to the
+INFO   | jvm 2    | 2011/12/23 15:37:19 |                   application.
+ERROR  | wrapper  | 2011/12/23 15:37:21 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 15:37:26 | Launching a JVM...
+INFO   | jvm 3    | 2011/12/23 15:37:26 | WrapperManager: Initializing...
+INFO   | jvm 3    | 2011/12/23 15:37:26 | WrapperSimpleApp Error: Unable to locate the class com.bizdata.campux.server.Main : java.lang.ClassNotFoundException: com.bizdata.campux.server.Main
+INFO   | jvm 3    | 2011/12/23 15:37:26 | 
+INFO   | jvm 3    | 2011/12/23 15:37:26 | WrapperSimpleApp Usage:
+INFO   | jvm 3    | 2011/12/23 15:37:26 |   java org.tanukisoftware.wrapper.WrapperSimpleApp {app_class{/app_method}} [app_arguments]
+INFO   | jvm 3    | 2011/12/23 15:37:26 | 
+INFO   | jvm 3    | 2011/12/23 15:37:26 | Where:
+INFO   | jvm 3    | 2011/12/23 15:37:26 |   app_class:      The fully qualified class name of the application to run.
+INFO   | jvm 3    | 2011/12/23 15:37:26 |   app_arguments:  The arguments that would normally be passed to the
+INFO   | jvm 3    | 2011/12/23 15:37:26 |                   application.
+ERROR  | wrapper  | 2011/12/23 15:37:28 | JVM exited while loading the application.
+STATUS | wrapper  | 2011/12/23 15:37:28 | CTRL-C trapped.  Shutting down.
+STATUS | wrapper  | 2011/12/23 15:37:28 | <-- Wrapper Stopped
+STATUS | wrapper  | 2011/12/23 15:48:01 | --> Wrapper Started as Console
+STATUS | wrapper  | 2011/12/23 15:48:01 | Java Service Wrapper Community Edition 32-bit 3.5.13
+STATUS | wrapper  | 2011/12/23 15:48:01 |   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2011/12/23 15:48:01 |     http://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2011/12/23 15:48:01 | 
+STATUS | wrapper  | 2011/12/23 15:48:02 | Launching a JVM...
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperManager: Initializing...
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp: 
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: Encountered an error running main:
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: java.io.FileNotFoundException: sdk.config (系统找不到指定的文件。)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at java.io.FileInputStream.open(Native Method)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at java.io.FileInputStream.<init>(Unknown Source)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at java.io.FileInputStream.<init>(Unknown Source)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at com.bizdata.campux.server.Main.main(Main.java:13)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at java.lang.reflect.Method.invoke(Unknown Source)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at org.tanukisoftware.wrapper.WrapperSimpleApp.run(WrapperSimpleApp.java:290)
+INFO   | jvm 1    | 2011/12/23 15:48:02 | WrapperSimpleApp Error: 	at java.lang.Thread.run(Unknown Source)
+STATUS | wrapper  | 2011/12/23 15:48:04 | CTRL-C trapped.  Shutting down.
+STATUS | wrapper  | 2011/12/23 15:48:04 | <-- Wrapper Stopped
+STATUS | wrapper  | 2011/12/23 15:48:49 | --> Wrapper Started as Console
+STATUS | wrapper  | 2011/12/23 15:48:49 | Java Service Wrapper Community Edition 32-bit 3.5.13
+STATUS | wrapper  | 2011/12/23 15:48:49 |   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2011/12/23 15:48:49 |     http://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2011/12/23 15:48:49 | 
+STATUS | wrapper  | 2011/12/23 15:48:50 | Launching a JVM...
+INFO   | jvm 1    | 2011/12/23 15:48:50 | WrapperManager: Initializing...
+INFO   | jvm 1    | 2011/12/23 15:48:50 | start server: Thread-1
+STATUS | wrapper  | 2011/12/23 15:49:22 | CTRL-C trapped.  Shutting down.
+STATUS | wrapper  | 2011/12/23 15:49:23 | CTRL-C trapped.  Forcing immediate shutdown.
+ERROR  | wrapper  | 2011/12/23 15:49:24 | JVM did not exit on request, terminated
+STATUS | wrapper  | 2011/12/23 15:49:24 | <-- Wrapper Stopped

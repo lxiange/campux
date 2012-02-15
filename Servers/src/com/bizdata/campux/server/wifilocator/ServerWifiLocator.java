@@ -14,7 +14,7 @@ import com.bizdata.campux.server.ServerBase;
  */
 public class ServerWifiLocator extends ServerBase {
     public ServerWifiLocator(){
-        m_serverName = "ServerUserStatus";
+        m_serverName = "ServerWifiLocator";
         m_port = Integer.parseInt(Config.getValue("ServicePort_WifiLocator"));
         m_saxhandlerClass = SAXHandler.class;
     }

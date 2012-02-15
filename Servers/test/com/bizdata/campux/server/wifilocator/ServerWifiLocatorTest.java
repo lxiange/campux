@@ -4,6 +4,7 @@
  */
 package com.bizdata.campux.server.wifilocator;
 
+import java.io.FileInputStream;
 import com.bizdata.campux.server.userstatus.ServerUserStatus;
 import com.bizdata.campux.sdk.Locator;
 import com.bizdata.campux.sdk.User;
@@ -40,7 +41,8 @@ public class ServerWifiLocatorTest {
     }
 
     @Test
-    public void testStartServer() {
+    public void testStartServer() throws Exception{
+        com.bizdata.campux.sdk.Config.init(new FileInputStream("sdk.config"));
         System.out.println("startServer");
         ServerUserStatus uinstance = new ServerUserStatus();
         uinstance.startServer();
@@ -51,18 +53,19 @@ public class ServerWifiLocatorTest {
         User user = new User();
         
         Locator locator = new Locator();
-        /*locator.addWifi("00:00:00:00:00:00", -70, true);
+        locator.addWifi("00:00:00:00:00:00", -70, true);
         try{
             locator.setLocation(user, "test");
         }catch(Exception exc){
             exc.printStackTrace();
-        }*/
+        }
         
         locator = new Locator();
         locator.addWifi("90:84:0d:db:1d:e1", -96, false);
         locator.addWifi("00:24:01:c5:97:a0", -91, false);
         try{
             String str = locator.getLocation(user);
+            System.out.println(str);
             assertEquals("体育场(仙林)", str);
         }catch(Exception exc){
             exc.printStackTrace();
@@ -72,6 +75,14 @@ public class ServerWifiLocatorTest {
         try{
             String str = locator.getLocation(user);
             assertEquals("test", str);
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        locator.clean();
+        locator.addWifi("00:00:11:22:00:00", -90, false);
+        try{
+            String str = locator.getLocation(user);
+            System.out.println("str:"+str);
         }catch(Exception exc){
             exc.printStackTrace();
         }
