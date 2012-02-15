@@ -49,7 +49,7 @@ public class FriendSAX extends SAXHandlerBase{
      * @param m_tagattr 
      */
     @Override
-    protected void contentReceived(String content, String tagname, Attributes m_tagattr){
+    protected void contentReceived(String content, String tagname){
     	System.out.println("contentrecevied:"+tagname);
         if("ok".equalsIgnoreCase(tagname)){
             m_responseStr = content;

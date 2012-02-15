@@ -19,7 +19,7 @@ package com.bizdata.campux.sdk.saxhandler;
 import com.bizdata.campux.sdk.Config;
 import com.bizdata.campux.sdk.Message;
 import java.util.LinkedList;
-import javax.xml.bind.DatatypeConverter;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import org.xml.sax.Attributes;
 
 /**
@@ -67,18 +67,19 @@ public class UserStatusSAX extends SAXHandlerBase{
      * @param m_tagattr 
      */
     @Override
-    protected void contentReceived(String content, String tagname, Attributes tagattr){
+    protected void contentReceived(String content, String tagname){
         if("ok".equalsIgnoreCase(tagname)){
             m_val = content;
+            
         }else if( "v".equalsIgnoreCase(tagname) ){
             m_vars.add(content);
         }else if( "b".equalsIgnoreCase(tagname) ){
             Message msg = new Message();
             msg.message = content;
-            msg.date = tagattr.getValue("t");
-            msg.publisher = tagattr.getValue("u");
+            msg.date = m_moreatt.get("t");
+            msg.publisher = m_moreatt.get("u");
             try{
-                msg.id = Integer.parseInt(tagattr.getValue("d"));
+                msg.id = Integer.parseInt( m_moreatt.get("d"));
             }catch(Exception exc){
                 msg.id = -1;
             }
@@ -101,7 +102,7 @@ public class UserStatusSAX extends SAXHandlerBase{
      * @param val
      * @return 
      */
-    public String prepareSetUserVariable(String sessionID, String var, String val){
+    public String prepareSetUserVariable(String sessionID, String targetuser, String var, String val){
         StringBuilder str = new StringBuilder();
         str.append( Config.getXMLfirstline() );
         
@@ -111,6 +112,10 @@ public class UserStatusSAX extends SAXHandlerBase{
         str.append( sessionID );
         str.append( "\" n=\"");
         str.append( var );
+        if( targetuser!=null){
+            str.append( "\" u=\"");
+            str.append( targetuser );
+        }
         str.append( "\" b64=\"true\">");
         str.append( val );
         str.append( "</usw>" );
@@ -123,11 +128,15 @@ public class UserStatusSAX extends SAXHandlerBase{
      * @param val
      * @return 
      */
-    public String prepareGetUserVariable(String sessionID, String var){
+    public String prepareGetUserVariable(String sessionID, String targetuser, String var){
         StringBuilder str = new StringBuilder();
         str.append( Config.getXMLfirstline() );
         str.append("<usr s=\"");
         str.append(sessionID);
+        if( targetuser!=null ){
+            str.append("\" u=\"");
+            str.append(targetuser);
+        }
         str.append( "\">" );
         str.append( var );
         str.append( "</usr>" );
