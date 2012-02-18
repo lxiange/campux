@@ -35,6 +35,10 @@ Friends按照Servers统一规范开发，XML消息开头可包含XML注释。
 
 = SDK使用 =
 
+注意：<br>
+1. 得到的好友更新可能不是按照时间顺序排列的，客户端需要再根据时间排序。<br>
+2. 在获取的好友更新中，默认会包含自己的更新。
+
 需要使用{{{com.bizdata.campux.sdk.User}}}和{{{com.bizdata.campux.sdk.Friends}}}类。<br/>
 
 * 用户对{{{UserStatus}}}、{{{UserLocation}}}变量的更改将自动发布好友更新信息。
