@@ -103,7 +103,15 @@ String[] vars = user.getUserVariables();
 {{{
 //读取变量名称var的值. 变量名称var为任意非空字符串
 String var = "UserName"; //读取用户姓名
-String val = user.getUserVariable(String var)
+String val = user.getUserVariable(var)
+}}}
+
+* 读取其他用户变量
+{{{
+//读取其他用户的变量名称var的值. 变量名称var为任意非空字符串
+String targetuser = "001221154"; //目标用户名
+String var = "UserName"; //读取用户姓名
+String val = user.getUserVariable(targetuser, var)
 }}}
 
 * 写入变量
