@@ -149,3 +149,9 @@ String id = instance.getSessionID();
 String user = instance.lookupUsername(String sessionID);
 }}}
 查出用户名称意味着该用户为真实的登录用户。
+
+*更改密码
+{{{
+boolean success = instance.changePassword(String newpassword);
+在登录后使用该函数修改密码为newpassword
+}}}
