@@ -90,27 +90,27 @@ public class ClassroomTest {
         
         ClassRoom f = new ClassRoom(usr);
         
-        /*HashMap<String, List<String>> roomlist = f.listClassRooms();
+        HashMap<String, List<String>> roomlist = f.listClassRooms();
         for(String key : roomlist.keySet()){
             System.out.println(key+":");
             List<String> rooms = roomlist.get(key);
             if( rooms!=null ){
                 for(String room : rooms)
-                    System.out.println("    "+room);
+                    System.out.println("    "+room + " " + f.readClassRoomComment(key, room));
             }
         }
         
-        suc = f.publishClassRoomComment("仙林", "I120", true);
+        /*suc = f.publishClassRoomComment("仙林", "I120", true);
         assertTrue(suc);
         
         suc = f.publishClassRoomComment("仙林", "I120", true);
         assertTrue(suc);
         
         suc = f.publishClassRoomComment("仙林", "I220", false);
-        assertTrue(suc);*/
+        assertTrue(suc);
         
         int v = f.readClassRoomComment("仙Ⅰ_102");
-        System.out.println(v);
+        System.out.println(v);*/
         
 //        roomlist = f.listClassRooms();
 //        for(String key : roomlist.keySet()){

@@ -35,6 +35,8 @@ public class ClassRoom {
     protected int m_ServicePort_Friend;
     // object for communication with the server
     protected ServerCommunicator m_comm = null;
+    // buffered scores
+    protected HashMap<String, Integer> m_scores = null;
     
     // initialization, load TCP ports (from a instance of User class)
     public ClassRoom(User user){
@@ -53,6 +55,8 @@ public class ClassRoom {
         
         sax.parseInput(m_comm.getInputStream());
         m_comm.close();
+        
+        m_scores = sax.getScores();
         
         return sax.getList();
     }
@@ -82,12 +86,22 @@ public class ClassRoom {
             System.out.println(sax.getErrorMsg());
             return false;
         }
+        
+        if( m_scores!=null ){
+            m_scores.remove(classroompath);
+        }
         return true;
     }
     public int readClassRoomComment(String building, String classroom) throws Exception{
         return readClassRoomComment(building+"_"+classroom);
     }
     public int readClassRoomComment(String classroompath) throws Exception{
+        if( m_scores!=null ){
+            Integer val = m_scores.get(classroompath);
+            if( val!=null )
+                return val.intValue();
+        }
+        
         // force shutdown of the old connection
         if( m_comm!=null) m_comm.close();
         m_comm = new ServerCommunicator(m_ServicePort_Friend);

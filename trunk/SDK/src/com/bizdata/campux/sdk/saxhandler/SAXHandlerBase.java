@@ -52,7 +52,7 @@ public abstract class SAXHandlerBase extends DefaultHandler{
     protected String m_tagname = null;
     protected String m_content = null;
     protected HashMap<String, String> m_moreatt = new HashMap<String, String>();
-    protected final String[] f_moreattNames = {"t","u","d"};
+    protected final String[] f_moreattNames = {"t","u","d","m"};
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         m_content = "";

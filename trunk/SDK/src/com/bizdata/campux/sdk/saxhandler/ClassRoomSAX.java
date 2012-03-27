@@ -30,6 +30,7 @@ import java.util.List;
 public class ClassRoomSAX extends SAXHandlerBase {
 
     protected HashMap<String, List<String>> m_vars = new HashMap<String, List<String>>();
+    protected HashMap<String, Integer> m_scores = new HashMap<String, Integer>();
     protected String m_responseStr = null;
 
     public String getResponseString() {
@@ -39,6 +40,12 @@ public class ClassRoomSAX extends SAXHandlerBase {
     public HashMap<String, List<String>> getList() {
         return m_vars;
     }
+    
+    public HashMap<String, Integer> getScores(){
+        return m_scores;
+    }
+    
+    
 
     @Override
     protected void contentReceived(String content, String tagname) {
@@ -46,14 +53,24 @@ public class ClassRoomSAX extends SAXHandlerBase {
         if ("ok".equalsIgnoreCase(tagname)) {
             m_responseStr = content;
         } else if ("c".equalsIgnoreCase(tagname)) {
+            
             String building = content.substring(0, content.indexOf("_"));
             String roomname = content.substring(content.indexOf("_")+1);
+            
+            String scorestr = m_moreatt.get("m");
+            int score = -1;
+            try{
+                score = Integer.parseInt(scorestr);
+            }catch(Exception exc){ }
+            
             List<String> buildingrooms = m_vars.get(building);
             if( buildingrooms==null ){
                 buildingrooms = new LinkedList<String>();
                 m_vars.put(building, buildingrooms);
             }
             buildingrooms.add(roomname);
+            
+            m_scores.put(content, score);
         }
     }
 
