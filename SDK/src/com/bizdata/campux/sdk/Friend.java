@@ -26,16 +26,15 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.io.*;
+import java.util.List;
 
 /**
  * An object of the Friend class represents a friend list of a user, and implements operations regarding the Friend service
  * @author gl
  */
 public class Friend {
-	 // store login sessionid of user who use service
-    protected String m_userSessionID = null;
-    // store username and password
-    protected String m_username, m_userpsw;
+    // store login sessionid of user who use service
+    protected User m_user = null;
     // store the last access time
     protected long m_lasttime;
     // TCP port of Friend service
@@ -44,110 +43,138 @@ public class Friend {
     protected ServerCommunicator m_comm = null;
     
     // initialization, load TCP ports (from a instance of User class)
-    public Friend(int port,String sessionID){
-    	m_ServicePort_Friend=port;
-    	m_userSessionID=sessionID;
+    public Friend(User user){
+    	m_ServicePort_Friend=Integer.parseInt(Config.getValue("ServicePort_Friend"));
+        m_user = user;
     }
     /**
      * List items in Friend table from the Friend Server
      * @return
      * @throws Exception 
      */
-    public String[] friendList() throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
-        
-        FriendSAX friend = new FriendSAX();
-        String str = friend.prepareFriendList(m_userSessionID);
-        m_comm.sentString(str);
-        
-        friend.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        String[] groups = friend.getList();
-        return groups;
+    public List<String> friendRead() {
+        return friendRead(m_user.m_username);
     }
-    /**
-     * Add a item to Friend table from the Friend Server
-     * @param friendID
-     * @return
-     * @throws Exception 
-     */
-    public boolean friendAdd(String friendID)throws Exception{
-   	    if( m_comm!=null) m_comm.close();
-   	    m_comm = new ServerCommunicator(m_ServicePort_Friend);
-     
-        FriendSAX friend = new FriendSAX();
-        String str = friend.prepareFriendAdd(m_userSessionID, friendID);
-        m_comm.sentString(str);
+
+    public List<String> friendRead(String username) {
+        LinkedList<String> list = new LinkedList<String>();
+        String friends =  null;
+        try {
+            friends = m_user.getUserVariable(username, "Friends");
+        } catch (Exception exc) {
+        }
+
+        if (friends == null) {
+            return null;
+        }
+        String[] friendsep = friends.split(",");
         
-        friend.parseInput(m_comm.getInputStream());
-        m_comm.close();        
-        if(friend.getIsError() ) return false;
+        for (String friendname : friendsep) {
+            if( !friendname.isEmpty() )
+                list.add(friendname);
+        }
+
+        return list;
+    }
+
+    public boolean friendAdd(String friendname) {
+        return friendAdd(m_user.m_username, friendname);
+    }
+
+    public boolean friendAdd(String username, String friendname) {
         
+        try {
+            boolean exists = false;
+            String fstr = "";
+            List<String> fnames = friendRead(username);
+            for(String fname : fnames){
+                if( fname.equals(friendname) )
+                    exists = true;
+                fstr += "," + fname;
+            }
+            if( !exists )
+                fstr += "," + friendname;
+            fstr = fstr.substring(1);
+            m_user.setUserVariable(username, "Friends", fstr);
+        } catch (Exception exc) {
+            return false;
+        }
         return true;
     }
-    /**
-     * Delete a item from Friend table from the Friend Server
-     * @param friendID
-     * @return
-     * @throws Exception 
-     */
-    public boolean friendDelete(String friendID)throws Exception{
-   	    if( m_comm!=null) m_comm.close();
-   	    m_comm = new ServerCommunicator(m_ServicePort_Friend);
-     
-        FriendSAX friend = new FriendSAX();
-        String str = friend.prepareFriendDelete(m_userSessionID, friendID);
-        m_comm.sentString(str);
-        
-        friend.parseInput(m_comm.getInputStream());
-        m_comm.close();        
-        if(friend.getIsError() ) return false;
-        
-        return true;
+
+    public boolean friendDel(String friendname) {
+        return friendDel(m_user.m_username, friendname);
     }
-    /**
-     * Change information of Friend table from the Friend Server
-     * @param i_content
-     * @return
-     * @throws Exception 
-     */
-    public boolean infoChange(String i_content)throws Exception{
-   	    if( m_comm!=null) m_comm.close();
-   	    m_comm = new ServerCommunicator(m_ServicePort_Friend);
-     
-        FriendSAX friend = new FriendSAX();
-        String str = friend.prepareInfoChange(m_userSessionID, i_content);
-        m_comm.sentString(str);
-        
-        friend.parseInput(m_comm.getInputStream());
-        m_comm.close();        
-        if(friend.getIsError() ) return false;
-        
+
+    public boolean friendDel(String username, String friendname) {
+        try{
+            List<String> list = friendRead(username);
+            if( list==null )
+                return false;
+            String friends="";
+            for(String fname : list){
+                if( !friendname.equalsIgnoreCase(fname))
+                    friends += "," + fname;
+            }
+            if( friends.length() > 0)
+                friends = friends.substring(1);
+            m_user.setUserVariable(username, "Friends", friends);
+        }catch(Exception exc){
+            return false;
+        }
         return true;
-    }
-    /**
-     * List items of histories of information from the Friend Server
-     * @param initialTime
-     * @param userName
-     * @return
-     * @throws Exception 
-     */
-    public String[] friendList(String initialTime,String userName) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
-        
-        FriendSAX friend = new FriendSAX();
-        String str = friend.prepareHistoryRead(m_userSessionID, initialTime, userName);
-        m_comm.sentString(str);
-        
-        friend.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        String[] groups = friend.getList();
-        return groups;
     }
     
+    /**
+     * List histories of bubbles from the Bubble Server
+     * @param b_initialTime
+     * @param b_location
+     * @return
+     * @throws Exception 
+     */
+    public FriendMessage[] friendStatusRead(long starttime) throws Exception{
+        // force shutdown of the old connection
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+        
+        FriendSAX fsax = new FriendSAX();
+        String str = fsax.prepareFriendRead(m_user.getSessionID(), starttime);
+        m_comm.sentString(str);
+        
+        fsax.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        FriendMessage[] groups = fsax.getList();
+        for(FriendMessage msg : groups){
+            if( m_lasttime < msg.time )
+                m_lasttime = msg.time;
+        }
+        return groups;
+    }
+    /**
+     * List the update of bubbles
+     * @param b_initialTime
+     * @param b_location
+     * @return
+     * @throws Exception 
+     */
+    public FriendMessage[] friendStatusUpdate() throws Exception{
+        return friendStatusRead(m_lasttime);
+    }
+    
+    public boolean __friendStatusPublish(String targetuser, String content) throws Exception{
+        if( m_comm!=null) m_comm.close();
+        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+
+        FriendSAX fsax = new FriendSAX();
+        String str = fsax.prepareFriendPublish(m_user.getSessionID(), targetuser, content);
+        
+        m_comm.sentString(str);
+        
+        fsax.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        if(fsax.getIsError() ) return false;
+        
+        return true;
+    }
     
 }

@@ -19,20 +19,13 @@ package com.bizdata.campux.sdk;
 import com.bizdata.campux.sdk.network.ServerCommunicator;
 import com.bizdata.campux.sdk.saxhandler.*;
 
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.LinkedList;
-import com.bizdata.campux.sdk.util.DatatypeConverter;
-import java.io.*;
 
 /**
  * An object of the Friend class represents a Bubble list of a user, and implements operations regarding the Bubble service
  * @author gl
  */
 public class Bubble {
-	// store login sessionid of user who use service
+    // store login sessionid of user who use service
     protected User m_user;
     // store the last access time
     protected long m_lasttime = 0;

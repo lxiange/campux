@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nanjing Bizdata-infotech co., ltd.
+ * Copyright (C) 2012 Nanjing Bizdata-infotech co., ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@ package com.bizdata.campux.sdk;
 /**
  *
  * @author yuy
- * @date 2011-11-29 01:16:07
+ * @date 2012-02-15 07:56:00
  */
-public class Message implements java.io.Serializable{
-    public int id;
+public class FriendMessage implements java.io.Serializable{
     public String message;
     public String publisher;
-    public String date;
+    public long time;
+    public int type;
 }

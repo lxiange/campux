@@ -19,27 +19,25 @@ package com.bizdata.campux.sdk.saxhandler;
 import com.bizdata.campux.sdk.Config;
 import com.bizdata.campux.sdk.FriendMessage;
 import com.bizdata.campux.sdk.util.DatatypeConverter;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author yuy
  */
-public class FriendSAX extends SAXHandlerBase {
+public class ClassRoomSAX extends SAXHandlerBase {
 
-    protected LinkedList<FriendMessage> m_vars = new LinkedList<FriendMessage>();
+    protected HashMap<String, List<String>> m_vars = new HashMap<String, List<String>>();
     protected String m_responseStr = null;
 
     public String getResponseString() {
         return m_responseStr;
     }
 
-    public FriendMessage[] getList() {
-        FriendMessage[] vs = new FriendMessage[m_vars.size()];
-        for (int i = 0; i < vs.length; i++) {
-            vs[i] = m_vars.get(i);
-        }
-        return vs;
+    public HashMap<String, List<String>> getList() {
+        return m_vars;
     }
 
     @Override
@@ -47,13 +45,15 @@ public class FriendSAX extends SAXHandlerBase {
         System.out.println("contentrecevied:" + tagname);
         if ("ok".equalsIgnoreCase(tagname)) {
             m_responseStr = content;
-        } else if ("m".equalsIgnoreCase(tagname)) {
-            FriendMessage msg = new FriendMessage();
-            msg.type = content.charAt(0)-'0';
-            msg.message = content.substring(1);
-            msg.publisher = m_moreatt.get("u");
-            msg.time = Long.parseLong(m_moreatt.get("d"));
-            m_vars.add(msg);
+        } else if ("c".equalsIgnoreCase(tagname)) {
+            String building = content.substring(0, content.indexOf("_"));
+            String roomname = content.substring(content.indexOf("_")+1);
+            List<String> buildingrooms = m_vars.get(building);
+            if( buildingrooms==null ){
+                buildingrooms = new LinkedList<String>();
+                m_vars.put(building, buildingrooms);
+            }
+            buildingrooms.add(roomname);
         }
     }
 
@@ -63,25 +63,34 @@ public class FriendSAX extends SAXHandlerBase {
      * @param content
      * @return 
      */
-    public String prepareFriendPublish(String sessionID, String targetuser, String content) {
-        String val = DatatypeConverter.printBase64Binary(content.getBytes(Config.getCharset()));
-
-        StringBuilder str = new StringBuilder();
-        str.append("<ps ");
-        str.append("s=\"" + sessionID + "\" u=\"");
-        str.append(targetuser);
-        str.append("\" b64=\"true\">");
-        str.append(val);
-        str.append("</ps>");
-        return str.toString();
+    public String prepareListRooms() {
+        return "<lc></lc>";
     }
 
-    public String prepareFriendRead(String sessionID, long time) {
+    public String preparePublishInfo(String sessionID, boolean good, String location) {
         StringBuilder str = new StringBuilder();
-        str.append("<rs ");
+        str.append("<pr ");
         str.append("s=\"" + sessionID + "\" ");
-        str.append("d=\"" + time + "\">");
-        str.append("</rs>");
+        str.append("c=\"" + (good?"1":"0") + "\" b64=\"true\">");
+        
+        String b64 = DatatypeConverter.printBase64Binary(location.getBytes(Config.getCharset()));
+        
+        str.append(b64);
+        
+        str.append("</pr>");
+        return str.toString();
+    }
+    
+    public String prepareReadInfo(String sessionID, String location) {
+        StringBuilder str = new StringBuilder();
+        str.append("<rr ");
+        str.append("s=\"" + sessionID + "\" b64=\"true\">");
+        
+        String b64 = DatatypeConverter.printBase64Binary(location.getBytes(Config.getCharset()));
+        
+        str.append(b64);
+        
+        str.append("</rr>");
         return str.toString();
     }
 

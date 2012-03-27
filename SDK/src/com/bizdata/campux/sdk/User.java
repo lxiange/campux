@@ -74,7 +74,7 @@ public class User {
                 Config.init(input);
             }
         } catch (Exception e) {
-            System.out.println("Can't find sde.config!");
+            System.out.println("Can't find sdk.config!");
         }
         m_ServicePort_UserAuth = Integer.parseInt(Config.getValue("ServicePort_UserAuth"));
         m_ServicePort_UserStatus = Integer.parseInt(Config.getValue("ServicePort_UserStatus"));
@@ -273,7 +273,7 @@ public class User {
      */
     public String getSessionID() throws Exception {
         long timeleft = System.currentTimeMillis() - m_lasttime;
-        if (!m_isapp && timeleft >= 3600000L) {
+        if (!m_isapp && timeleft >= 1800000L) {
             login(m_username, m_userpsw);
         }
         return m_userSessionID;
@@ -381,7 +381,7 @@ public class User {
     }
 
     /**
-     * list all groups
+     * list all groups of a user
      * @return
      * @throws Exception 
      */
@@ -394,6 +394,23 @@ public class User {
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareGroupList(getSessionID());
+        m_comm.sentString(str);
+
+        auth.parseInput(m_comm.getInputStream());
+        m_comm.close();
+        String[] groups = auth.getList();
+        return groups;
+    }
+    
+    public String[] groupList(String sessionID) throws Exception {
+        // force shutdown of the old connection
+        if (m_comm != null) {
+            m_comm.close();
+        }
+        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+
+        UserAuthSAX auth = new UserAuthSAX();
+        String str = auth.prepareGroupList(sessionID);
         m_comm.sentString(str);
 
         auth.parseInput(m_comm.getInputStream());
@@ -1029,270 +1046,5 @@ public class User {
 
         return true;
 
-    }
-
-    /**
-     * List items in PUBLISHER from the UserInfo Server
-     * @return
-     * @throws Exception 
-     */
-    public String[] publisherList() throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.preparePublisherList();
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        String[] files = info.getList();
-        return files;
-    }
-
-    /**
-     * Register a item in PUBLISHER table from the UserInfo Server
-     * @param p_name
-     * @param icon
-     * @param p_displayName
-     * @param p_infoKind
-     * @return
-     * @throws Exception 
-     */
-    public boolean publisherRegistration(String p_name,
-            String icon, String p_displayName, String[] p_infoKind) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.preparePublisherRegistration(getSessionID(), p_name, icon, p_displayName, p_infoKind);
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        if (info.getIsError()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Initialize the PUBLISHER account from the UserInfo Server
-     * @return
-     * @throws Exception
-     */
-    public boolean publiserInitialization() throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.prepareAccountInitialization(getSessionID());
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        if (info.getIsError()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check the update of PUBLISHER table from the UserInfo Server
-     * @param file
-     * @param begin
-     * @param end
-     * @return
-     * @throws Exception 
-     */
-    public String updateCheck() throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.prepareUpdateCheck(getSessionID());
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        String content = info.getResponseString();
-        return content;
-    }
-
-    /**
-     * List items in PUBLISHER from the UserInfo Server
-     * @param  initialInfoID
-     * @return
-     * @throws Exception 
-     */
-    public String[] publisherInfoAchieve(String initialInfoID) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.prepareInfoAchieve(getSessionID(), initialInfoID);
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        String[] files = info.getList();
-        return files;
-    }
-
-    /**
-     * List detailed items in PUBLISHER from the UserInfo Server
-     * @param  initialInfoID
-     * @return
-     * @throws Exception 
-     */
-    public String[] publisherDetailedInfoAchieve(String infoID) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.prepareInfoAchieve(getSessionID(), infoID);
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        String[] files = info.getList();
-        return files;
-    }
-
-    /**
-     * Publish a item in PUBLISHER table from the UserInfo Server
-     * @param i_title
-     * @param i_link
-     * @param i_conten
-     * @param i_kind
-     * @param a_name
-     * @param a_date
-     * @param a_address
-     * @return
-     * @throws Exception 
-     */
-    public boolean publisherRegistration(String i_title, String i_date, String i_link,
-            String i_content, String i_kind, String a_name, String a_date, String a_address) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.prepareInfoPublish(getSessionID(), i_title, i_date, i_link, i_content, i_kind, a_name, a_date, a_address);
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        if (info.getIsError()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Delete a item in PUBLISHER table from the UserInfo Server
-     * @param infoID
-     * @return
-     * @throws Exception 
-     */
-    public boolean publisherRegistration(String infoID) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserInfo);
-
-        UserInfoSAX info = new UserInfoSAX();
-        String str = info.prepareInfoDelete(getSessionID(), infoID);
-        m_comm.sentString(str);
-
-        info.parseInput(m_comm.getInputStream());
-        m_comm.close();
-        if (info.getIsError()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public List<String> friendRead() {
-        return friendRead(m_username);
-    }
-
-    public List<String> friendRead(String username) {
-        String friends =  null;
-        try {
-            friends = getUserVariable(username, "Friends");
-        } catch (Exception exc) {
-        }
-
-        if (friends == null) {
-            return null;
-        }
-        String[] friendsep = friends.split(",");
-        LinkedList<String> list = new LinkedList<String>();
-        for (String friendname : friendsep) {
-            if( !friendname.isEmpty() )
-                list.add(friendname);
-        }
-
-        return list;
-    }
-
-    public boolean friendAdd(String friendname) {
-        return friendAdd(m_username, friendname);
-    }
-
-    public boolean friendAdd(String username, String friendname) {
-        
-        try {
-            String friends = getUserVariable(username, "Friends");
-            if( friends == null )
-                friends = friendname;
-            else
-                friends += friendname + "," + friendname;
-            setUserVariable(username, "Friends", friends);
-        } catch (Exception exc) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean friendDel(String friendname) {
-        return friendDel(m_username, friendname);
-    }
-
-    public boolean friendDel(String username, String friendname) {
-        try{
-            List<String> list = friendRead(username);
-            if( list==null )
-                return false;
-            String friends="";
-            for(String fname : list){
-                if( !friendname.equalsIgnoreCase(fname))
-                    friends += "," + fname;
-            }
-            if( friends.length() > 0)
-                friends = friends.substring(1);
-            setUserVariable(username, "Friends", friends);
-        }catch(Exception exc){
-            return false;
-        }
-        return true;
     }
 }
