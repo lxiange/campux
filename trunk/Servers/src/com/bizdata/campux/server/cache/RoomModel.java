@@ -4,6 +4,7 @@
  */
 package com.bizdata.campux.server.cache;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -98,5 +99,19 @@ public class RoomModel {
         }
         room.remove(time);
         return true;
+    }
+    
+    public List<String> listRooms(){
+        LinkedList<String> roomlist = new LinkedList<String>();
+        File dir = new File(m_path);
+        File[] filelist = dir.listFiles();
+        for(File afile : filelist){
+            if( !afile.isFile() )
+                continue;
+            String filename = afile.getName();
+            if( filename.endsWith(".room") )
+                roomlist.addLast(filename.substring(0, filename.indexOf('.')));
+        }
+        return roomlist;
     }
 }

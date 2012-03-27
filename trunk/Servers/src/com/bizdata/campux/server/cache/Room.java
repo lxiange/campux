@@ -123,8 +123,9 @@ public class Room implements java.io.Serializable{
             ObjectInputStream input = new ObjectInputStream( new BufferedInputStream(new FileInputStream(filepath+name+".room")));
             room.m_name = (String)input.readObject();
             room.m_pieces = (LinkedList<Piece>)input.readObject();
+            
             input.close();
-            room.m_file = filepath + name + ".room";
+            //room.m_file = filepath + name + ".room";
             room.m_unsaved = false;
         }catch(Exception exc)
         {
