@@ -63,7 +63,7 @@ public class Locator {
             m_comm = new ServerCommunicator(m_ServicePort_Locator);
        
         LocationSAX locator = new LocationSAX();
-        String str = locator.prepareGetLocation(null, m_ip, m_wifis, m_connected);
+        String str = locator.prepareGetLocation(user.m_userSessionID, m_ip, m_wifis, m_connected);
         m_comm.sentString(str);
         locator.parseInput(m_comm.getInputStream());
         m_comm.close();
@@ -75,7 +75,7 @@ public class Locator {
             m_comm = new ServerCommunicator(m_ServicePort_Locator);
        
         LocationSAX locator = new LocationSAX();
-        String str = locator.prepareAddLocation(null, locationname, m_ip, m_wifis, m_connected);
+        String str = locator.prepareAddLocation(user.m_userSessionID, locationname, m_ip, m_wifis, m_connected);
         m_comm.sentString(str);
         locator.parseInput(m_comm.getInputStream());
         m_comm.close();

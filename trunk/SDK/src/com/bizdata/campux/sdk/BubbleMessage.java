@@ -21,7 +21,7 @@ package com.bizdata.campux.sdk;
  * @author yuy
  * @date 2012-02-15 01:35:31
  */
-public class BubbleMessage {
+public class BubbleMessage implements java.io.Serializable{
     public String message;
     public String publisher;
     public long time;
