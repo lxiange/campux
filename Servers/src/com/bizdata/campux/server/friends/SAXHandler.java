@@ -4,6 +4,7 @@
  */
 package com.bizdata.campux.server.friends;
 
+import com.bizdata.campux.sdk.Friend;
 import com.bizdata.campux.sdk.User;
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.Log;
@@ -12,7 +13,9 @@ import com.bizdata.campux.server.SAXHandlerBase;
 import com.bizdata.campux.server.exception.ParseEndException;
 import com.bizdata.campux.sdk.util.DatatypeConverter;
 import com.bizdata.campux.server.cache.Piece;
-import java.util.Iterator;
+import com.bizdata.campux.server.cache.PieceComparator;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -52,6 +55,8 @@ public class SAXHandler extends SAXHandlerBase{
     String m_usersession;
     // date for update
     String m_date;
+    // target user
+    String m_targetuser;
     
     /**
      * 处理XML的一个项目的开头
@@ -63,6 +68,7 @@ public class SAXHandler extends SAXHandlerBase{
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        m_content = "";
         if(m_state==0){
             for(Command cmd : Command.values()){
                 if( cmd.string().equalsIgnoreCase(qName) ){
@@ -70,6 +76,7 @@ public class SAXHandler extends SAXHandlerBase{
                     m_state = cmd.state();
                     m_usersession = attributes.getValue("s");
                     m_date = attributes.getValue("d");
+                    m_targetuser = attributes.getValue("u");
                     String tmp = attributes.getValue("b64");
                     if( tmp!=null )
                         m_b64=true;
@@ -91,11 +98,7 @@ public class SAXHandler extends SAXHandlerBase{
     public void characters(char[] ch, int start, int length) throws SAXException {
         if( m_state<=0)
             return; //忽略以外字符
-        m_content = new String(ch, start, length).trim();
-        if( m_b64 ){
-            byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
-            m_content = new String(bytes, Config.getCharset());
-        }
+        m_content += new String(ch, start, length);
     }
     /**
      * 处理XML文件的项目终止记号
@@ -109,6 +112,11 @@ public class SAXHandler extends SAXHandlerBase{
         if( m_state==0 ){
             //not needed
         }else{
+            if( m_b64 ){
+                byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
+                m_content = new String(bytes, Config.getCharset());
+            }
+            
             if( m_cmd.string().equalsIgnoreCase(qName) ){
                 m_state = 0;
                 fire(m_cmd);
@@ -167,13 +175,20 @@ public class SAXHandler extends SAXHandlerBase{
         }*/
         
         str.append("<ok>");
+        LinkedList<Piece> allPieces = new LinkedList<Piece>();
         try{
+            // read friend list
             sysuser.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
-            List<String> friends = sysuser.friendRead(username);
+            Friend fobj = new Friend(sysuser);
+            List<String> friends = fobj.friendRead(username);
             String fristr = "";
             if( friends!=null )
                 for(String tmp:friends)
                     fristr += tmp+";";
+            else
+                friends = new LinkedList<String>();
+            if( !friends.contains(username) )
+                friends.add(username);
             
             Long timeafter = 0L;
             if( m_date!=null )
@@ -181,7 +196,12 @@ public class SAXHandler extends SAXHandlerBase{
             
             Log.log(f_servername, Type.INFO, "friends: " + fristr + " and time:"+ timeafter);
         
+            // read updates of each friend
             for(String friend: friends){
+                // check for the authorization
+                if( !isReadAllowed(username, friend, sysuser) )
+                    continue;
+                // read updates
                 List<Piece> list = FriendRooms.roomModel().readPieces(friend);
                 if( list == null )
                     continue;
@@ -198,9 +218,11 @@ public class SAXHandler extends SAXHandlerBase{
                     str.append("</m>");
                 }
             }
+            
+            Collections.sort(allPieces, new PieceComparator());
         }catch(Exception exc){
             Log.log(f_servername, Type.ERROR, exc);
-            responseError(0, "error analyzing document: " + exc.getMessage());
+            responseError(0, "error reading friend info: " + exc.getMessage());
             return;
         }
         
@@ -217,21 +239,42 @@ public class SAXHandler extends SAXHandlerBase{
         String username = Config.isUnitTest() ? 
                 m_usersession : user.lookupUsername(m_usersession); // go get user id;
         
-        Log.log(f_servername, Type.INFO, "write for: " + m_usersession + ":"+ username);
-        /*if( user==null ){
-            responseError(0, "user not valid");
+        Log.log(f_servername, Type.INFO, "write for: " + m_usersession + ":"+ username + " to " + m_targetuser);
+        if( !username.equals(Config.getValue("Service_User") ) ){
+            responseError(0, "unauthorized to publish friend updates");
+            Log.log(f_servername, Type.INFO, "unauthorized to publish friend updates");
             return;
-        }*/
+        }
         
         String message = m_content;
         try{
             Log.log(f_servername, Type.INFO, "message:"+ message);
         
-            FriendRooms.roomModel().appendPiece(username, message);
+            FriendRooms.roomModel().appendPiece(m_targetuser, message);
         }catch(Exception exc){
             Log.log(f_servername, Type.ERROR, exc);
             responseError(0, "error publish message: " + exc.getMessage());
         }
         response("<ok></ok>");
+    }
+    
+    protected boolean isReadAllowed(String username, String targetuser, User sysuser){
+        try{
+            String ofbf = sysuser.getUserVariable(targetuser,"OnlyFollowedByFriends");
+            // OFBF not set
+            if( ofbf==null || !(ofbf.equalsIgnoreCase("true")&&ofbf.equals("1")) ){
+                return true;
+            }
+            // check friends
+            String targetuser_friends = sysuser.getUserVariable(targetuser,"Friends");
+            if( targetuser_friends==null )
+                return true;
+            if( targetuser_friends.indexOf(username) < 0 )
+                return false;
+        }catch(Exception exc){
+            Log.log(f_servername, Type.NOTICE, exc);
+            return false;
+        }
+        return true;
     }
 }

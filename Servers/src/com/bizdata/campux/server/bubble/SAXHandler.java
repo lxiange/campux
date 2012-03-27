@@ -91,11 +91,7 @@ public class SAXHandler extends SAXHandlerBase{
     public void characters(char[] ch, int start, int length) throws SAXException {
         if( m_state<=0)
             return; //忽略以外字符
-        m_content = new String(ch, start, length).trim();
-        if( m_b64 ){
-            byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
-            m_content = new String(bytes, Config.getCharset());
-        }
+        m_content += new String(ch, start, length);
     }
     /**
      * 处理XML文件的项目终止记号
@@ -109,6 +105,10 @@ public class SAXHandler extends SAXHandlerBase{
         if( m_state==0 ){
             //not needed
         }else{
+            if( m_b64 ){
+                byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
+                m_content = new String(bytes, Config.getCharset());
+            }
             if( m_cmd.string().equalsIgnoreCase(qName) ){
                 m_state = 0;
                 fire(m_cmd);

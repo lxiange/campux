@@ -1,5 +1,6 @@
 package com.bizdata.campux.server.userstatus;
 
+import com.bizdata.campux.sdk.Friend;
 import com.bizdata.campux.sdk.User;
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.Log;
@@ -11,6 +12,14 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import com.bizdata.campux.sdk.util.DatatypeConverter;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.nio.charset.Charset;
+import javax.imageio.ImageIO;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -256,7 +265,8 @@ public class SAXHandler extends SAXHandlerBase{
             isAuthorized = true;
         }else{
             try{
-                String[] groups = userauth.groupList();
+                userauth.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
+                String[] groups = userauth.userGroups(user);
                 for(String group : groups)
                     if( group.equalsIgnoreCase("system") || group.equalsIgnoreCase("admin")){
                         isAuthorized = true;
@@ -284,11 +294,25 @@ public class SAXHandler extends SAXHandlerBase{
             val = new String(bytes, Config.getCharset());
         }
         
-        Log.log(f_servername, Type.INFO, "write for: " + usd + ":"+ user+ " to user:" + targetuser + " " + varname+"="+content+" " + m_b64+" " +val);
+        Log.log(f_servername, Type.INFO, "write for: " + usd + ":"+ user+ " to user:" + targetuser + " " + varname);
         //从Cache中取出用户变量
+        String oldval = StateCache.getInstance().getUserState(targetuser, varname);
         if( !StateCache.getInstance().setUserState(targetuser, varname, val) ){
             responseError(151,"No such system variable");
-        }else{        
+        }else{
+            if( "UserStatus".equals(varname) ){
+                if( val!=null && !val.equals(oldval)){
+                    boolean suc = user_info_updated(targetuser, 0, val);
+                    if(!suc) responseError(152,"Failed to publish status change");
+                }
+            }else if( "UserLocation".equals(varname) ){
+                if( val!=null && !val.equals(oldval)){
+                    boolean suc = user_info_updated(targetuser, 1, val);
+                    if(!suc) responseError(152,"Failed to publish location change");
+                }
+            }else if( "UserPhoto".equals(varname) ){
+                scale_photo(targetuser, val);
+            }
             response("<ok></ok>");
         }
     }
@@ -384,5 +408,49 @@ public class SAXHandler extends SAXHandlerBase{
         UserMessage.getInstance().deleteMessage(user, id);
         
         response("<ok></ok>");
+    }
+    
+    protected boolean user_info_updated(String targetuser, int type, String content){
+        User user = new User();
+        try{
+            user.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
+            Friend fobj = new Friend(user);
+            fobj.__friendStatusPublish(targetuser, type+content);
+        }catch(Exception exc){
+            Log.log(f_servername, Type.NOTICE, exc);
+            return false;
+        }
+        return true;
+    }
+    
+    private void scale_photo(String targetuser, String val){
+        if( val==null || val.isEmpty() )
+            return;
+        try {
+            byte[] imgbytes = DatatypeConverter.parseBase64Binary(val);
+            BufferedImage src = ImageIO.read(new ByteArrayInputStream(imgbytes)); // 读入文件  
+            int width = src.getWidth(); // 得到源图宽  
+            int height = src.getHeight(); // 得到源图长 
+            int maxedge = width > height? width : height;
+            double ratio = 70.0/(double)maxedge;
+            int afterwidth = (int)(Math.round(ratio*width));
+            int afterheight = (int)(Math.round(ratio*height));
+                            
+            Image image = src.getScaledInstance(afterwidth, afterheight, Image.SCALE_SMOOTH);
+            
+            BufferedImage tag = new BufferedImage(afterwidth, afterheight, BufferedImage.TYPE_INT_RGB);  //缩放图像  
+            Graphics g = tag.getGraphics();  
+            g.drawImage(image, 0, 0, null); // 绘制缩小后的图  
+            g.dispose();  
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();  
+            ImageIO.write(tag,"JPEG", bos);// 输出到bos  
+            
+            String scaledimage = DatatypeConverter.printBase64Binary(bos.toByteArray());
+            bos.close();
+            
+            StateCache.getInstance().setUserState(targetuser, "UserPhotoSnippet", scaledimage);
+        } catch (Exception e) {  
+            Log.log(f_servername, Type.INFO, e); 
+        }  
     }
 }

@@ -161,21 +161,24 @@ public class SAXHandler extends SAXHandlerBase{
      * function for list system variables
      */
     protected void func_GET_LOCATION(){
-        //User userauth = new User();
-        String user = null; //userauth.lookupUsername(m_usersession); // go get user id;
+        User userauth = new User();
+        String user = userauth.lookupUsername(m_usersession); // go get user id;
+        
         
         Log.log("ServerWifiLocator", Type.INFO, "get location for: " + m_usersession + ":"+ user);
         Log.log("ServerWifiLocator", Type.INFO, "get location:" + m_item.toString());
-        /*if( user==null ){
+        if( user==null ){
             responseError(0, "user not valid");
             return;
-        }*/
+        }
         
         StringBuilder strbuilder = new StringBuilder();
         strbuilder.append("<ok b64=\"true\">");
         try{
+            userauth.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
+            
             Locator locator = Locator.getInstance();
-            String lname = locator.locate(m_item.wifis);
+            String lname = locator.locate(m_item);
             Log.log("ServerWifiLocator", Type.INFO, "classified location:" + lname);
             if( lname==null )
                 lname="";
@@ -183,6 +186,8 @@ public class SAXHandler extends SAXHandlerBase{
             strbuilder.append(lname);
             strbuilder.append("</ok>");
             response(strbuilder.toString());
+            
+            userauth.setUserVariable(user, "UserLocation", lname);
         }catch(Exception exc){
             Log.log("wifi", Type.ERROR, exc);
             responseError(0, "error getting location: " + exc.getMessage());
@@ -194,19 +199,23 @@ public class SAXHandler extends SAXHandlerBase{
      * @param content 
      */
     protected void func_ADD_LOCATION(){
-        //User userauth = new User();
-        String user = null;//userauth.lookupUsername(m_usersession); // go get user id;
+        User userauth = new User();
+        String user = userauth.lookupUsername(m_usersession); // go get user id;
         
         Log.log("ServerWifiLocator", Type.INFO, "add location for: " + m_usersession + ":"+ user);
         Log.log("ServerWifiLocator", Type.INFO, "add location:" + m_item.toString());
-        /*if( user==null ){
+        if( user==null ){
             responseError(0, "user not valid");
             return;
-        }*/
+        }
         
         try{
+            userauth.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
+            
             Locator locator = Locator.getInstance();
             locator.addData(m_item);
+            
+            userauth.setUserVariable(user, "UserLocation", m_item.name);
         }catch(Exception exc){
             Log.log("wifi", Type.ERROR, exc);
             responseError(0, "error getting location: " + exc.getMessage());

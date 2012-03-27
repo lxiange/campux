@@ -1,7 +1,10 @@
 package com.bizdata.campux.server;
 
 import com.bizdata.campux.server.bubble.ServerBubble;
+import com.bizdata.campux.server.classroom.ServerClassroom;
 import com.bizdata.campux.server.docanalysis.ServerDocAnalysis;
+import com.bizdata.campux.server.friends.ServerFriends;
+import com.bizdata.campux.server.info.ServerInfo;
 import com.bizdata.campux.server.userinfo.ServerUserInfo;
 import com.bizdata.campux.server.userstatus.ServerUserStatus;
 import com.bizdata.campux.server.wifilocator.ServerWifiLocator;
@@ -23,6 +26,9 @@ public class Main {
             System.out.println("    UserInfo");
             System.out.println("    DocAnalysis");
             System.out.println("    Bubble");
+            System.out.println("    Friend");
+            System.out.println("    Info");
+            System.out.println("    ClassRoom");
             return;
         }
         ServerBase instance = null;
@@ -36,6 +42,12 @@ public class Main {
             instance = new ServerDocAnalysis();
         }else if( "bubble".equalsIgnoreCase(args[0])){
             instance = new ServerBubble();
+        }else if( "friend".equalsIgnoreCase(args[0])){
+            instance = new ServerFriends();
+        }else if( "info".equalsIgnoreCase(args[0])){
+            instance = new ServerInfo();
+        }else if( "classroom".equalsIgnoreCase(args[0])){
+            instance = new ServerClassroom();
         }
         // start the server
         System.out.println("start server: " + instance.getServerName());
