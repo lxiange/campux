@@ -1,6 +1,7 @@
 package com.bizdata.campux.server.userstatus;
 
 import com.bizdata.campux.sdk.Friend;
+import com.bizdata.campux.sdk.Info;
 import com.bizdata.campux.sdk.User;
 import com.bizdata.campux.server.Config;
 import com.bizdata.campux.server.Log;
@@ -15,9 +16,12 @@ import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import javax.imageio.ImageIO;
 import org.xml.sax.Attributes;
@@ -272,6 +276,7 @@ public class SAXHandler extends SAXHandlerBase{
                         isAuthorized = true;
                         break;
                     }
+                userauth.logout();
             }catch(Exception exc){
                 Log.log(f_servername, Type.INFO, exc);
             }
@@ -312,6 +317,9 @@ public class SAXHandler extends SAXHandlerBase{
                 }
             }else if( "UserPhoto".equals(varname) ){
                 scale_photo(targetuser, val);
+            }else if( "UserName".equals(varname) ){
+                if( oldval==null || oldval.isEmpty())
+                    loadRegInfo(targetuser);
             }
             response("<ok></ok>");
         }
@@ -416,6 +424,7 @@ public class SAXHandler extends SAXHandlerBase{
             user.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
             Friend fobj = new Friend(user);
             fobj.__friendStatusPublish(targetuser, type+content);
+            user.logout();
         }catch(Exception exc){
             Log.log(f_servername, Type.NOTICE, exc);
             return false;
@@ -452,5 +461,75 @@ public class SAXHandler extends SAXHandlerBase{
         } catch (Exception e) {  
             Log.log(f_servername, Type.INFO, e); 
         }  
+    }
+    public void loadRegInfo(String id) {
+        String filehash = Config.getValue("RegInfoPath")+id.substring(0,4) + ".reginfo";
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filehash),Charset.forName("UTF-8")));
+            String line = null;
+            String infoline = null;
+            while( (line=reader.readLine())!=null){
+                if( id.equalsIgnoreCase(line.substring(0,id.length()))){
+                    infoline = line;
+                    break;
+                }
+            }
+            reader.close();
+            
+            if( infoline == null )
+                return;
+            String segs[] = infoline.split("\\t");
+            String userid = segs[0].trim();
+            String name = segs[1].trim();
+            String school = segs.length>=3 ? segs[2].trim() : "";
+            String watch = segs.length>=4 ? segs[3].trim() : "";
+            
+            StateCache.getInstance().setUserState(id, "UserName", name);
+            
+            if( !school.isEmpty()) 
+                StateCache.getInstance().setUserState(id, "UserSchool", school);
+                
+            boolean graduate = userid.charAt(0) > '9';
+            String num = graduate ? userid.substring(2,4) : userid.substring(0,2);
+            if( num.charAt(0) > '1' )
+                num = "19" + num;
+            else
+                num = "20" + num;
+            StateCache.getInstance().setUserState(id, "UserGrade", num);
+            
+            // clear
+            StateCache.getInstance().setUserState(id, "InfoRooms", "");
+            StateCache.getInstance().setUserState(id, "InfoPublishers", "");
+            StateCache.getInstance().setUserState(id, "Friends", id);
+            
+            User usr = new User();
+            usr.login("system_service", "sysuser_bizdata");
+            Info info = new Info(usr);
+            info.infoPublisherAdd(userid,"PublisherNotice");
+            info.infoPublisherAdd(userid,"PublisherRecruitment");
+            info.infoPublisherAdd(userid,"PublisherTalk");
+            info.infoPublisherAdd(userid,"NJUAnniversary");
+            info.infoPublisherAdd(userid,"system");
+            //info.infoRoomAdd(userid, "NJUExpress");
+            info.infoRoomAdd(userid, "M_Job");
+            info.infoRoomAdd(userid, "JobAndWork");
+            info.infoRoomAdd(userid, "NYBLSystem"); // the virtual board
+            if( !watch.isEmpty())
+                info.infoRoomAdd(userid, watch);
+            if( !graduate )
+                info.infoRoomAdd(userid, "M_Academic");
+            else
+                info.infoRoomAdd(userid, "M_Graduate");
+            usr.logout();
+            
+            System.out.println("UserName=" + StateCache.getInstance().getUserState(id, "UserName"));
+            System.out.println("UserGrade=" + StateCache.getInstance().getUserState(id, "UserGrade"));
+            System.out.println("InfoRooms=" + StateCache.getInstance().getUserState(id, "InfoRooms"));
+            System.out.println("InfoPublishers=" + StateCache.getInstance().getUserState(id, "InfoPublishers"));
+            System.out.println("Friends=" + StateCache.getInstance().getUserState(id, "Friends"));
+        }catch(Exception exc){
+            Log.log(f_servername, Type.NOTICE, exc);
+        }
+        
     }
 }

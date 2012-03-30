@@ -181,6 +181,7 @@ public class SAXHandler extends SAXHandlerBase{
             sysuser.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
             Friend fobj = new Friend(sysuser);
             List<String> friends = fobj.friendRead(username);
+            sysuser.logout();
             String fristr = "";
             if( friends!=null )
                 for(String tmp:friends)

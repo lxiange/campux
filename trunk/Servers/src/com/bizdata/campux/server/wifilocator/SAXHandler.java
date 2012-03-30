@@ -162,12 +162,13 @@ public class SAXHandler extends SAXHandlerBase{
      */
     protected void func_GET_LOCATION(){
         User userauth = new User();
+        System.out.println(m_usersession);
         String user = userauth.lookupUsername(m_usersession); // go get user id;
         
         
         Log.log("ServerWifiLocator", Type.INFO, "get location for: " + m_usersession + ":"+ user);
         Log.log("ServerWifiLocator", Type.INFO, "get location:" + m_item.toString());
-        if( user==null ){
+        if( user==null || user.isEmpty() ){
             responseError(0, "user not valid");
             return;
         }
@@ -180,6 +181,9 @@ public class SAXHandler extends SAXHandlerBase{
             Locator locator = Locator.getInstance();
             String lname = locator.locate(m_item);
             Log.log("ServerWifiLocator", Type.INFO, "classified location:" + lname);
+            if( lname!=null && !lname.isEmpty())
+                userauth.setUserVariable(user, "UserLocation", lname);
+            
             if( lname==null )
                 lname="";
             lname = DatatypeConverter.printBase64Binary(lname.getBytes(Config.getCharset()));
@@ -187,7 +191,8 @@ public class SAXHandler extends SAXHandlerBase{
             strbuilder.append("</ok>");
             response(strbuilder.toString());
             
-            userauth.setUserVariable(user, "UserLocation", lname);
+            
+            userauth.logout();
         }catch(Exception exc){
             Log.log("wifi", Type.ERROR, exc);
             responseError(0, "error getting location: " + exc.getMessage());
@@ -209,6 +214,12 @@ public class SAXHandler extends SAXHandlerBase{
             return;
         }
         
+        if( m_item.name==null || m_item.name.isEmpty() || m_item.wifis.size()==0 )
+        {
+            responseError(0, "invalid location info");
+            return;
+        }
+        
         try{
             userauth.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
             
@@ -216,6 +227,7 @@ public class SAXHandler extends SAXHandlerBase{
             locator.addData(m_item);
             
             userauth.setUserVariable(user, "UserLocation", m_item.name);
+            userauth.logout();
         }catch(Exception exc){
             Log.log("wifi", Type.ERROR, exc);
             responseError(0, "error getting location: " + exc.getMessage());

@@ -79,6 +79,7 @@ public class SAXHandler extends SAXHandlerBase{
         }else{
             // no code here
         }
+        m_content = "";
     }
     /**
      * 处理XML文件中的非开始和终止记号
@@ -159,10 +160,10 @@ public class SAXHandler extends SAXHandlerBase{
                 user.lookupUsername(m_usersession); // go get user id;
         
         Log.log(f_servername, Type.INFO, "read for: " + m_usersession + ":"+ username);
-        /*if( user==null ){
+        if( user==null ){
             responseError(0, "user not valid");
             return;
-        }*/
+        }
         
         List<Piece> list=null;
         try{
@@ -174,6 +175,7 @@ public class SAXHandler extends SAXHandlerBase{
             
             String location = Config.isUnitTest() ? "testlocation" : 
                     sysuser.getUserVariable(username, "UserLocation");
+            sysuser.logout();
             if( location==null || location.isEmpty() ){
                 responseError(901, "Your location is undetermined");
                 return;
@@ -195,15 +197,15 @@ public class SAXHandler extends SAXHandlerBase{
         }
         
         if( list==null ){
-            Log.log(f_servername, Type.ERROR, new Exception("the list is null"));
-            responseError(0, "Server internal error.");
+            response("<ok></ok>");
             return;
         }
         
         StringBuilder str = new StringBuilder();
         str.append("<ok>");
+        String linebreak = new String("\n".getBytes(Config.getCharset()), Config.getCharset());
         for(Piece p:list){
-            int sepindex = p.m_content.indexOf('\n');
+            int sepindex = p.m_content.indexOf("\n");
             if( sepindex==-1){
                 Log.log(f_servername, Type.ERROR, new Exception("bubble message format error"));
                 responseError(0, "Server internal error.");
@@ -233,19 +235,19 @@ public class SAXHandler extends SAXHandlerBase{
         User sysuser = new User();
         String username = Config.isUnitTest() ? 
                 m_usersession : user.lookupUsername(m_usersession); // go get user id;
-        
-        Log.log(f_servername, Type.INFO, "write for: " + m_usersession + ":"+ username);
-        /*if( user==null ){
+        if( user==null ){
             responseError(0, "user not valid");
             return;
-        }*/
+        }
+        
+        Log.log(f_servername, Type.INFO, "write for: " + m_usersession + ":"+ username + " message:" + m_content);
         
         String message = username+"\n"+m_content;
         try{
             sysuser.login(Config.getValue("Service_User"), Config.getValue("Service_Psw"));
             
-            String location = Config.isUnitTest() ? 
-                    "testlocation" : sysuser.getUserVariable(username, "UserLocation");
+            String location = sysuser.getUserVariable(username, "UserLocation");
+            sysuser.logout();
             if( location==null || location.isEmpty() ){
                 responseError(901, "Your location is undetermined");
                 return;

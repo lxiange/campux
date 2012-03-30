@@ -22,6 +22,8 @@ import java.util.HashMap;
 public class ClassRooms {
     static private RoomModel s_roommodel;
     static private HashMap<String, String[]> s_prearrange = null;
+    static private HashMap<String, String> s_dayswitch = null;
+    static private long s_lastloadtime=0;
     
     static RoomModel roomModel(){
         if( s_roommodel==null ){
@@ -49,8 +51,26 @@ public class ClassRooms {
         
         // get current time
         Calendar rightNow = Calendar.getInstance();
+        
+        int day = rightNow.get(Calendar.DAY_OF_MONTH);
+        int month = rightNow.get(Calendar.MONTH)+1;
+        dayswitch();
+        String daystr = month + "." + day;
+        String switchday = s_dayswitch.get(daystr);
+        if( switchday == null ){
+            // do nothing
+        }else if( switchday.isEmpty() ){
+            // holiday
+            return false;
+        }else{
+            // switch
+            int numswitch = Integer.parseInt(switchday);
+            rightNow.add(Calendar.DAY_OF_YEAR, numswitch);
+        }
+        
         int hour = rightNow.get(Calendar.HOUR_OF_DAY);
         int minute = rightNow.get(Calendar.MINUTE);
+        day = rightNow.get(Calendar.DAY_OF_WEEK);
         double hours = (double)hour + (double)minute/60.0;
         int interval = -1;
         for(int i=0; i<5; i++){
@@ -65,7 +85,6 @@ public class ClassRooms {
         if( interval==-1 )
             return false;
         
-        int day = rightNow.get(Calendar.DAY_OF_WEEK);
         day = day-2;
         if( day==-1 ) day=7;
         System.out.println("day:"+day);
@@ -88,7 +107,6 @@ public class ClassRooms {
     }
     
     static void loadPrearrange(){
-        System.out.println("load...");
         s_prearrange = new HashMap<String, String[]>();
         try{
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("classroom_prearrange.txt"),Config.getCharset()));
@@ -102,6 +120,28 @@ public class ClassRooms {
                 String arrange[] = new String[35];
                 System.arraycopy(seps, 1, arrange, 0, 35);
                 s_prearrange.put(room, arrange);
+            }
+            reader.close();
+        }catch(Exception exc){
+            Log.log("ClassRoom", Log.Type.NOTICE, exc);
+        }
+    }
+    
+    static void dayswitch(){
+        long time = System.currentTimeMillis();
+        if( !(time - s_lastloadtime > 7200000)) // two hours
+            return;
+        s_lastloadtime = time;
+        s_dayswitch = new HashMap<String, String>();
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("day-switch.txt"),Config.getCharset()));
+            String line = null;
+            while( (line=reader.readLine())!=null ){
+                System.out.println(line);
+                String seps[] = line.split(",");
+                String fromDay = seps[0].trim();
+                String toDay = seps[1].trim();
+                s_dayswitch.put(fromDay, toDay);
             }
             reader.close();
         }catch(Exception exc){
