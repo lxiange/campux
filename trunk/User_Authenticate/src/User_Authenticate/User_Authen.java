@@ -35,16 +35,6 @@ public class User_Authen
 		String user_name=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_name_label);
 		String user_psw=Get_ChildNodeOfRootInXml.get_TextOfElementInXml(document, user_psw_label);
 		
-		// password convert to MD5 --by yuy
-		try{
-			MessageDigest mda = MessageDigest.getInstance("SHA-512", "BC");
-			byte [] digest = mda.digest(user_psw.getBytes());
-			user_psw = String.format("%0128x", new BigInteger(1, digest));
-		}catch(Exception exc){
-			exc.printStackTrace();
-			System.exit(1);
-		}
-		
 		//错误2：用户名为空
 		if(user_name=="")
 		{
@@ -57,6 +47,17 @@ public class User_Authen
 			response=Connect_DBTable_WS.wrong_Response("3");
 			return response;
 		}
+		
+		// password convert to SHA-512 --by yuy
+		try{
+			MessageDigest mda = MessageDigest.getInstance("SHA-512", "BC");
+			byte [] digest = mda.digest(user_psw.getBytes());
+			user_psw = String.format("%0128x", new BigInteger(1, digest));
+		}catch(Exception exc){
+			exc.printStackTrace();
+			System.exit(1);
+		}
+		
 		//错误4：数据库中无此用户名
 		if(Connect_DBTable_UP.have_User(user_name)==false)
 		{
