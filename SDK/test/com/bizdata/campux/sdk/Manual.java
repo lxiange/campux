@@ -16,17 +16,23 @@
  */
 package com.bizdata.campux.sdk;
 
+import java.io.OutputStreamWriter;
+import java.io.BufferedWriter;
+import java.util.HashMap;
 import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.io.FileNotFoundException;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import org.junit.Ignore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -61,8 +67,81 @@ public class Manual {
     }
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
-    //
     //@Ignore
+    @Test
+    public void test() throws Exception{
+        String str="001221154\n测试";
+        String name = str.substring(str.indexOf("\n")+1);
+        String base64 = DatatypeConverter.printBase64Binary(name.getBytes(Config.getCharset()));
+        name = new String(DatatypeConverter.parseBase64Binary(base64), Config.getCharset());
+        System.out.println(name);
+    }
+    @Ignore
+    @Test
+    public void verRegFile() throws Exception{
+        String id = "mg1133023";
+        String name = "鲁翔";
+        String filehash = id.substring(0,4) + ".reginfo";
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filehash)));
+        String line = null;
+        String infoline = null;
+        while( (line=reader.readLine())!=null){
+            if( id.equalsIgnoreCase(line.substring(0,id.length()))){
+                infoline = line;
+                break;
+            }
+        }
+        if( infoline == null )
+            return;
+        String segs[] = infoline.split("\\t");
+        String rid = segs[0];
+        String rname = segs[1];
+        String rdept = segs.length>=3 ? segs[2] : "";
+        String rboard = segs.length>=4 ? segs[3] : "";
+        System.out.println(rid + " " + rname + " " + rdept + " " + rboard);
+        System.out.println(name.equalsIgnoreCase(rname));
+        
+        System.out.println(name + " " + rname);
+	        {
+	        	byte[] bs = name.getBytes(Charset.forName("UTF-8"));
+	        	for(byte b:bs)
+	        		System.out.print(b+"");
+	        }
+	        System.out.println("");
+	        {
+	        	byte[] bs = rname.getBytes();
+                        String n=new String(bs,Charset.forName("UTF-8"));
+                        bs = n.getBytes("UTF-8");
+                        System.out.println(n);
+	        	for(byte b:bs)
+	        		System.out.print(b+"");
+	        }
+    }
+    @Ignore
+    @Test
+    public void sepRegfile() throws Exception{
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\usr\\Campux\\campux\\SDK\\newfile"),Charset.forName("UTF-8")));
+        HashMap<String, BufferedWriter> hash = new HashMap<String, BufferedWriter>();
+        String line = null;
+        while( (line=reader.readLine())!=null){
+            if( line.length()<6 )
+                continue;
+            String prefix = line.substring(0,4);
+            BufferedWriter writer = hash.get(prefix);
+            if( writer==null ){
+                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(prefix+".reginfo"), Charset.forName("UTF-8")));
+                hash.put(prefix, writer);
+            }
+            writer.write(line);
+            writer.newLine();
+        }
+        reader.close();
+        for(BufferedWriter w:hash.values()){
+            w.close();
+        }
+    }
+    //
+    @Ignore
     @Test
     public void registerSystemServices() throws Exception{
         File lflarge = new File("c:/usr/campux/lily-74.png");

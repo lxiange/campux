@@ -185,7 +185,7 @@ public class User {
         m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
-        String str = auth.prepareRegistration(studentID, psw);
+        String str = auth.prepareRegistration(studentID, psw, name);
         m_comm.sentString(str);
 
         auth.parseInput(m_comm.getInputStream());
@@ -199,36 +199,37 @@ public class User {
             return false;
         }
         // set variables
+        if (depart != null && !depart.isEmpty()) {
+            if (!setUserVariable("UserDepartment", depart)) {
+                return false;
+            }
+        }
+        if (school != null && !school.isEmpty()) {
+            if (!setUserVariable("UserSchool", school)) {
+                return false;
+            }
+        }
+        if (grade != null && !grade.isEmpty()) {
+            if (!setUserVariable("UserGrade", grade)) {
+                return false;
+            }
+        }
+        if (age != null && !age.isEmpty()) {
+            if (!setUserVariable("UserAge", age)) {
+                return false;
+            }
+        }
+        if (gender != null && !age.isEmpty()) {
+            if (!setUserVariable("UserGender", gender)) {
+                return false;
+            }
+        }
         if (name != null) {
             if (!setUserVariable("UserName", name)) {
                 return false;
             }
         }
-        if (depart != null) {
-            if (!setUserVariable("UserDepartment", depart)) {
-                return false;
-            }
-        }
-        if (school != null) {
-            if (!setUserVariable("UserSchool", school)) {
-                return false;
-            }
-        }
-        if (grade != null) {
-            if (!setUserVariable("UserGrade", grade)) {
-                return false;
-            }
-        }
-        if (age != null) {
-            if (!setUserVariable("UserAge", age)) {
-                return false;
-            }
-        }
-        if (gender != null) {
-            if (!setUserVariable("UserGender", gender)) {
-                return false;
-            }
-        }
+        logout();
         return true;
     }
 

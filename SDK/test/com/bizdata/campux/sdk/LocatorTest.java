@@ -16,6 +16,7 @@
  */
 package com.bizdata.campux.sdk;
 
+import org.junit.Ignore;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -51,6 +52,7 @@ public class LocatorTest {
     /**
      * Test of clean method, of class Locator.
      */
+    @Ignore
     @Test
     public void testClean() {
         System.out.println("clean");
@@ -63,6 +65,7 @@ public class LocatorTest {
     /**
      * Test of addWifi method, of class Locator.
      */
+    @Ignore
     @Test
     public void testAddWifi() {
         System.out.println("addWifi");
@@ -78,6 +81,7 @@ public class LocatorTest {
     /**
      * Test of setIP method, of class Locator.
      */
+    @Ignore
     @Test
     public void testSetIP() {
         System.out.println("setIP");
@@ -94,7 +98,8 @@ public class LocatorTest {
     @Test
     public void testGetLocation() throws Exception {
         System.out.println("getLocation");
-        User user = null;
+        User user = new User();
+        user.login("001221154", "123456");
         Locator instance = new Locator();
         String expResult = "";
         String result = instance.getLocation(user);
@@ -106,6 +111,7 @@ public class LocatorTest {
     /**
      * Test of setLocation method, of class Locator.
      */
+    @Ignore
     @Test
     public void testSetLocation() throws Exception {
         System.out.println("setLocation");
