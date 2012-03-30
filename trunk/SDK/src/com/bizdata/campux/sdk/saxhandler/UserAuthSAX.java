@@ -71,14 +71,16 @@ public class UserAuthSAX extends SAXHandlerBase {
         return str.toString();
     }
     
-    public String prepareRegistration(String user, String psw){
+    public String prepareRegistration(String user, String psw, String name){
         StringBuilder str = new StringBuilder();
         //str.append( Config.getXMLfirstline() );
         str.append("<a><u>");
         str.append(user);
         str.append("</u><p>");
         str.append(psw);
-        str.append("</p></a>\r\n");
+        str.append("</p><n>");
+        str.append(name);
+        str.append("</n></a>\r\n");
         return str.toString();
     }
     

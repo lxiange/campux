@@ -55,12 +55,12 @@ public class UserTest_Auth {
     /**
      * Test of register method, of class User.
      */
-    //@Ignore
+    @Ignore
     @Test
     public void testRegister() throws Exception{
         System.out.println("register");
         
-        boolean result = instance.register("001221157", "123456", "俞扬", "计算机", null, null, "18", "M");
+        boolean result = instance.register("001221154", "123456", "俞扬", null, null, null, null, null);
         assertTrue(result);
         
     }
@@ -72,10 +72,15 @@ public class UserTest_Auth {
     @Test
     public void testLogin() throws Exception {
         System.out.println("login");
-        String name = "001221157";
+        String name = "001221154";
         String psw = "123456";
         
         boolean result = instance.login(name, psw);
+        
+        User user = new User();
+        user.login(name, psw);
+        
+        user.logout();
         
         assertTrue(result);
         
