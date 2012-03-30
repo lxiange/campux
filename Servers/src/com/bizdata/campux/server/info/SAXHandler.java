@@ -205,6 +205,7 @@ public class SAXHandler extends SAXHandlerBase{
                     continue;
                 allPieces.addAll(list);                
             }
+            sysuser.logout();
             
             Collections.sort(allPieces, new PieceComparator());
             
