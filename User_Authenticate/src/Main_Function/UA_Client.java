@@ -1,6 +1,8 @@
 package Main_Function;
 import java.io.*; 
+import java.math.BigInteger;
 import java.net.*; 
+import java.security.MessageDigest;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -12,6 +14,7 @@ public class UA_Client
 	{
 		try
 		{
+			
 			/**
 			 * changed to SSL socket
 			 */
@@ -89,7 +92,18 @@ public class UA_Client
 	
 	public static void main(String[] args)
 	{
-		authen_Client_1();
+		String user_psw="56f7315cb9e7311477a03d5fcae5973e9df1499ef5f5ec9e796dd1dc94ec5e59b36e9c972a3b54ebc2097ba2ecda59606786893f56b01bb8fb522316328a27d3";
+		// password convert to SHA-512 --by yuy
+		try{
+			MessageDigest mda = MessageDigest.getInstance("SHA-512");
+			byte [] digest = mda.digest(user_psw.getBytes());
+			user_psw = String.format("%0128x", new BigInteger(1, digest));
+		}catch(Exception exc){
+			exc.printStackTrace();
+			System.exit(1);
+		}
+		System.out.println(user_psw);
+		//authen_Client_1();
 	}
 
 }
