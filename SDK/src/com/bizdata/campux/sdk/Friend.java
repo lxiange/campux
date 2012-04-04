@@ -46,6 +46,7 @@ public class Friend {
     public Friend(User user){
     	m_ServicePort_Friend=Integer.parseInt(Config.getValue("ServicePort_Friend"));
         m_user = user;
+        m_comm = new ServerCommunicator();
     }
     /**
      * List items in Friend table from the Friend Server
@@ -133,9 +134,7 @@ public class Friend {
      * @throws Exception 
      */
     public FriendMessage[] friendStatusRead(long starttime) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+        m_comm.SetupCommunicator(m_ServicePort_Friend);
         
         FriendSAX fsax = new FriendSAX();
         String str = fsax.prepareFriendRead(m_user.getSessionID(), starttime);
@@ -162,8 +161,7 @@ public class Friend {
     }
     
     public boolean __friendStatusPublish(String targetuser, String content) throws Exception{
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+        m_comm.SetupCommunicator(m_ServicePort_Friend);
 
         FriendSAX fsax = new FriendSAX();
         String str = fsax.prepareFriendPublish(m_user.getSessionID(), targetuser, content);

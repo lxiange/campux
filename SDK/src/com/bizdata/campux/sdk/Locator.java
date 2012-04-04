@@ -43,6 +43,7 @@ public class Locator {
     	}
  	catch(Exception e){System.out.println("Can't find sde.config!");}
         m_ServicePort_Locator = Integer.parseInt(Config.getValue("ServicePort_WifiLocator"));
+        m_comm = new ServerCommunicator();
     }
     
     public void clean(){
@@ -59,8 +60,7 @@ public class Locator {
         m_ip = ip;
     }
     public String getLocation(User user) throws Exception{
-        if( m_comm!=null) m_comm.close();
-            m_comm = new ServerCommunicator(m_ServicePort_Locator);
+        m_comm.SetupCommunicator(m_ServicePort_Locator);
        
         LocationSAX locator = new LocationSAX();
         String str = locator.prepareGetLocation(user.m_userSessionID, m_ip, m_wifis, m_connected);
@@ -71,8 +71,7 @@ public class Locator {
         return locator.getResponseString();
     }
     public void setLocation(User user, String locationname) throws Exception{
-        if( m_comm!=null) m_comm.close();
-            m_comm = new ServerCommunicator(m_ServicePort_Locator);
+        m_comm.SetupCommunicator(m_ServicePort_Locator);
        
         LocationSAX locator = new LocationSAX();
         String str = locator.prepareAddLocation(user.m_userSessionID, locationname, m_ip, m_wifis, m_connected);

@@ -58,24 +58,12 @@ public class UserStatusTest {
     public void testUserstatus() throws Exception{
         Config.init(new FileInputStream("sdk.config"));
         User user = new User();
-        boolean suc = user.login("test", "test");
+        boolean suc = user.login("001221154", "123456");
         System.out.println("login:"+suc);
         
-        String longstr = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        longstr += longstr;
-        longstr += longstr;
-        longstr += longstr;
-        longstr += longstr;
-        longstr += longstr;
-        longstr += longstr;
-        longstr += longstr;
-        
-        suc = user.setUserVariable("UserPhoto", longstr);
-        System.out.println("write:"+suc);
-        
-        String verify = user.getUserVariable("UserPhoto");
+        String verify = user.getUserVariable("111292053","UserSchool");
         System.out.println(verify);
         
-        System.out.println(longstr.equals(verify));
+        user.logout();
     }
 }

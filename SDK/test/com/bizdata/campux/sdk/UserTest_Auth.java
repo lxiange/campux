@@ -91,7 +91,7 @@ public class UserTest_Auth {
     /**
      * Test of lookupUsername method, of class User.
      */
-    //@Ignore
+    @Ignore
     @Test
     public void testLookupUsername() throws Exception {
         System.out.println("lookupUsername: " + instance.getSessionID());

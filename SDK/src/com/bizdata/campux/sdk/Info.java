@@ -46,6 +46,7 @@ public class Info {
     public Info(User user){
     	m_ServicePort_Info=Integer.parseInt(Config.getValue("ServicePort_UserInfo"));
         m_user = user;
+        m_comm = new ServerCommunicator();
     }
     /**
      * List items in Friend table from the Friend Server
@@ -156,9 +157,7 @@ public class Info {
      * @throws Exception 
      */
     public InfoMessage[] infoRead(long starttime) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Info);
+        m_comm.SetupCommunicator(m_ServicePort_Info);
         
         UserInfoSAX sax = new UserInfoSAX();
         String str = sax.prepareInfoRead(m_user.getSessionID(), starttime);
@@ -185,8 +184,7 @@ public class Info {
     }
     
     public boolean __infoPublish(String roomname, String content) throws Exception{
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Info);
+        m_comm.SetupCommunicator(m_ServicePort_Info);
 
         UserInfoSAX fsax = new UserInfoSAX();
         String str = fsax.prepareInfoPublish(m_user.getSessionID(), roomname, content);

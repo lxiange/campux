@@ -112,17 +112,18 @@ public class ClassroomTest {
         int v = f.readClassRoomComment("仙Ⅰ_102");
         System.out.println(v);*/
         
-//        roomlist = f.listClassRooms();
-//        for(String key : roomlist.keySet()){
-//            System.out.println(key+":");
-//            List<String> rooms = roomlist.get(key);
-//            if( rooms!=null ){
-//                for(String room : rooms){
-//                    int v = f.readClassRoomComment(key, room);
-//                    System.out.println("    "+room+":"+v);
-//                }
-//            }
-//        }
+        roomlist = f.listClassRooms();
+        for(String key : roomlist.keySet()){
+            System.out.println(key+":");
+            List<String> rooms = roomlist.get(key);
+            if( rooms!=null ){
+                for(String room : rooms){
+                    int v = f.readClassRoomComment(key, room);
+                    System.out.println("    "+room+":"+v);
+                }
+            }
+        }
+        usr.logout();
     }
     
 }

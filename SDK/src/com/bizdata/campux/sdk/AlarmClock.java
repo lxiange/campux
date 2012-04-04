@@ -47,6 +47,7 @@ public class AlarmClock{
     public AlarmClock(int port,String sessionID){
     	m_ServicePort_AlarmClock=port;
     	m_userSessionID=sessionID;
+        m_comm = new ServerCommunicator();
     }
     
     /**
@@ -58,9 +59,7 @@ public class AlarmClock{
      * @throws Exception 
      */
     public String singleACSet(String c_user,String c_time,String c_content) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_AlarmClock);
+        m_comm.SetupCommunicator(m_ServicePort_AlarmClock);
         
         AlarmClockSAX clock = new AlarmClockSAX();
         String str = clock.prepareSingleACSet(m_userSessionID, c_user, c_time, c_content);
@@ -85,9 +84,7 @@ public class AlarmClock{
      */
     public String multipeACSet(String c_user,String c_time,
 			String c_initialDate,String c_interval,String c_content) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_AlarmClock);
+        m_comm.SetupCommunicator(m_ServicePort_AlarmClock);
         
         AlarmClockSAX clock = new AlarmClockSAX();
         String str = clock.prepareMultipleACSet(m_userSessionID, c_user, c_time, c_initialDate, c_interval, c_content);
@@ -106,9 +103,7 @@ public class AlarmClock{
      * @throws Exception 
      */
     public String[] aCEnum() throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_AlarmClock);
+        m_comm.SetupCommunicator(m_ServicePort_AlarmClock);
         
         AlarmClockSAX clock = new AlarmClockSAX();
         String str = clock.prepareACEnum(m_userSessionID);
@@ -126,9 +121,7 @@ public class AlarmClock{
      * @throws Exception 
      */
     public String aCDelete(String c_alarmID) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_AlarmClock);
+        m_comm.SetupCommunicator(m_ServicePort_AlarmClock);
         
         AlarmClockSAX clock = new AlarmClockSAX();
         String str = clock.prepareACDelete(m_userSessionID, c_alarmID);

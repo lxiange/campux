@@ -86,6 +86,8 @@ public class User {
         m_ServicePort_Media = Integer.parseInt(Config.getValue("ServicePort_Media"));
         m_ServicePort_AlarmClock = Integer.parseInt(Config.getValue("ServicePort_AlarmClock"));
         m_ServicePort_ClassSchedule = Integer.parseInt(Config.getValue("ServicePort_ClassSchedule"));
+        
+        m_comm = new ServerCommunicator();
     }
 
     /**
@@ -110,11 +112,7 @@ public class User {
         m_username = name;
         m_userpsw = psw;
 
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareLogin(m_username, m_userpsw);
@@ -145,14 +143,10 @@ public class User {
             return;
         }
 
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareLogout(m_userSessionID);
-        System.out.println(str);
         m_comm.sentString(str);
 
         m_comm.close();
@@ -178,11 +172,7 @@ public class User {
             String depart, String school, String grade, String age,
             String gender) throws Exception {
 
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareRegistration(studentID, psw, name);
@@ -241,11 +231,7 @@ public class User {
     public String lookupUsername(String userSessionID) {
         String user = null;
         try {
-            // force shutdown of the old connection
-            if (m_comm != null) {
-                m_comm.close();
-            }
-            m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+            m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
             UserAuthSAX auth = new UserAuthSAX();
             String str = auth.prepareLookup(userSessionID);
@@ -287,11 +273,7 @@ public class User {
      * @throws Exception 
      */
     public boolean deleteUser(String usr) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareUserDelete(getSessionID(), usr);
@@ -312,11 +294,7 @@ public class User {
      * @throws Exception 
      */
     public boolean changePassword(String newpassword) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.preparePasswordChange(getSessionID(), m_userpsw);
@@ -336,11 +314,7 @@ public class User {
      * @return 
      */
     public boolean groupAdd(String group) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareGroupAdd(getSessionID(), group);
@@ -362,11 +336,7 @@ public class User {
      * @throws Exception 
      */
     public boolean groupDelete(String group) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareGroupDelete(getSessionID(), group);
@@ -387,11 +357,7 @@ public class User {
      * @throws Exception 
      */
     public String[] groupList() throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareGroupList(getSessionID());
@@ -404,11 +370,7 @@ public class User {
     }
     
     public String[] groupList(String sessionID) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareGroupList(sessionID);
@@ -427,11 +389,7 @@ public class User {
      * @throws Exception 
      */
     public String[] groupUsers(String group) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareGroupUserList(getSessionID(), group);
@@ -450,11 +408,7 @@ public class User {
      * @throws Exception 
      */
     public String[] userGroups(String user) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareUserBelongingGroups(getSessionID(), user);
@@ -473,11 +427,7 @@ public class User {
      * @throws Exception 
      */
     public boolean groupAssociateToUser(String group, String user) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareUserAssociateGroup(getSessionID(), user, group);
@@ -499,11 +449,7 @@ public class User {
      * @throws Exception 
      */
     public boolean groupDissociateFromUser(String group, String user) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserAuth);
+        m_comm.SetupSSLCommunicator(m_ServicePort_UserAuth);
 
         UserAuthSAX auth = new UserAuthSAX();
         String str = auth.prepareUserDissociateGroup(getSessionID(), user, group);
@@ -524,11 +470,7 @@ public class User {
      * @throws Exception 
      */
     public String[] getUserVariables() throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
         // SAX object
         UserStatusSAX status = new UserStatusSAX();
         // prepare the communication string
@@ -552,11 +494,7 @@ public class User {
      * @throws Exception 
      */
     public String getUserVariable(String var) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.prepareGetUserVariable(getSessionID(), null, var);
@@ -577,11 +515,7 @@ public class User {
      * @throws Exception 
      */
     public String getUserVariable(String targetuser, String var) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.prepareGetUserVariable(getSessionID(), targetuser, var);
@@ -603,11 +537,7 @@ public class User {
      * @throws Exception 
      */
     public boolean setUserVariable(String var, String val) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.prepareSetUserVariable(getSessionID(), null, var, val);
@@ -629,11 +559,7 @@ public class User {
      * @throws Exception 
      */
     public boolean setUserVariable(String targetuser, String var, String val) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.prepareSetUserVariable(getSessionID(), targetuser, var, val);
@@ -654,11 +580,7 @@ public class User {
      * @throws Exception 
      */
     public Message[] messageGet(int lastmsgid) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.prepareGetMessage(getSessionID(), lastmsgid);
@@ -672,11 +594,7 @@ public class User {
     }
 
     public boolean messageDelete(int msgID) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.prepareDeleteMessage(getSessionID(), msgID);
@@ -700,11 +618,7 @@ public class User {
      * @throws Exception 
      */
     public boolean messagePut(String[] users, String[] groups, String message) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStatus);
+        m_comm.SetupCommunicator(m_ServicePort_UserStatus);
 
         UserStatusSAX status = new UserStatusSAX();
         String str = status.preparePutMessage(getSessionID(), users, groups, message);
@@ -724,11 +638,7 @@ public class User {
      * @throws Exception 
      */
     public String[] appList() throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareAppList(getSessionID());
@@ -747,11 +657,7 @@ public class User {
      * @throws Exception 
      */
     public boolean appAdd(String app) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareAppAdd(getSessionID(), app);
@@ -773,11 +679,7 @@ public class User {
      * @throws Exception 
      */
     public boolean appDelete(String app) throws Exception {
-        // force shutdown of the old connection
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareAppDelete(getSessionID(), app);
@@ -798,10 +700,7 @@ public class User {
      * @throws Exception 
      */
     public boolean appSetSpace(String app, String len) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareAppSetSpace(getSessionID(), app, len);
@@ -822,10 +721,7 @@ public class User {
      * @throws Exception 
      */
     public String[] appGetSpace(String app) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareAppGetSpace(getSessionID(), app);
@@ -844,10 +740,7 @@ public class User {
      * @throws Exception 
      */
     public String[] dirList(String path) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareDirList(getSessionID(), path);
@@ -866,10 +759,7 @@ public class User {
      * @throws Exception 
      */
     public boolean dirAdd(String path) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
 
         UserStoreSAX auth = new UserStoreSAX();
@@ -892,10 +782,7 @@ public class User {
      * @throws Exception 
      */
     public boolean dirDelete(String path) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareDirDelete(getSessionID(), path);
@@ -918,10 +805,7 @@ public class User {
      * @throws Exception 
      */
     public boolean fileExist(String file) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareFileExist(getSessionID(), file);
@@ -943,10 +827,7 @@ public class User {
      * @throws Exception 
      */
     public String[] fileGetProperty(String file) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareFileGetProperty(getSessionID(), file);
@@ -967,10 +848,7 @@ public class User {
      * @throws Exception 
      */
     public String fileRead(String file, String begin, String end) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX auth = new UserStoreSAX();
         String str = auth.prepareFileRead(getSessionID(), file, begin, end);
@@ -1005,10 +883,7 @@ public class User {
      * @throws Exception 
      */
     private boolean fileWrite(String file, long begin, String content) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX store = new UserStoreSAX();
         String str = store.prepareFileWrite(getSessionID(), file, begin, content);
@@ -1030,10 +905,7 @@ public class User {
      * @throws Exception 
      */
     public boolean fileDelete(String file) throws Exception {
-        if (m_comm != null) {
-            m_comm.close();
-        }
-        m_comm = new ServerCommunicator(m_ServicePort_UserStore);
+        m_comm.SetupCommunicator(m_ServicePort_UserStore);
 
         UserStoreSAX store = new UserStoreSAX();
         String str = store.prepareFileDelete(getSessionID(), file);

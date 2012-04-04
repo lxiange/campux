@@ -70,11 +70,9 @@ public class Manual {
     //@Ignore
     @Test
     public void test() throws Exception{
-        String str="001221154\n测试";
-        String name = str.substring(str.indexOf("\n")+1);
-        String base64 = DatatypeConverter.printBase64Binary(name.getBytes(Config.getCharset()));
-        name = new String(DatatypeConverter.parseBase64Binary(base64), Config.getCharset());
-        System.out.println(name);
+        String str="5a6X56uL";
+        String base64 = new String(DatatypeConverter.parseBase64Binary(str), Config.getCharset());
+       System.out.println(base64);
     }
     @Ignore
     @Test
