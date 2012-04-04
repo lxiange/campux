@@ -513,7 +513,8 @@ public class SAXHandler extends SAXHandlerBase{
             //info.infoRoomAdd(userid, "NJUExpress");
             info.infoRoomAdd(userid, "M_Job");
             info.infoRoomAdd(userid, "JobAndWork");
-            info.infoRoomAdd(userid, "NYBLSystem"); // the virtual board
+            info.infoRoomAdd(userid, "NYBLSystem");
+            info.infoRoomAdd(userid, "AcademicReport");// the virtual board
             if( !watch.isEmpty())
                 info.infoRoomAdd(userid, watch);
             if( !graduate )

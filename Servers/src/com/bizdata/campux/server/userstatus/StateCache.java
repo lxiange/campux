@@ -112,23 +112,27 @@ public class StateCache {
                 String var, val;
                 boolean b64;
                 boolean root = true;
+                String content = null;
                 public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
                     var = qName;
                     b64 = attributes.getValue("b64")==null ? false : true;                        
+                    content = "";
                 }
                 @Override
                 public void characters(char ch[], int start, int length) throws SAXException {
                     if( var == null )
                         return;
                     val = new String(ch, start, length);
-                    if( b64 ){
-                        byte[] bytes = DatatypeConverter.parseBase64Binary(val);
-                        val = new String(bytes, Charset.forName("UTF-8"));
-                    }
-                    state.m_values.put(var, val);
+                    content = content + val;
                 }
                 @Override
                 public void endElement(String uri, String localName, String qName) throws SAXException {
+                    if( b64 ){
+                        byte[] bytes = DatatypeConverter.parseBase64Binary(content);
+                        val = new String(bytes, Charset.forName("UTF-8"));
+                    }
+                    state.m_values.put(var, val);
+
                     var = null;
                 }
                 

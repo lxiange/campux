@@ -22,6 +22,8 @@ import javax.net.ssl.SSLSocket;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.security.KeyStore;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -34,34 +36,45 @@ import javax.net.ssl.SSLContext;
  */
 public class CommonServer extends Thread{
     protected SSLServerSocket m_sslserversocket = null;
+    protected ServerSocket m_serversocket = null;
     protected int m_port = -1;
     protected ServerBase m_server = null;
+    protected boolean m_ssl = true;
     
     @Override
     public void run() {
         try{
+            System.out.println("Server running on:"+m_port);
+            if( m_ssl ){
             //setup ssl server socket
-            String keyFile = Config.getValue("SSLServerCertificate");
-            String keyFilePass = Config.getValue("SSLServerCertificateKey");
-            String keyPass = Config.getValue("SSLServerAliasKey");
-            KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(keyFile), keyFilePass.toCharArray()); 
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"); 
-            kmf.init(ks,keyPass.toCharArray());
-            SSLContext sslc = SSLContext.getInstance("SSLv3"); 
-            sslc.init(kmf.getKeyManagers(), null, null); 
-            SSLServerSocketFactory sslserversocketfactory = sslc.getServerSocketFactory(); 
+                String keyFile = Config.getValue("SSLServerCertificate");
+                String keyFilePass = Config.getValue("SSLServerCertificateKey");
+                String keyPass = Config.getValue("SSLServerAliasKey");
+                KeyStore ks = KeyStore.getInstance("JKS");
+                ks.load(new FileInputStream(keyFile), keyFilePass.toCharArray()); 
+                KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"); 
+                kmf.init(ks,keyPass.toCharArray());
+                SSLContext sslc = SSLContext.getInstance("SSLv3"); 
+                sslc.init(kmf.getKeyManagers(), null, null); 
+                SSLServerSocketFactory sslserversocketfactory = sslc.getServerSocketFactory(); 
 
-            //Listen
-            m_sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(m_port);
+                m_sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(m_port);
+            }else{
+                m_serversocket = new ServerSocket(m_port);
+            }
+            
         }catch(Exception exc){
             Log.log("server", Log.Type.FATAL, exc);
             return;
         }
         
-        while(m_sslserversocket!=null){
+        while(m_sslserversocket!=null || m_serversocket!=null){
             try{
-                SSLSocket sslsocket = (SSLSocket) m_sslserversocket.accept();
+                Socket sslsocket = null;
+                if( m_ssl )
+                    sslsocket = (SSLSocket) m_sslserversocket.accept();
+                else
+                    sslsocket = m_serversocket.accept();
 
                 InputStream inputstream = sslsocket.getInputStream();
                 OutputStream outputstream = sslsocket.getOutputStream();
@@ -76,6 +89,7 @@ public class CommonServer extends Thread{
     /**
      * instance of the server
      */
+    private CommonServer m_sslinstance = null;
     private CommonServer m_instance = null;
     /**
      * Start the server that listens the port
@@ -89,9 +103,19 @@ public class CommonServer extends Thread{
         }catch(Exception exc){
             Log.log("server", Log.Type.FATAL, exc);
         }
+        try{
+            m_sslinstance = this.getClass().newInstance();
+        }catch(Exception exc){
+            Log.log("server", Log.Type.FATAL, exc);
+        }
         
-        m_instance.m_port = port;
+        m_sslinstance.m_port = port;
+        m_sslinstance.m_server = server;
+        m_sslinstance.m_ssl = true;
+        m_sslinstance.start();
+        m_instance.m_port = port+200;
         m_instance.m_server = server;
+        m_instance.m_ssl=false;
         m_instance.start();
     }
     /**
@@ -104,7 +128,15 @@ public class CommonServer extends Thread{
             }catch(Exception exc){
                 Log.log("server", Log.Type.NOTICE, exc);
             }
-            m_instance.m_sslserversocket = null;
+            m_instance.m_serversocket = null;
+        }
+        if( m_sslinstance!=null ){
+            try{
+                m_sslinstance.m_sslserversocket.close();
+            }catch(Exception exc){
+                Log.log("server", Log.Type.NOTICE, exc);
+            }
+            m_sslinstance.m_sslserversocket = null;
         }
     }
 }
