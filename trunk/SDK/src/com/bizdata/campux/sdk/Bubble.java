@@ -39,6 +39,7 @@ public class Bubble {
     public Bubble(User user){
     	m_ServicePort_Bubble=Integer.parseInt(Config.getValue("ServicePort_Bubble"));
         m_user = user;
+        m_comm = new ServerCommunicator();
     }
     /**
      * Release a bubble from the Bubble Server
@@ -48,8 +49,7 @@ public class Bubble {
      * @throws Exception 
      */
     public boolean publish(String content)throws Exception{
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Bubble);
+        m_comm.SetupCommunicator(m_ServicePort_Bubble);
 
         BubbleSAX bubble = new BubbleSAX();
         String str = bubble.prepareBubblePublish(m_user.getSessionID(), content);
@@ -70,9 +70,7 @@ public class Bubble {
      * @throws Exception 
      */
     public BubbleMessage[] bubbleRead(long starttime) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Bubble);
+        m_comm.SetupCommunicator(m_ServicePort_Bubble);
         
         BubbleSAX bubble = new BubbleSAX();
         String str = bubble.prepareBubbleRead(m_user.getSessionID(), starttime);

@@ -31,6 +31,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.KeyStore;
 //import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSocket;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.BasicHttpParams;
@@ -44,6 +45,7 @@ public class ServerCommunicator {
     protected Socket m_socket;
     protected InputStream m_inputstream;
     protected OutputStream m_outputstream;
+    protected String m_host = null;
     static public enum StoreType{
         JKS, BKS, PKCS, JCEKS
     }
@@ -52,20 +54,38 @@ public class ServerCommunicator {
      * @param port
      * @throws Exception 
      */
-    public ServerCommunicator(int port) throws Exception{
+    public ServerCommunicator(){
+        m_host = Config.getValue("ServerAddress");
+    }
+    public boolean SetupCommunicator(int port) throws Exception{
+        close();
+        port = port+200; // for non-secure socket
+        try{            
+            m_socket = new Socket(m_host,port);
+            
+            m_inputstream = new BufferedInputStream(m_socket.getInputStream());
+            m_outputstream = new BufferedOutputStream(m_socket.getOutputStream());
+        }catch(Exception exc){
+            Log.log("ServerCommunication", Type.ERROR, exc);
+            //return false;
+            throw exc;
+        }
+        return true;
+    }
+    public boolean SetupSSLCommunicator(int port) throws Exception{
+        close();
         try{
             String storetype = Config.getValue("KeyStoreType");
-            String host = Config.getValue("ServerAddress");
             String password = Config.getValue("SSLClientCertificateKey");
             
             // when the KeyStoreType is not specified or is "jsk", use Oracle default setting, otherwise, use android compatible setting
             if( storetype==null || "jsk".equalsIgnoreCase(storetype)){
-                InetSocketAddress serveraddress = new InetSocketAddress(host, port);
+                InetSocketAddress serveraddress = new InetSocketAddress(m_host, port);
                 System.setProperty("javax.net.ssl.trustStore",Config.getValue("SSLClientCertificate"));
                 System.setProperty("javax.net.ssl.trustStorePassword",Config.getValue("SSLClientCertificateKey"));
             
                 javax.net.ssl.SSLSocketFactory sslsf = (javax.net.ssl.SSLSocketFactory)javax.net.ssl.SSLSocketFactory.getDefault();
-                m_socket = sslsf.createSocket(host, port);
+                m_socket = sslsf.createSocket(m_host, port);
             }else{
                 KeyStore trusted = KeyStore.getInstance(storetype);
                 trusted.load(new FileInputStream(Config.getValue("SSLClientCertificate")), password.toCharArray());
@@ -74,15 +94,17 @@ public class ServerCommunicator {
                 // the deprecated methods are used to be compatible with android 2.2
                 sslsf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 m_socket = sslsf.createSocket();
-                m_socket = sslsf.connectSocket(m_socket, host, port, null, -1, new BasicHttpParams());
+                m_socket = sslsf.connectSocket(m_socket, m_host, port, null, -1, new BasicHttpParams());
             }
             
             m_inputstream = new BufferedInputStream(m_socket.getInputStream());
             m_outputstream = new BufferedOutputStream(m_socket.getOutputStream());
         }catch(Exception exc){
             Log.log("ServerCommunication", Type.ERROR, exc);
-            throw(new ServerOutofreachException(exc));
+            //return false;
+            throw exc;
         }
+        return true;
     }
     /**
      * get the input stream of the socket
@@ -116,19 +138,19 @@ public class ServerCommunicator {
      */
     public void close(){
         try{
-            m_inputstream.close();
+            if( m_inputstream!=null)
+                m_inputstream.close();
         }catch(Exception exc){
-            Log.log("ServerCommunication", Type.NOTICE, exc);
         }
         try{
-            m_outputstream.close();
+            if( m_outputstream!=null )
+                m_outputstream.close();
         } catch (Exception exc) {
-            Log.log("ServerCommunication", Type.NOTICE, exc);
         }
         try{
-            m_socket.close();
+            if( m_socket!=null && !m_socket.isClosed())
+                m_socket.close();
         } catch (Exception exc) {
-            Log.log("ServerCommunication", Type.NOTICE, exc);
         }
     }
 }

@@ -47,6 +47,7 @@ public class ClassSchedule{
     public ClassSchedule(int port,String sessionID){
     	m_ServicePort_ClassSchedule=port;
     	m_userSessionID=sessionID;
+        m_comm = new ServerCommunicator();
     }
     
     /**
@@ -55,9 +56,7 @@ public class ClassSchedule{
      * @throws Exception 
      */
     public String[] classListGet() throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_ClassSchedule);
+        m_comm.SetupCommunicator(m_ServicePort_ClassSchedule);
         
         ClassScheduleSAX schedule = new ClassScheduleSAX();
         String str = schedule.prepareClassListGet();
@@ -76,10 +75,9 @@ public class ClassSchedule{
      * @throws Exception 
      */
     public boolean classPublish(String address,String available)throws Exception{
-   	    if( m_comm!=null) m_comm.close();
-   	    m_comm = new ServerCommunicator(m_ServicePort_ClassSchedule);
+   	m_comm.SetupCommunicator(m_ServicePort_ClassSchedule);
      
-   	    ClassScheduleSAX schedule = new ClassScheduleSAX();
+   	ClassScheduleSAX schedule = new ClassScheduleSAX();
         String str = schedule.prepareClassPublish(m_userSessionID, address, available);
         m_comm.sentString(str);
         
@@ -96,9 +94,7 @@ public class ClassSchedule{
      * @throws Exception 
      */
     public String multipeACSet(String address) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_ClassSchedule);
+        m_comm.SetupCommunicator(m_ServicePort_ClassSchedule);
         
         ClassScheduleSAX schedule= new ClassScheduleSAX();
         String str = schedule.prepareClassHistoryRead(m_userSessionID, address);
@@ -117,9 +113,7 @@ public class ClassSchedule{
      * @throws Exception 
      */
     public String[] classScheduleRead() throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_ClassSchedule);
+        m_comm.SetupCommunicator(m_ServicePort_ClassSchedule);
         
         ClassScheduleSAX schedule = new ClassScheduleSAX();
         String str = schedule.prepareClassScheduleRead(m_userSessionID);
@@ -140,10 +134,9 @@ public class ClassSchedule{
      * @throws Exception 
      */
     public boolean classPublish(String c_day,String c_class,String c_room,String c_content)throws Exception{
-   	    if( m_comm!=null) m_comm.close();
-   	    m_comm = new ServerCommunicator(m_ServicePort_ClassSchedule);
+   	m_comm.SetupCommunicator(m_ServicePort_ClassSchedule);
      
-   	    ClassScheduleSAX schedule = new ClassScheduleSAX();
+   	ClassScheduleSAX schedule = new ClassScheduleSAX();
         String str = schedule.prepareClassScheduleSet(m_userSessionID, c_day, c_class, c_room, c_content);
         m_comm.sentString(str);
         

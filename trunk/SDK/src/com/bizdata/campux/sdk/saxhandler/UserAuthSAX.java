@@ -16,6 +16,8 @@
  */
 package com.bizdata.campux.sdk.saxhandler;
 
+import com.bizdata.campux.sdk.Config;
+import com.bizdata.campux.sdk.util.DatatypeConverter;
 import java.util.LinkedList;
 import org.xml.sax.Attributes;
 
@@ -73,14 +75,22 @@ public class UserAuthSAX extends SAXHandlerBase {
     
     public String prepareRegistration(String user, String psw, String name){
         StringBuilder str = new StringBuilder();
+        
         //str.append( Config.getXMLfirstline() );
         str.append("<a><u>");
         str.append(user);
         str.append("</u><p>");
         str.append(psw);
-        str.append("</p><n>");
-        str.append(name);
-        str.append("</n></a>\r\n");
+        str.append("</p>");
+        if( name==null || name.isEmpty()){
+            str.append("<n></n>");
+        }else{
+            String b64 = DatatypeConverter.printBase64Binary(name.getBytes(Config.getCharset()));
+            str.append("<n b64=\"true\">");
+            str.append(b64);
+            str.append("</n>");
+        }
+        str.append("</a>\r\n");
         return str.toString();
     }
     

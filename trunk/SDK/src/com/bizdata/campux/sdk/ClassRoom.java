@@ -42,12 +42,11 @@ public class ClassRoom {
     public ClassRoom(User user){
     	m_ServicePort_Friend=Integer.parseInt(Config.getValue("ServicePort_ClassSchedule"));
         m_user = user;
+        m_comm = new ServerCommunicator();
     }
     
     public HashMap<String, List<String>> listClassRooms() throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+        m_comm.SetupCommunicator(m_ServicePort_Friend);
         
         ClassRoomSAX sax = new ClassRoomSAX();
         String str = sax.prepareListRooms();
@@ -71,9 +70,7 @@ public class ClassRoom {
         return publishClassRoomComment(building+"_"+classroom, good);
     }
     public boolean publishClassRoomComment(String classroompath, boolean good) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+        m_comm.SetupCommunicator(m_ServicePort_Friend);
         
         ClassRoomSAX sax = new ClassRoomSAX();
         String str = sax.preparePublishInfo(m_user.getSessionID(), good, classroompath);
@@ -102,9 +99,7 @@ public class ClassRoom {
                 return val.intValue();
         }
         
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Friend);
+        m_comm.SetupCommunicator(m_ServicePort_Friend);
         
         ClassRoomSAX sax = new ClassRoomSAX();
         String str = sax.prepareReadInfo(m_user.getSessionID(), classroompath);

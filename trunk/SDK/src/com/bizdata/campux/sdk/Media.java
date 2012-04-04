@@ -47,6 +47,7 @@ public class Media{
     public Media(int port,String sessionID){
     	m_ServicePort_Media=port;
     	m_userSessionID=sessionID;
+        m_comm = new ServerCommunicator();
     }
     
     /**
@@ -55,9 +56,7 @@ public class Media{
      * @throws Exception 
      */
     public String[] mediaListGet() throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Media);
+        m_comm.SetupCommunicator(m_ServicePort_Media);
         
         MediaSAX media = new MediaSAX();
         String str = media.prepareMediaListGet(m_userSessionID);
@@ -75,9 +74,7 @@ public class Media{
      * @throws Exception 
      */
     public String[] mediaContentRead(String m_content) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Media);
+        m_comm.SetupCommunicator(m_ServicePort_Media);
         
         MediaSAX media = new MediaSAX();
         String str = media.prepareMediaContentRead(m_userSessionID, m_content);
@@ -95,9 +92,7 @@ public class Media{
      * @throws Exception 
      */
     public String musicRead(String m_ID) throws Exception{
-        // force shutdown of the old connection
-        if( m_comm!=null) m_comm.close();
-        m_comm = new ServerCommunicator(m_ServicePort_Media);
+        m_comm.SetupCommunicator(m_ServicePort_Media);
         
         MediaSAX media= new MediaSAX();
         String str = media.prepareMusicRead(m_userSessionID, m_ID);
