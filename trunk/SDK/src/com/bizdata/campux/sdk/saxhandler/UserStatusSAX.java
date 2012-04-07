@@ -106,7 +106,7 @@ public class UserStatusSAX extends SAXHandlerBase{
         StringBuilder str = new StringBuilder();
         str.append( Config.getXMLfirstline() );
         
-        val = DatatypeConverter.printBase64Binary(val.getBytes(Config.getCharset()));
+        val = DatatypeConverter.printBase64Binary(val);
         
         str.append( "<usw s=\"" );
         str.append( sessionID );
@@ -199,7 +199,7 @@ public class UserStatusSAX extends SAXHandlerBase{
             str.append("</g>");
         }        
         str.append("<m b64=\"true\">");
-        message = DatatypeConverter.printBase64Binary(message.getBytes(Config.getCharset()));
+        message = DatatypeConverter.printBase64Binary(message);
         str.append(message);
         str.append("</m><ms>");
         return str.toString();

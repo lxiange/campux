@@ -102,7 +102,9 @@ public abstract class SAXHandlerBase extends DefaultHandler{
         if(m_saxbody){
             if( m_b64 ){
                 byte[] bytes = DatatypeConverter.parseBase64Binary(m_content);
-                m_content = new String(bytes, Config.getCharset());
+                try{
+                    m_content = new String(bytes, Config.getCharset().name());
+                }catch(Exception exc){exc.printStackTrace();}
             }
             contentReceived(m_content, m_tagname);
         }

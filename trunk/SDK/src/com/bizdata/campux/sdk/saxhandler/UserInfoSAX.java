@@ -65,7 +65,7 @@ public class UserInfoSAX extends SAXHandlerBase{
      * @return 
      */
     public String prepareInfoPublish(String sessionID, String room, String content) {
-        String val = DatatypeConverter.printBase64Binary(content.getBytes(Config.getCharset()));
+        String val = DatatypeConverter.printBase64Binary(content);
 
         StringBuilder str = new StringBuilder();
         str.append("<si ");

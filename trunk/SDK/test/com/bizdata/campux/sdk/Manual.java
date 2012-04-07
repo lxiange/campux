@@ -71,7 +71,7 @@ public class Manual {
     @Test
     public void test() throws Exception{
         String str="5a6X56uL";
-        String base64 = new String(DatatypeConverter.parseBase64Binary(str), Config.getCharset());
+        String base64 = new String(DatatypeConverter.parseBase64Binary(str), Config.getCharset().name());
        System.out.println(base64);
     }
     @Ignore
@@ -101,14 +101,14 @@ public class Manual {
         
         System.out.println(name + " " + rname);
 	        {
-	        	byte[] bs = name.getBytes(Charset.forName("UTF-8"));
+	        	byte[] bs = name.getBytes("UTF-8");
 	        	for(byte b:bs)
 	        		System.out.print(b+"");
 	        }
 	        System.out.println("");
 	        {
 	        	byte[] bs = rname.getBytes();
-                        String n=new String(bs,Charset.forName("UTF-8"));
+                        String n=new String(bs,"UTF-8");
                         bs = n.getBytes("UTF-8");
                         System.out.println(n);
 	        	for(byte b:bs)

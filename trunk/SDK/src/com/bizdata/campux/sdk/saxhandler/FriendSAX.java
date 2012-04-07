@@ -64,7 +64,7 @@ public class FriendSAX extends SAXHandlerBase {
      * @return 
      */
     public String prepareFriendPublish(String sessionID, String targetuser, String content) {
-        String val = DatatypeConverter.printBase64Binary(content.getBytes(Config.getCharset()));
+        String val = DatatypeConverter.printBase64Binary(content);
 
         StringBuilder str = new StringBuilder();
         str.append("<ps ");

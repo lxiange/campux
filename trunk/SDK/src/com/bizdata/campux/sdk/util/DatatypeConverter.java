@@ -18,6 +18,9 @@ package com.bizdata.campux.sdk.util;
 
 // this codefile is imported from javax.xml.blind for the portability to android systems.
 
+import com.bizdata.campux.sdk.Config;
+
+
 /**
  * This class is the JAXB RI's default implementation of the
  * {@link DatatypeConverterInterface}.
@@ -77,6 +80,18 @@ public class DatatypeConverter {
             r.append(hexCode[(b & 0xF)]);
         }
         return r.toString();
+    }
+    
+    static public String printBase64Binary(String str) {
+        if( str==null )
+            return null;
+        try{
+            byte[] bs = str.getBytes(Config.getCharset().name());
+            return printBase64Binary(bs);
+        }catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
     }
 
     static public String printBase64Binary(byte[] val) {

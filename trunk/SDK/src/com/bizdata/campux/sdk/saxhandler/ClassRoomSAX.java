@@ -90,7 +90,7 @@ public class ClassRoomSAX extends SAXHandlerBase {
         str.append("s=\"" + sessionID + "\" ");
         str.append("c=\"" + (good?"1":"0") + "\" b64=\"true\">");
         
-        String b64 = DatatypeConverter.printBase64Binary(location.getBytes(Config.getCharset()));
+        String b64 = DatatypeConverter.printBase64Binary(location);
         
         str.append(b64);
         
@@ -103,7 +103,7 @@ public class ClassRoomSAX extends SAXHandlerBase {
         str.append("<rr ");
         str.append("s=\"" + sessionID + "\" b64=\"true\">");
         
-        String b64 = DatatypeConverter.printBase64Binary(location.getBytes(Config.getCharset()));
+        String b64 = DatatypeConverter.printBase64Binary(location);
         
         str.append(b64);
         
