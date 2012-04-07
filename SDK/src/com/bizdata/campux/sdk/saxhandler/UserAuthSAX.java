@@ -85,7 +85,7 @@ public class UserAuthSAX extends SAXHandlerBase {
         if( name==null || name.isEmpty()){
             str.append("<n></n>");
         }else{
-            String b64 = DatatypeConverter.printBase64Binary(name.getBytes(Config.getCharset()));
+            String b64 = DatatypeConverter.printBase64Binary(name);
             str.append("<n b64=\"true\">");
             str.append(b64);
             str.append("</n>");

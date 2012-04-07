@@ -61,7 +61,7 @@ public class BubbleSAX extends SAXHandlerBase{
 	
 	public String prepareBubblePublish(String sessionID,String content)
 	{
-            String val = DatatypeConverter.printBase64Binary(content.getBytes(Config.getCharset()));
+            String val = DatatypeConverter.printBase64Binary(content);
             
             StringBuilder str = new StringBuilder();
             str.append("<p ");
